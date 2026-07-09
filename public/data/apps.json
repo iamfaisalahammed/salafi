@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "name": "Al Quran",
+    "image": "https://i.ibb.co.com/pjxkhkrQ/Screenshot-20260707-201441-Google-Play-Store.jpg",
+    "description": "Read and explore the Holy Quran with authentic resources.",
+    "link": "https://play.google.com/store/apps/details?id=com.greentech.quran"
+  },
+  {
+    "id": 2,
+    "name": "Al Hadith",
+    "image": "https://i.ibb.co.com/MDtTcYxh/Screenshot-20260707-201539-Google-Play-Store.jpg",
+    "description": "Explore authentic Hadith collections from Quran and Sunnah.",
+    "link": "https://play.google.com/store/apps/details?id=com.ihadis.ihadis"
+  },
+  {
+    "id": 3,
+    "name": "Hisnul Muslim",
+    "image": "https://i.ibb.co.com/0pjR17Ff/Picsart-26-07-09-22-22-23-839.png",
+    "description": "Daily authentic duas and supplications from Hisnul Muslim."
+    ,
+    "link": "https://play.google.com/store/apps/details?id=com.greentech.hisnulmuslimbn"
+  },
+
+  {
+    "id": 4,
+    "name": "IslamQA",
+    "image": "https://i.ibb.co.com/zh7FM1LZ/Screenshot-20260707-201603-Google-Play-Store.jpg",
+    "description": "Find answers to Islamic questions based on Quran and Sunnah.",
+    "link": "https://play.google.com/store/apps/details?id=zad.com.islamqa"
+  },
+
+  {
+    "id": 5,
+    "name": "Seerah of Muhammad ﷺ",
+    "image": "https://i.ibb.co.com/Dfs5PKBX/Picsart-26-07-07-21-18-45-163.jpg",
+    "description": "Learn about the life and teachings of Prophet Muhammad ﷺ.",
+    "link": "https://play.google.com/store/apps/details?id=org.gtaf.seerah"
+  },
+  {
+    "id": 6,
+    "name": "Muslim Day",
+    "image": "https://i.ibb.co.com/Mybbvgmb/Picsart-26-07-07-20-23-53-736.png",
+    "description": "Daily Islamic reminders, prayers, and beneficial content.",
+    "link": "https://play.google.com/store/apps/details?id=theoaktroop.appoframadan"
+  }
+]

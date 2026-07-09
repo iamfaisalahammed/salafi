@@ -1,26 +1,25 @@
-
 import { Link } from "react-scroll";
-
 
 const Nav = () => {
   const link = (
     <>
-      <Link
-        to="resources"
-        smooth={true}
-        duration={500}
-        className="cursor-pointer font-semibold hover:text-gray-300"
-      >
-       Resources
-      </Link>
       <Link
         to="apps"
         smooth={true}
         duration={500}
         className="cursor-pointer font-semibold hover:text-gray-300"
       >
-       Apps
+        Apps
       </Link>
+      <Link
+        to="resources"
+        smooth={true}
+        duration={500}
+        className="cursor-pointer font-semibold hover:text-gray-300"
+      >
+        Resources
+      </Link>
+
       <Link
         to="topics"
         smooth={true}
@@ -37,8 +36,14 @@ const Nav = () => {
       >
         Scholars
       </Link>
-   
-   
+      <Link
+        to="channels"
+        smooth={true}
+        duration={500}
+        className="cursor-pointer font-semibold hover:text-gray-300"
+      >
+        Channels
+      </Link>
     </>
   );
 
@@ -70,14 +75,17 @@ const Nav = () => {
             </div>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content gap-y-3 bg-white/10 backdrop-blur-lg text-white rounded-box z-50 mt-3 w-52 p-2 shadow-lg border border-white/20"
+              className="menu menu-sm dropdown-content gap-y-3  bg-white/10 backdrop-blur-lg text-white rounded-box z-50 mt-3 w-52 p-2 shadow-lg border border-white/20"
             >
               {link}
             </ul>
           </div>
-        <a className="text-xl text-white font-bold flex items-center justify-center gap-2">
-           SALAFI
-          </a>
+          <h3
+            className="text-2xl text-white font-bold flex items-center justify-center gap-2"
+            style={{ fontFamily: "'Caveat', cursive" }}
+          >
+            HIKMAH
+          </h3>
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1 text-white gap-6">{link}</ul>

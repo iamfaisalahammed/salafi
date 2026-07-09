@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "name": "Quran.com",
+    "image": "https://i.ibb.co.com/m5rm2rFg/Picsart-26-07-08-22-56-14-278.jpg",
+    "description": "অনলাইনে পবিত্র কুরআন পড়া, অনুবাদ, তাফসীর ও বিভিন্ন ক্বারীর কণ্ঠে তিলাওয়াত শোনার জন্য একটি জনপ্রিয় কুরআন রিসোর্স প্ল্যাটফর্ম।",
+    "link": "https://quran.com"
+  },
+  {
+    "id": 2,
+    "name": "Sunnah.com",
+    "image": "https://i.ibb.co.com/d0Y4r7Mm/Picsart-26-07-08-03-38-45-316.jpg",
+    "description": "রাসূলুল্লাহ ﷺ এর হাদিসসমূহ পড়া ও অনুসন্ধানের জন্য একটি নির্ভরযোগ্য অনলাইন হাদিস সংগ্রহশালা, যেখানে বিভিন্ন হাদিস গ্রন্থ পাওয়া যায়।",
+    "link": "https://sunnah.com"
+  },
+  {
+    "id": 3,
+    "name": "HadithBD.com",
+    "image": "https://i.ibb.co.com/WNP4WChr/Picsart-26-07-08-03-44-51-067.jpg",
+    "description": "বাংলা ভাষায় কুরআন, তাফসীর, হাদিস, ইসলামিক বই ও বিভিন্ন ইসলামিক জ্ঞান অনুসন্ধানের জন্য একটি বড় অনলাইন প্ল্যাটফর্ম।",
+    "link": "https://www.hadithbd.com"
+  },
+  {
+    "id": 4,
+    "name": "iHadith.com",
+    "image": "https://i.ibb.co.com/MDtTcYxh/Screenshot-20260707-201539-Google-Play-Store.jpg",
+    "description": "হাদিস পড়া, অনুসন্ধান করা এবং ইসলামিক জ্ঞান অর্জনের জন্য একটি অনলাইন হাদিস রিসোর্স প্ল্যাটফর্ম।",
+    "link": "https://ihadith.com"
+  },
+  {
+    "id": 5,
+    "name": "AudioQuran.com",
+    "image": "https://i.ibb.co.com/29M5Z91/Picsart-26-07-09-22-20-31-302.jpg",
+    "description": "বিভিন্ন ক্বারীর কণ্ঠে পবিত্র কুরআনের তিলাওয়াত শোনার জন্য একটি অডিও কুরআন প্ল্যাটফর্ম।",
+    "link": "https://audioquran.com"
+  },
+  {
+    "id": 6,
+    "name": "IslamHouse.com",
+    "image": "https://i.ibb.co.com/0yG12CQz/Picsart-26-07-09-22-15-39-944.jpg",
+    "description": "ইসলাম সম্পর্কে জ্ঞান অর্জনের জন্য কুরআন, হাদিস, বই, প্রবন্ধ ও বিভিন্ন ইসলামিক শিক্ষা উপকরণের একটি আন্তর্জাতিক ওয়েবসাইট।",
+    "link": "https://islamhouse.com"
+  },
+  {
+  "id": 7,
+  "name": "IslamQA",
+  "image": "https://i.ibb.co.com/zh7FM1LZ/Screenshot-20260707-201603-Google-Play-Store.jpg",
+  "description": "ইসলাম সম্পর্কিত বিভিন্ন প্রশ্নের উত্তর, ফতোয়া, কুরআন ও সুন্নাহভিত্তিক জ্ঞান এবং ইসলামিক গবেষণামূলক তথ্য প্রদানকারী একটি জনপ্রিয় ওয়েবসাইট।",
+  "link": "https://islamqa.info"
+}
+]

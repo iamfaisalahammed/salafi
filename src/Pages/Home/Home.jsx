@@ -1,5 +1,6 @@
 import Apps from "../../Sections/Apps";
 import Banner from "../../Sections/Banner";
+import Channel from "../../Sections/Channel";
 import Footer from "../../Sections/Footer";
 import Nav from "../../Sections/Nav";
 import Resources from "../../Sections/Resources";
@@ -25,8 +26,10 @@ const Home = () => {
       <div id="scholars">
         <Scholars></Scholars>
       </div>
+      <div id="channels"> <Channel> </Channel> </div>
       <Footer></Footer>
     </div>
+   
   );
 };
 

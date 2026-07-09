@@ -1,53 +1,408 @@
-
+import { useEffect, useState } from "react";
+import { FaMosque } from "react-icons/fa";
+import { IoLocationOutline, IoSettingsOutline } from "react-icons/io5"
 
 const Banner = () => {
-    return (
-        <div className="relative overflow-hidden bg-gradient-to-b from-black to-white/50 text-white py-28 px-4">
-      
-      {/* Soft glow background effect */}
-      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.2),transparent)]"></div>
+  const [prayerTimes, setPrayerTimes] = useState(null);
+  const [locationName, setLocationName] = useState("");
+  const [loadingLocation, setLoadingLocation] = useState(false);
 
-      <div className="relative max-w-4xl mx-auto text-center">
-        
-        {/* Title */}
-        <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
-          Authentic{" "}
-          <span className="text-yellow-300 drop-shadow-md">
-            Islamic ilm
-          </span>
-        </h1>
+  const [school, setSchool] = useState(() => {
+  const savedMadhhab = localStorage.getItem("madhhab");
+  return savedMadhhab !== null ? Number(savedMadhhab) : 1;
+});
 
-        {/* Subtitle */}
-        <p className="mt-5 text-gray-200 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-        Learn Islam From Authentic source__All In One Place
-        </p>
+  const [showSettings, setShowSettings] = useState(false);
 
-        {/* Search Box */}
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <input
-            type="text"
-            placeholder="Search scholars, topics, lectures..."
-            className="input input-bordered w-full sm:w-[420px] text-black focus:outline-none focus:ring-2 focus:ring-yellow-300"
-          />
-          <button className="btn btn-warning px-6">
-            Search
-          </button>
+  const formatTime = (time24) => {
+    if (!time24) return "--";
+
+    const cleanTime = time24.split(" ")[0];
+    const [hours, minutes] = cleanTime.split(":");
+
+    const date = new Date();
+
+    date.setHours(Number(hours));
+    date.setMinutes(Number(minutes));
+
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
+
+  // Prayer End Time
+  const getEndTime = (currentPrayer) => {
+    const order = [
+      "Fajr",
+      "Dhuhr",
+      "Asr",
+      "Maghrib",
+      "Isha",
+    ];
+
+
+    let nextPrayer;
+
+
+    // Fajr ends before Sunrise
+    if (currentPrayer === "Fajr") {
+      return formatTime(prayerTimes.Sunrise);
+    }
+
+
+    const index = order.indexOf(currentPrayer);
+
+
+    if (index === -1) return "--";
+
+
+    // Isha ends before next Fajr
+    if (currentPrayer === "Isha") {
+      nextPrayer = "Fajr";
+    } else {
+      nextPrayer = order[index + 1];
+    }
+
+
+    const nextTime = prayerTimes[nextPrayer];
+
+
+    if (!nextTime) return "--";
+
+
+    const cleanTime = nextTime.split(" ")[0];
+    const [hours, minutes] = cleanTime.split(":");
+
+
+    const date = new Date();
+
+    date.setHours(Number(hours));
+    date.setMinutes(Number(minutes) - 1);
+
+
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
+
+
+  const getLocation = () => {
+    setLoadingLocation(true);
+
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const {
+            latitude,
+            longitude,
+          } = position.coords;
+
+
+          const res = await fetch(
+            `https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=1&school=${school}`,
+          );
+
+
+          const data = await res.json();
+
+
+          setPrayerTimes(data.data.timings);
+
+
+
+          const locationRes = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+          );
+
+
+          const locationData = await locationRes.json();
+
+
+          const address = locationData.address;
+
+
+          setLocationName(
+            `${address.city || address.town || address.village || "Unknown"}, ${
+              address.country || ""
+            }`,
+          );
+
+
+        } catch (error) {
+          console.log(error);
+
+        } finally {
+          setLoadingLocation(false);
+        }
+      },
+
+
+      (error) => {
+        console.log(error);
+        setLoadingLocation(false);
+      },
+    );
+  };
+
+
+
+  useEffect(() => {
+    localStorage.setItem("madhhab", school);
+
+    getLocation();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [school]);
+
+
+
+  return (
+    <section className="relative overflow-hidden bg-gradient-to-b from-black via-green-950 to-slate-950 text-white py-24 px-6">
+
+      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.25),transparent)]"></div>
+
+
+      <div className="relative max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+
+
+        {/* Left Side */}
+
+        <div>
+
+          <h1
+            className="text-5xl md:text-7xl leading-tight font-bold"
+            style={{ fontFamily: "'Caveat', cursive" }}
+          >
+            Seek Knowledge,
+            <br />
+            Follow The Sunnah
+          </h1>
+
+
+          <p className="mt-6 text-lg text-gray-300 max-w-lg leading-relaxed">
+            Learn Islam From Authentic Sources — Qur'an, Hadith, Scholars,
+            Islamic Apps and Resources, All In One Place.
+          </p>
+
+
+          <div className="mt-8 flex flex-wrap gap-4">
+
+            <button className="btn  btn-outline broder-2 border-white
+            "
+            style={{ fontFamily: "'Caveat', cursive" }}>
+              Explore Books
+            </button>
+
+
+            {/* <button className="btn bg-[#29514F] text-white border-white hover:bg-white hover:text-black">
+              Learn More
+            </button> */}
+
+          </div>
+
         </div>
 
-        {/* Tags */}
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <span className="badge badge-outline px-3 py-2 text-sm">Qur’an</span>
-          <span className="badge badge-outline px-3 py-2 text-sm">Sunnah</span>
-          <span className="badge badge-outline px-3 py-2 text-sm">Scholars</span>
-          <span className="badge badge-outline px-3 py-2 text-sm">Lectures</span>
-          <span className="badge badge-outline px-3 py-2 text-sm">Fiqh</span>
-          <span className="badge badge-outline px-3 py-2 text-sm">Aqeedah</span>
+
+
+        {/* Right Side */}
+
+
+        <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 shadow-2xl">
+
+
+          <div className="flex items-center justify-between mb-5">
+
+
+            <div>
+
+              <h3 className="text-2xl  flex gap-2">
+                <FaMosque></FaMosque> Today's Prayer Times
+              </h3>
+
+
+              <p className="text-sm text-gray-300 mt-2 flex items-center gap-2">
+
+                <IoLocationOutline ></IoLocationOutline>
+
+                {loadingLocation
+                  ? "Detecting location..."
+                  : locationName || "Location not found"}
+
+
+                <span className="badge badge-sm badge-outline text-white border-white/40">
+
+                  {school === 1 ? "Hanafi" : "Shafi • Maliki • Hanbali"}
+
+                </span>
+
+
+              </p>
+
+
+            </div>
+
+
+
+            <div className="flex gap-2">
+
+
+              <button
+                onClick={getLocation}
+                className="btn bg-white/1 btn-circle"
+                title="Detect Location"
+              >
+                <IoLocationOutline ></IoLocationOutline>
+              </button>
+
+
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className="btn bg-white/1  btn-circle"
+                title="Prayer Settings"
+              >
+                <IoSettingsOutline></IoSettingsOutline>
+              </button>
+
+
+            </div>
+
+
+          </div>
+
+
+
+
+          {showSettings && (
+
+            <div className="absolute right-8 top-24 bg-white text-black rounded-xl p-4 shadow-xl z-50 w-56">
+
+
+              <p className="font-bold mb-3">
+                Select Madhhab
+              </p>
+
+
+
+              <button
+                onClick={() => {
+                  setSchool(1);
+                  setShowSettings(false);
+                }}
+                className="btn btn-sm w-full mb-2"
+              >
+                Hanafi
+              </button>
+
+
+
+              <button
+                onClick={() => {
+                  setSchool(0);
+                  setShowSettings(false);
+                }}
+                className="btn btn-sm w-full"
+              >
+                Shafi / Hanbali / Maliki
+              </button>
+
+
+
+            </div>
+
+          )}
+
+
+
+
+
+          {prayerTimes ? (
+
+            <div className="space-y-4">
+
+
+              {[
+                ["Fajr", "Fajr"],
+                ["Dhuhr", "Dhuhr"],
+                ["Asr", "Asr"],
+                ["Maghrib", "Maghrib"],
+                ["Isha", "Isha"],
+
+              ].map(([name, key]) => (
+
+
+                <div
+                  key={key}
+                  className="flex justify-between items-center border-b border-white/10 pb-2"
+                >
+
+
+                  <span className="font-medium">
+                    {name}
+                  </span>
+
+
+
+                  <span className="text-sm">
+
+
+                    {formatTime(prayerTimes[key])}
+
+
+
+                    <span className="mx-2 text-gray-400">
+                      -
+                    </span>
+
+
+
+                    <span className="text-gray-300">
+                      {getEndTime(key)}
+                    </span>
+
+
+
+                  </span>
+
+
+
+                </div>
+
+
+              ))}
+
+
+            </div>
+
+
+          ) : (
+
+
+            <div className="flex justify-center py-8">
+
+              <span className="loading loading-spinner loading-lg"></span>
+
+            </div>
+
+
+          )}
+
+
         </div>
+
 
       </div>
-    </div>
-    );
+
+
+    </section>
+  );
 };
 
-export default Banner;
 
+export default Banner;

@@ -1,4 +1,6 @@
+
 import { Link } from "react-scroll";
+import InstallApp from "../components/InstallApp";
 
 const Nav = () => {
   const link = (
@@ -90,10 +92,8 @@ const Nav = () => {
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1 text-white gap-6">{link}</ul>
         </div>
-        <div className="navbar-end">
-          {/* Dark/Light */}
-          🌙
-        </div>
+        {/* App Install Button  */}
+        <InstallApp></InstallApp>
       </div>
     </div>
   );

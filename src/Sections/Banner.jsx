@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaMosque } from "react-icons/fa";
+import { FaBookOpen, FaMosque } from "react-icons/fa";
 import { IoLocationOutline, IoSettingsOutline } from "react-icons/io5"
 
 const Banner = () => {
@@ -196,8 +196,8 @@ const Banner = () => {
 
             <button className="btn  btn-outline broder-2 border-white
             "
-            style={{ fontFamily: "'Caveat', cursive" }}>
-              Explore Books
+            style={{ fontFamily: "-moz-initial" }}>
+              EXPLORE BOOKS <FaBookOpen className=" animate-bounce"></FaBookOpen>
             </button>
 
 

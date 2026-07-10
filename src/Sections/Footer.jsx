@@ -5,7 +5,7 @@ export default function Footer() {
           
       </p>
       <p className="text-xs opacity-70 mt-2">
-        Built with ❤️ for the Ummah 🌙
+        Built with <span className="animate-pulse">❤️</span> for the Ummah 🌙
       </p>
     </footer>
   );

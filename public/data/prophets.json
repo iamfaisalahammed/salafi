@@ -1,0 +1,202 @@
+    [
+  {
+    "id": 1,
+    "name": "Adam",
+    "arabic": "عليه السلام",
+    "icon": "🌳",
+    "color": "#4ADE80",
+    "youtube": "https://youtu.be/ywHoaKVf0E4"
+  },
+  {
+    "id": 2,
+    "name": "Idris",
+    "arabic": "عليه السلام",
+    "icon": "⛰️",
+    "color": "#38BDF8",
+    "youtube": "https://youtu.be/S4JR8gWIvYg"
+  },
+  {
+    "id": 3,
+    "name": "Nuh",
+    "arabic": "عليه السلام",
+    "icon": "🚢",
+    "color": "#F472B6",
+    "youtube": "https://youtu.be/Qe9ylM6fNYM"
+  },
+  {
+    "id": 4,
+    "name": "Hud",
+    "arabic": "عليه السلام",
+    "icon": "🌪️",
+    "color": "#A78BFA",
+    "youtube": "https://youtu.be/Brnu5TgB0Jc"
+  },
+  {
+    "id": 5,
+    "name": "Saleh",
+    "arabic": "عليه السلام",
+    "icon": "🐪",
+    "color": "#FB923C",
+    "youtube": "https://youtu.be/Pxf0L6PguOY"
+  },
+  {
+    "id": 6,
+    "name": "Ibrahim",
+    "arabic": "عليه السلام",
+    "icon": "🔥",
+    "color": "#F87171",
+    "youtube": "https://youtu.be/tSteK_9b5Q0"
+  },
+  {
+    "id": 7,
+    "name": "Lut",
+    "arabic": "عليه السلام",
+    "icon": "🏙️",
+    "color": "#FBBF24",
+    "youtube": "https://youtu.be/T8e9J_FleyE"
+  },
+  {
+    "id": 8,
+    "name": "Ismail",
+    "arabic": "عليه السلام",
+    "icon": "🐑",
+    "color": "#F87171",
+    "youtube": "https://youtu.be/LlLNy0Icf7M"
+  },
+  {
+    "id": 9,
+    "name": "Ishaq",
+    "arabic": "عليه السلام",
+    "icon": "🕊️",
+    "color": "#60A5FA",
+    "youtube": "https://youtu.be/ntfdrLthUdg"
+  },
+  {
+    "id": 10,
+    "name": "Yaqub",
+    "arabic": "عليه السلام",
+    "icon": "🏕️",
+    "color": "#C084FC",
+    "youtube": "https://youtu.be/_CqhdVQztxg"
+  },
+  {
+    "id": 11,
+    "name": "Yusuf",
+    "arabic": "عليه السلام",
+    "icon": "🪣",
+    "color": "#FCD34D",
+    "youtube": "https://youtu.be/_lzwHFr2hBA"
+  },
+  {
+    "id": 12,
+    "name": "Ayyub",
+    "arabic": "عليه السلام",
+    "icon": "⏳",
+    "color": "#F97316",
+    "youtube": "https://youtu.be/lN_0oRePY-g"
+  },
+  {
+    "id": 13,
+    "name": "Shuaib",
+    "arabic": "عليه السلام",
+    "icon": "⚡",
+    "color": "#818CF8",
+    "youtube": "https://youtu.be/jcCEiN4xhFI"
+  },
+  {
+    "id": 14,
+    "name": "Musa",
+    "arabic": "عليه السلام",
+    "icon": "🌊",
+    "color": "#22D3EE",
+    "youtube": "https://youtu.be/TbQJ6MKtp5Q"
+  },
+  {
+    "id": 15,
+    "name": "Harun",
+    "arabic": "عليه السلام",
+    "icon": "🪄",
+    "color": "#4ADE80",
+    "youtube": "https://youtu.be/UPybeb9JdJs"
+  },
+  {
+    "id": 16,
+    "name": "Dhul-Kifl",
+    "arabic": "عليه السلام",
+    "icon": "🕯️",
+    "color": "#34D399",
+    "youtube": "https://youtu.be/UQokR2tslts"
+  },
+  {
+    "id": 17,
+    "name": "Dawud",
+    "arabic": "عليه السلام",
+    "icon": "👑",
+    "color": "#FBBF24",
+    "youtube": "https://youtu.be/prZrvfpMQ9U"
+  },
+  {
+    "id": 18,
+    "name": "Sulaiman",
+    "arabic": "عليه السلام",
+    "icon": "🦜",
+    "color": "#4ADE80",
+    "youtube": "https://youtu.be/bFIheGltBC8"
+  },
+  {
+    "id": 19,
+    "name": "Ilyas",
+    "arabic": "عليه السلام",
+    "icon": "✨",
+    "color": "#60A5FA",
+    "youtube": "https://youtu.be/cWfNnCaH6MI"
+  },
+  {
+    "id": 20,
+    "name": "Alyasa",
+    "arabic": "عليه السلام",
+    "icon": "🌟",
+    "color": "#F472B6",
+    "youtube": "https://youtu.be/vf0Df6XVTTc"
+  },
+  {
+    "id": 21,
+    "name": "Yunus",
+    "arabic": "عليه السلام",
+    "icon": "🐋",
+    "color": "#38BDF8",
+    "youtube": "https://youtu.be/9_W1cFXWqrE"
+  },
+  {
+    "id": 22,
+    "name": "Zakariya",
+    "arabic": "عليه السلام",
+    "icon": "🌿",
+    "color": "#34D399",
+    "youtube": "https://youtu.be/4uvZtvQv6ow"
+  },
+  {
+    "id": 23,
+    "name": "Yahya",
+    "arabic": "عليه السلام",
+    "icon": "📖",
+    "color": "#A78BFA",
+    "youtube": "https://youtu.be/9KFO2P-0LhI"
+  },
+  {
+    "id": 24,
+    "name": "Isa",
+    "arabic": "عليه السلام",
+    "icon": "🧺",
+    "color": "#FBBF24",
+    "youtube": "https://youtu.be/2pVm1-edHWk"
+  },
+  {
+    "id": 25,
+    "name": "Muhammad",
+    "arabic": "ﷺ",
+    "icon": "🕋",
+    "color": "#F87171",
+    "youtube": "https://youtu.be/MxkQM92MSzI"
+  }
+]

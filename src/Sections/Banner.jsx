@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaBookOpen, FaMosque } from "react-icons/fa";
 import { IoLocationOutline, IoSettingsOutline } from "react-icons/io5"
+import { Link } from "react-router-dom";
 
 const Banner = () => {
   const [prayerTimes, setPrayerTimes] = useState(null);
@@ -194,11 +195,11 @@ const Banner = () => {
 
           <div className="mt-8 flex flex-wrap gap-4">
 
-            <button className="btn  btn-outline broder-2 border-white
+            <Link to='/ExploreLibrary' className="btn  btn-outline broder-2 border-white
             "
             style={{ fontFamily: "-moz-initial" }}>
-              EXPLORE BOOKS <FaBookOpen className=" animate-bounce"></FaBookOpen>
-            </button>
+             Explore Library <FaBookOpen className=" animate-bounce"></FaBookOpen>
+            </Link>
 
 
             {/* <button className="btn bg-[#29514F] text-white border-white hover:bg-white hover:text-black">

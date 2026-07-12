@@ -1,13 +1,22 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import Home from "./Pages/Home/Home.jsx";
+import { BrowserRouter } from "react-router-dom";
 import { registerSW } from "virtual:pwa-register";
+import Root from "./Root/Root";
+
+
+
 
 registerSW();
 
+
+
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <Home />
+    <BrowserRouter>
+     <Root></Root>
+    </BrowserRouter>
   </StrictMode>
-);  
+);

@@ -11,7 +11,7 @@
 // Quran & Tafsir
 // ├── Learn Quran
 // ├── Tajweed
-// ├── Tafsir
+// ├── Tafsir    
 // ├── Quran Memorization
 // ├── Quran Reflection
 // └── Sciences of the Quran
@@ -32,13 +32,11 @@
 // ├── Hajj & Umrah
 // └── Dua & Adhkar
 
-// Islamic Legacy
+// Seerah & History
 // ├── All Prophets
 // ├── Seerah of Prophet ﷺ
 // ├── Sahabah
-// ├── Tabi'un
 // ├── Great Scholars
-// ├── Khulafa Rashidun
 // └── Islamic History
 
 // Why Islam?

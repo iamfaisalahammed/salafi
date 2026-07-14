@@ -14,16 +14,15 @@ export default function Scholars() {
 
   return (
     <section className="p-10 ">
-    <h2 className="text-3xl md:text-3xl font-bold text-center mb-10">
-       Islamic Scholars
-
+      <h2 className="text-3xl md:text-3xl font-bold text-center mb-10">
+        Islamic Scholars
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 ">
         {scholars.map((scholar, index) => (
           <div
             key={index}
             onClick={() => setSelected(scholar)}
-            className="  bg-base-200  border-2  border-white/30 shadow-md p-5
+            className="   border-2  border-white/30 shadow-md p-5
               cursor-pointer hover:shadow-xl
               transition duration-300
               text-center
@@ -115,7 +114,6 @@ export default function Scholars() {
               <p>
                 <span className="font-bold"></span> {selected.information}
               </p>
-         
             </div>
 
             {/* Youtube Button */}

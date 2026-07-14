@@ -120,6 +120,7 @@ const buildPath = (nodes) => {
   return d;
 };
 
+
 const SeerahHistory = () => {
   const [active, setActive] = useState("prophets");
 

@@ -38,6 +38,12 @@ const videos = [
     link: "https://youtube.com",
   },
   {
+    category: "seerah",
+    title: "Life of Prophet Muhammad ﷺ",
+    image: "https://i.ibb.co.com/example.jpg",
+    link: "https://youtube.com",
+  },
+  {
     category: "sahabah",
     title: "Biography of Abu Bakr رضي الله عنه",
     image: "https://i.ibb.co.com/example.jpg",
@@ -158,7 +164,7 @@ const SeerahHistory = () => {
         ))}
       </div>
 
-      {/* All Prophets — winding path timeline */}
+      {/* All Prophets — winding path timeline (now on all devices, including mobile) */}
       {active === "prophets" && (
         <div className="max-w-4xl mx-auto">
           <h2 className="text-white text-2xl font-bold text-center mb-2">
@@ -168,11 +174,8 @@ const SeerahHistory = () => {
             25 Prophets mentioned in the Qur'an
           </p>
 
-          {/* Desktop / tablet: winding snake path */}
-          <div
-            className="relative hidden md:block"
-            style={{ height: pathHeight }}
-          >
+          {/* Winding snake path — shared by desktop, tablet, and mobile */}
+          <div className="relative" style={{ height: pathHeight }}>
             <svg
               viewBox={`0 0 1000 ${pathHeight}`}
               preserveAspectRatio="none"
@@ -195,48 +198,25 @@ const SeerahHistory = () => {
                 style={{ left: `${p.x}%`, top: p.y }}
               >
                 <div
-                  className="w-14 h-14 rounded-full flex items-center justify-center text-2xl bg-white/10 backdrop-blur-md border-2 shadow-lg transition-transform duration-300 group-hover:scale-110"
+                  className="w-11 h-11 md:w-14 md:h-14 rounded-full flex items-center justify-center text-lg md:text-2xl bg-white/10 backdrop-blur-md border-2 shadow-lg transition-transform duration-300 group-hover:scale-110"
                   style={{ borderColor: p.color }}
                 >
                   {p.icon}
                 </div>
                 <div className="text-center leading-tight whitespace-nowrap">
                   <p
-                    className="font-bold text-sm"
+                    className="font-bold text-[11px] md:text-sm"
                     style={{ color: p.color }}
                   >
                     {p.name}
                   </p>
-                  <p className="text-[10px] text-gray-400">{p.arabic}</p>
+                  <p className="text-[8px] md:text-[10px] text-gray-400">{p.arabic}</p>
                 </div>
                 <span className="absolute -top-3 -right-3 text-[10px] w-5 h-5 rounded-full bg-black/60 border border-white/20 text-gray-300 flex items-center justify-center">
                   {index + 1}
                 </span>
               </div>
             ))}
-          </div>
-
-          {/* Mobile: simple vertical timeline */}
-          <div className="md:hidden relative pl-8">
-            <div className="absolute left-[27px] top-2 bottom-2 border-l-2 border-dashed border-white/20" />
-            <div className="space-y-5">
-              {prophets.map((p, index) => (
-                <div key={p.name} className="relative flex items-center gap-4">
-                  <div
-                    className="w-12 h-12 shrink-0 rounded-full flex items-center justify-center text-xl bg-white/10 border-2 z-10"
-                    style={{ borderColor: p.color }}
-                  >
-                    {p.icon}
-                  </div>
-                  <div>
-                    <p className="font-bold" style={{ color: p.color }}>
-                      {index + 1}. {p.name}
-                    </p>
-                    <p className="text-xs text-gray-400">{p.arabic}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       )}

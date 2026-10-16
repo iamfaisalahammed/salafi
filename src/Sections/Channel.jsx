@@ -5,7 +5,7 @@ import { Autoplay, FreeMode } from "swiper/modules";
 import {
   FaYoutube,
   FaArrowRight,
-  FaStar,
+
 } from "react-icons/fa";
 
 import "swiper/css";
@@ -48,10 +48,7 @@ const Channel = () => {
         {/* Section Header */}
         <div className="mb-12 text-center">
 
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/[0.08] px-4 py-2 text-sm font-medium text-emerald-300">
-            <FaStar className="text-amber-400" />
-            Learn Through Video
-          </div>
+         
 
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
             {data.sectionTitle || "Islamic "}

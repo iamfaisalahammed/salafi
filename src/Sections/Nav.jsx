@@ -1,101 +1,119 @@
 
+import { useState } from "react";
 import { Link } from "react-scroll";
+import { FaMoon, FaBars, FaTimes } from "react-icons/fa";
 import InstallApp from "../components/InstallApp";
 
 const Nav = () => {
-  const link = (
-    <>
-      <Link
-        to="apps"
-        smooth={true}
-        duration={500}
-        className="cursor-pointer font-semibold hover:text-gray-300"
-      >
-        Apps
-      </Link>
-      <Link
-        to="resources"
-        smooth={true}
-        duration={500}
-        className="cursor-pointer font-semibold hover:text-gray-300"
-      >
-        Resources
-      </Link>
+  const [menuOpen, setMenuOpen] = useState(false);
 
-      <Link
-        to="topics"
-        smooth={true}
-        duration={500}
-        className="cursor-pointer font-semibold hover:text-gray-300"
-      >
-        Topics
-      </Link>
-      <Link
-        to="scholars"
-        smooth={true}
-        duration={500}
-        className="cursor-pointer font-semibold hover:text-gray-300"
-      >
-        Scholars
-      </Link>
-      <Link
-        to="channels"
-        smooth={true}
-        duration={500}
-        className="cursor-pointer font-semibold hover:text-gray-300"
-      >
-        Channels
-      </Link>
-    </>
-  );
+  const navItems = [
+    { name: "Apps", to: "apps" },
+    { name: "Resources", to: "resources" },
+    { name: "Topics", to: "topics" },
+    { name: "Scholars", to: "scholars" },
+    { name: "Channels", to: "channels" },
+  ];
+
+  const navLinkClass =
+    "cursor-pointer whitespace-nowrap text-sm font-medium text-gray-300 transition-colors duration-300 hover:text-emerald-300";
+
+  const handleLinkClick = () => setMenuOpen(false);
 
   return (
-    <div>
-      {/* Navbar */}
-      <div className="navbar fixed top-0 left-0 w-full bg-white/10 backdrop-blur-lg border-b border-white/20 shadow-lg z-50">
-        <div className="navbar-start">
-          <div className="dropdown">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost text-white lg:hidden"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h8m-8 6h16"
-                />
-              </svg>
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content gap-y-3  bg-white/10 backdrop-blur-lg text-white rounded-box z-50 mt-3 w-52 p-2 shadow-lg border border-white/20"
-            >
-              {link}
-            </ul>
-          </div>
-          <h3
-            className="text-2xl text-white font-bold flex items-center justify-center gap-2"
-            style={{ fontFamily: "'Caveat', cursive" }}
+    <header className="fixed left-0 top-0 z-50 w-full border-b border-emerald-400/15 bg-[#071810]/85 text-white shadow-lg shadow-black/10 backdrop-blur-xl">
+      <nav className="navbar mx-auto min-h-[72px] max-w-7xl px-3 sm:px-6 lg:px-8">
+        {/* Logo and mobile menu */}
+        <div className="navbar-start gap-1">
+          <button
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={menuOpen}
+            className="btn btn-ghost btn-circle text-gray-300 hover:bg-emerald-400/10 hover:text-emerald-300 lg:hidden"
           >
-            HIKMAH
-          </h3>
+            {menuOpen ? (
+              <FaTimes className="text-lg" />
+            ) : (
+              <FaBars className="text-lg" />
+            )}
+          </button>
+
+          <a
+            href="#home"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById("home")?.scrollIntoView({
+                behavior: "smooth",
+              });
+              setMenuOpen(false);
+            }}
+            className="flex items-center gap-2"
+            aria-label="Hikmah home"
+          >
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-400/10 text-lg text-emerald-300">
+              <FaMoon />
+            </span>
+
+            <span className="text-xl font-extrabold tracking-[0.15em] sm:text-2xl">
+              HIK<span className="text-emerald-300">MAH</span>
+            </span>
+          </a>
         </div>
+
+        {/* Desktop navigation */}
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1 text-white gap-6">{link}</ul>
+          <ul className="flex items-center gap-7">
+            {navItems.map((item) => (
+              <li key={item.to}>
+                <Link
+                  to={item.to}
+                  smooth={true}
+                  duration={500}
+                  offset={-75}
+                  spy={true}
+                  activeClass="!text-emerald-300"
+                  className={navLinkClass}
+                >
+                  {item.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
-        {/* App Install Button  */}
-        <InstallApp></InstallApp>
+
+        {/* Install app */}
+        <div className="navbar-end">
+          <InstallApp />
+        </div>
+      </nav>
+
+      {/* Mobile navigation */}
+      <div
+        className={`overflow-hidden border-t border-emerald-400/10 bg-[#071810]/95 transition-all duration-300 lg:hidden ${
+          menuOpen
+            ? "max-h-96 opacity-100"
+            : "pointer-events-none max-h-0 opacity-0"
+        }`}
+      >
+        <ul className="mx-auto flex max-w-7xl flex-col gap-1 px-5 py-3 sm:px-8">
+          {navItems.map((item) => (
+            <li key={item.to}>
+              <Link
+                to={item.to}
+                smooth={true}
+                duration={500}
+                offset={-75}
+                onClick={handleLinkClick}
+                className="block cursor-pointer rounded-xl px-4 py-3 text-sm font-medium text-gray-300 transition-colors duration-200 hover:bg-emerald-400/10 hover:text-emerald-300"
+              >
+                {item.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
-    </div>
+    </header>
   );
 };
 

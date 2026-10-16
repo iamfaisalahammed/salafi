@@ -193,20 +193,21 @@ const Banner = () => {
           </p>
 
 
-          <div className="mt-8 flex flex-wrap gap-4">
+       
+<div className="mt-8 flex flex-wrap gap-4">
+  <Link
+    to="/ExploreLibrary"
+    className="btn btn-lg rounded-xl border-2 border-white/30 bg-white px-6 text-gray-900 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-white hover:bg-white/90 hover:shadow-xl"
+    style={{ fontFamily: "inherit" }}
+  >
+    <FaBookOpen className="text-lg" />
+    Explore the Library
+    <span className="transition-transform duration-300 group-hover:translate-x-1">
+      →
+    </span>
+  </Link>
+</div>
 
-            <Link to='/ExploreLibrary' className="btn  btn-outline broder-2 border-white
-            "
-            style={{ fontFamily: "-moz-initial" }}>
-             Explore Library <FaBookOpen className=" animate-bounce"></FaBookOpen>
-            </Link>
-
-
-            {/* <button className="btn bg-[#29514F] text-white border-white hover:bg-white hover:text-black">
-              Learn More
-            </button> */}
-
-          </div>
 
         </div>
 

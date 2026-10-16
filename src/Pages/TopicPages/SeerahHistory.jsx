@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { FaPlay, FaBookQuran, FaGraduationCap, FaLandmark } from "react-icons/fa6";
-import { FaUserFriends } from "react-icons/fa";
+import { FaPlay, FaBookQuran, } from "react-icons/fa6";
+
 
 const categories = [
   {
     id: "prophets",
-    name: "All Prophets",
+    name: "25 Prophets",
     icon: <FaBookQuran />,
   },
   {
@@ -13,36 +13,31 @@ const categories = [
     name: "Seerah of Prophet ﷺ",
     icon: <FaBookQuran />,
   },
-  {
-    id: "sahabah",
-    name: "Sahabah",
-    icon: <FaUserFriends />,
-  },
-  {
-    id: "scholars",
-    name: "Great Scholars",
-    icon: <FaGraduationCap />,
-  },
-  {
-    id: "history",
-    name: "Islamic History",
-    icon: <FaLandmark />,
-  },
+  // {
+  //   id: "sahabah",
+  //   name: "Sahabah",
+  //   icon: <FaUserFriends />,
+  // },
+  // {
+  //   id: "scholars",
+  //   name: "Great Scholars",
+  //   icon: <FaGraduationCap />,
+  // },
+  // {
+  //   id: "history",
+  //   name: "Islamic History",
+  //   icon: <FaLandmark />,
+  // },
 ];
 
 const videos = [
   {
     category: "seerah",
     title: "Life of Prophet Muhammad ﷺ",
-    image: "https://i.ibb.co.com/example.jpg",
-    link: "https://youtube.com",
+    image: "https://i.ibb.co.com/hRDJjJxK/f0a62ab2-c43c-4a7c-85eb-d6e0c324a540.png",
+    link: "https://www.youtube.com/show/VLPLlZazEh_c4nScNCvGBn8OEf6ujk-sDUpg?sbp=KgtEVy0wMGNrQ0FQSUAB",
   },
-  {
-    category: "seerah",
-    title: "Life of Prophet Muhammad ﷺ",
-    image: "https://i.ibb.co.com/example.jpg",
-    link: "https://youtube.com",
-  },
+
   {
     category: "sahabah",
     title: "Biography of Abu Bakr رضي الله عنه",
@@ -66,31 +61,31 @@ const videos = [
 // 25 Prophets mentioned in the Qur'an, each paired with a symbol from
 // their story and a distinct accent color, in traditional chronological order.
 const prophets = [
-  { name: "Adam", arabic: "عليه السلام", icon: "🌳", color: "#4ADE80" },
-  { name: "Idris", arabic: "عليه السلام", icon: "⛰️", color: "#38BDF8" },
-  { name: "Nuh", arabic: "عليه السلام", icon: "🚢", color: "#F472B6" },
-  { name: "Hud", arabic: "عليه السلام", icon: "🌪️", color: "#A78BFA" },
-  { name: "Saleh", arabic: "عليه السلام", icon: "🐪", color: "#FB923C" },
-  { name: "Ibrahim", arabic: "عليه السلام", icon: "🔥", color: "#F87171" },
-  { name: "Lut", arabic: "عليه السلام", icon: "🏙️", color: "#FBBF24" },
-  { name: "Ismail", arabic: "عليه السلام", icon: "🐑", color: "#34D399" },
-  { name: "Ishaq", arabic: "عليه السلام", icon: "🕊️", color: "#60A5FA" },
-  { name: "Yaqub", arabic: "عليه السلام", icon: "🏕️", color: "#C084FC" },
-  { name: "Yusuf", arabic: "عليه السلام", icon: "🪣", color: "#FCD34D" },
-  { name: "Ayyub", arabic: "عليه السلام", icon: "⏳", color: "#F97316" },
-  { name: "Shuaib", arabic: "عليه السلام", icon: "⚡", color: "#818CF8" },
-  { name: "Musa", arabic: "عليه السلام", icon: "🌊", color: "#22D3EE" },
-  { name: "Harun", arabic: "عليه السلام", icon: "🪄", color: "#4ADE80" },
-  { name: "Dhul-Kifl", arabic: "عليه السلام", icon: "🕯️", color: "#FB7185" },
-  { name: "Dawud", arabic: "عليه السلام", icon: "👑", color: "#FBBF24" },
-  { name: "Sulaiman", arabic: "عليه السلام", icon: "🦜", color: "#4ADE80" },
-  { name: "Ilyas", arabic: "عليه السلام", icon: "✨", color: "#60A5FA" },
-  { name: "Alyasa", arabic: "عليه السلام", icon: "🌟", color: "#F472B6" },
-  { name: "Yunus", arabic: "عليه السلام", icon: "🐋", color: "#38BDF8" },
-  { name: "Zakariya", arabic: "عليه السلام", icon: "🌿", color: "#34D399" },
-  { name: "Yahya", arabic: "عليه السلام", icon: "📖", color: "#A78BFA" },
-  { name: "Isa", arabic: "عليه السلام", icon: "🧺", color: "#FBBF24" },
-  { name: "Muhammad", arabic: "ﷺ", icon: "🕋", color: "#F87171" },
+  { name: "Adam", arabic: "عليه السلام", icon: "🌳", color: "#4ADE80", link: "https://youtu.be/ywHoaKVf0E4" },
+  { name: "Idris", arabic: "عليه السلام", icon: "⛰️", color: "#38BDF8", link: "https://youtu.be/Qe9ylM6fNYM" },
+  { name: "Nuh", arabic: "عليه السلام", icon: "🚢", color: "#F472B6", link: "https://youtu.be/S4JR8gWIvYg" },
+  { name: "Hud", arabic: "عليه السلام", icon: "🌪️", color: "#A78BFA", link: "https://youtu.be/Brnu5TgB0Jc" },
+  { name: "Saleh", arabic: "عليه السلام", icon: "🐪", color: "#FB923C", link: "https://youtu.be/Pxf0L6PguOY" },
+  { name: "Ibrahim", arabic: "عليه السلام", icon: "🔥", color: "#F87171", link: "https://youtu.be/tSteK_9b5Q0" },
+  { name: "Lut", arabic: "عليه السلام", icon: "🏙️", color: "#FBBF24", link: "https://youtu.be/T8e9J_FleyE" },
+  { name: "Ismail", arabic: "عليه السلام", icon: "🐑", color: "#F87171", link: "https://youtu.be/LlLNy0Icf7M" },
+  { name: "Ishaq", arabic: "عليه السلام", icon: "🕊️", color: "#60A5FA", link: "https://youtu.be/ntfdrLthUdg" },
+  { name: "Yaqub", arabic: "عليه السلام", icon: "🏕️", color: "#C084FC", link: "https://youtu.be/_CqhdVQztxg" },
+  { name: "Yusuf", arabic: "عليه السلام", icon: "🪣", color: "#FCD34D", link: "https://youtu.be/_lzwHFr2hBA" },
+  { name: "Ayyub", arabic: "عليه السلام", icon: "⏳", color: "#F97316", link: "https://youtu.be/lN_0oRePY-g" },
+  { name: "Shuaib", arabic: "عليه السلام", icon: "⚡", color: "#818CF8", link: "https://youtu.be/jcCEiN4xhFI" },
+  { name: "Musa", arabic: "عليه السلام", icon: "🌊", color: "#22D3EE", link: "https://youtu.be/TbQJ6MKtp5Q" },
+  { name: "Harun", arabic: "عليه السلام", icon: "🪄", color: "#4ADE80", link: "https://youtu.be/UPybeb9JdJs" },
+  { name: "Dhul-Kifl", arabic: "عليه السلام", icon: "🕯️", color: "#4ADE80", link: "https://youtu.be/UQokR2tslts" },
+  { name: "Dawud", arabic: "عليه السلام", icon: "👑", color: "#FBBF24", link: "https://youtu.be/prZrvfpMQ9U" },
+  { name: "Sulaiman", arabic: "عليه السلام", icon: "🦜", color: "#4ADE80", link: "https://youtu.be/bFIheGltBC8" },
+  { name: "Ilyas", arabic: "عليه السلام", icon: "✨", color: "#60A5FA", link: "https://youtu.be/cWfNnCaH6MI" },
+  { name: "Alyasa", arabic: "عليه السلام", icon: "🌟", color: "#F472B6", link: "https://youtu.be/vf0Df6XVTTc" },
+  { name: "Yunus", arabic: "عليه السلام", icon: "🐋", color: "#38BDF8", link: "https://youtu.be/9_W1cFXWqrE" },
+  { name: "Zakariya", arabic: "عليه السلام", icon: "🌿", color: "#34D399", link: "https://youtu.be/4uvZtvQv6ow" },
+  { name: "Yahya", arabic: "عليه السلام", icon: "📖", color: "#A78BFA", link: "https://youtu.be/9KFO2P-0LhI" },
+  { name: "Isa", arabic: "عليه السلام", icon: "🧺", color: "#FBBF24", link: "https://youtu.be/2pVm1-edHWk" },
+  { name: "Muhammad", arabic: "ﷺ", icon: "🕋", color: "#F87171", link: "https://youtu.be/MxkQM92MSzI" },
 ];
 
 // Snake the 25 prophets through a 5-column grid, alternating direction
@@ -125,7 +120,6 @@ const buildPath = (nodes) => {
   }
   return d;
 };
-
 
 const SeerahHistory = () => {
   const [active, setActive] = useState("prophets");
@@ -194,7 +188,20 @@ const SeerahHistory = () => {
             {prophetNodes.map((p, index) => (
               <div
                 key={p.name}
-                className="absolute flex flex-col items-center gap-2 -translate-x-1/2 -translate-y-1/2 group"
+                role={p.link ? "button" : undefined}
+                tabIndex={p.link ? 0 : undefined}
+                onClick={() => {
+                  if (p.link) window.open(p.link, "_blank", "noopener,noreferrer");
+                }}
+                onKeyDown={(e) => {
+                  if (p.link && (e.key === "Enter" || e.key === " ")) {
+                    e.preventDefault();
+                    window.open(p.link, "_blank", "noopener,noreferrer");
+                  }
+                }}
+                className={`absolute flex flex-col items-center gap-2 -translate-x-1/2 -translate-y-1/2 group ${
+                  p.link ? "cursor-pointer" : "cursor-default"
+                }`}
                 style={{ left: `${p.x}%`, top: p.y }}
               >
                 <div

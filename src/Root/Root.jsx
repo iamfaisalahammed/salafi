@@ -9,6 +9,7 @@ import HadithSunnah from "../Pages/TopicPages/HadithSunnah";
 import SeerahHistory from "../Pages/TopicPages/SeerahHistory";
 import WhyIslam from "../Pages/TopicPages/WhyIslam";
 import ExploreLibrary from "../Pages/ExploreLibrary/ExploreLibrary";
+import NotFound from "../Pages/NotFound";
 
 
 export default function Root() {
@@ -64,7 +65,11 @@ export default function Root() {
         element={<ExploreLibrary/>}
       />
 
-
+    {/* 404 Page */}
+      <Route
+        path="*"
+        element={<NotFound />}
+      />
     </Routes>
   );
 

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { FaDownload } from "react-icons/fa6";
 import Swal from "sweetalert2";
@@ -7,164 +8,121 @@ const InstallApp = () => {
   const [isInstalling, setIsInstalling] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
 
-
   useEffect(() => {
+    const standalone = window.matchMedia(
+      "(display-mode: standalone)"
+    );
 
-    // Check App Installed
     const checkInstalled = () => {
       const installed =
-        window.matchMedia("(display-mode: standalone)").matches ||
+        standalone.matches ||
         window.navigator.standalone === true;
 
-      if (installed) {
-        setIsInstalled(true);
-      }
+      setIsInstalled(installed);
     };
-
 
     checkInstalled();
 
-
-    // Android Install Prompt
-    const handler = (e) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
+    const handleBeforeInstallPrompt = (event) => {
+      event.preventDefault();
+      setDeferredPrompt(event);
     };
 
+    const handleAppInstalled = () => {
+      setIsInstalled(true);
+      setDeferredPrompt(null);
+      setIsInstalling(false);
+    };
+
+    standalone.addEventListener("change", checkInstalled);
 
     window.addEventListener(
       "beforeinstallprompt",
-      handler
+      handleBeforeInstallPrompt
     );
 
+    window.addEventListener("appinstalled", handleAppInstalled);
 
     return () => {
+      standalone.removeEventListener("change", checkInstalled);
+
       window.removeEventListener(
         "beforeinstallprompt",
-        handler
+        handleBeforeInstallPrompt
+      );
+
+      window.removeEventListener(
+        "appinstalled",
+        handleAppInstalled
       );
     };
-
   }, []);
 
-
-
   const handleInstall = async () => {
+    const isIOS = /iphone|ipad|ipod/i.test(
+      window.navigator.userAgent
+    );
 
-    // Check iOS
-    const isIOS =
-      /iphone|ipad|ipod/i.test(
-        window.navigator.userAgent
-      );
+    if (isInstalled) return;
 
-
-    // Already installed
-    if (isInstalled) {
-      Swal.fire({
-        icon: "info",
-        title: "App Already Installed",
-        text: "This app is already installed on your device.",
-        confirmButtonText: "OK",
-      });
-
-      return;
-    }
-
-
-
-    // iOS install instruction
     if (isIOS) {
-
       Swal.fire({
         icon: "info",
         title: "Install HIKMAH App",
-        text:
-          "Tap Share button ⬆️ then select 'Add to Home Screen' to install this app.",
+        text: "Tap the Share button ⬆️, then select 'Add to Home Screen' to install this app.",
         confirmButtonText: "OK",
       });
 
       return;
     }
 
-
-
-    // Android install unavailable
     if (!deferredPrompt) {
-
       Swal.fire({
         icon: "info",
         title: "Install Option Not Ready",
-        text:
-          "Please open this app in Google Chrome and wait a few seconds.",
+        text: "Please open this website in a supported browser, such as Google Chrome. The install option may not be available yet.",
         confirmButtonText: "OK",
       });
 
       return;
     }
 
-
-
     setIsInstalling(true);
 
+    try {
+      await deferredPrompt.prompt();
 
-    deferredPrompt.prompt();
+      const result = await deferredPrompt.userChoice;
 
-
-    const result = await deferredPrompt.userChoice;
-
-
-    if (result.outcome === "accepted") {
-
-      setIsInstalled(true);
-
-      Swal.fire({
-        icon: "success",
-        title: "Installation Completed",
-        text: "App installed successfully!",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-
+      if (result.outcome === "accepted") {
+        setDeferredPrompt(null);
+      }
+    } catch (error) {
+      console.error("App installation failed:", error);
+    } finally {
+      setIsInstalling(false);
+      setDeferredPrompt(null);
     }
-
-
-
-    setIsInstalling(false);
-    setDeferredPrompt(null);
-
   };
 
-
+  // Hide the button completely after installation
+  if (isInstalled) return null;
 
   return (
-    <a
+    <button
+      type="button"
       onClick={handleInstall}
-      className="navbar-end flex items-center gap-1 cursor-pointer text-white hover:text-gray-300 transition"
+      disabled={isInstalling}
+      aria-label="Download HIKMAH app"
+      className="flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-3 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-400/20 disabled:cursor-wait disabled:opacity-70"
     >
+      <FaDownload
+        className={isInstalling ? "animate-bounce" : ""}
+      />
 
-      {isInstalled ? (
-        <>✓ App Installed</>
-      ) : (
-        <>
-          <FaDownload
-            className={
-              isInstalling
-                ? "animate-bounce"
-                : ""
-            }
-          />
-
-          {isInstalling
-            ? "Installing..."
-            : "Download App"
-          }
-
-        </>
-      )}
-
-    </a>
+      {isInstalling ? "Installing..." : "Download App"}
+    </button>
   );
 };
-
 
 export default InstallApp;

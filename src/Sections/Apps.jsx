@@ -37,19 +37,9 @@ const App = () => {
         <div className="mb-12 text-center">
 
          
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            Mobile{" "}
-            <span className="bg-gradient-to-r from-emerald-300 via-green-200 to-amber-300 bg-clip-text text-transparent">
-              Applications
-            </span>
-          </h2>
+      
 
-          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-gray-400 sm:text-base">
-            Discover useful applications designed to make learning,
-            daily tasks, and your digital experience more convenient.
-          </p>
-
-          <div className="mx-auto mt-7 h-1 w-20 rounded-full bg-gradient-to-r from-emerald-400 to-amber-400" />
+         
         </div>
 
         {/* Description Panel */}

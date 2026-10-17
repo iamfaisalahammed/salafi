@@ -65,59 +65,65 @@ export default function Scholars() {
 
       <div className="relative mx-auto max-w-7xl">
 
-        {/* Header */}
-        <div className="mx-auto mb-12 max-w-3xl text-center">
+      
+{/* Header */}
+<div className="mb-10 border-b border-white/10 pb-8 text-left sm:mb-12 sm:pb-10">
+  <div className="mb-5 flex items-center gap-3">
+    <span className="h-px w-8 bg-amber-400" />
 
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/[0.08] px-4 py-2 text-sm font-medium text-emerald-300">
-            <FaGraduationCap />
-            Knowledge • Wisdom • Guidance
-          </div>
+    <span className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
+      Knowledge • Wisdom • Guidance
+    </span>
+  </div>
 
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            Learn From Islamic{" "}
-            <span className="bg-gradient-to-r from-emerald-300 via-green-200 to-amber-300 bg-clip-text text-transparent">
-              Scholars
-            </span>
-          </h2>
+  <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+    <div>
+      <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
+        Learn From Islamic
+        <span className="mt-1 block text-emerald-300">
+          Scholars.
+        </span>
+      </h2>
+    </div>
 
-          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-gray-400 sm:text-base">
-            Explore Islamic teachings, listen to lectures, and gain
-            knowledge from scholars through their educational content.
-          </p>
+    <p className="max-w-md text-sm leading-7 text-gray-400 sm:text-base">
+      Explore Islamic teachings, listen to lectures, and gain
+      beneficial knowledge from Islamic scholars and their educational content.
+    </p>
+  </div>
 
-          <div className="mx-auto mt-7 h-1 w-20 rounded-full bg-gradient-to-r from-emerald-400 to-amber-400" />
+  {/* Search */}
+  <div className="mt-8 flex max-w-lg items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3.5 shadow-lg backdrop-blur-md transition focus-within:border-emerald-400/50 focus-within:bg-white/[0.07]">
+    <FaSearch className="shrink-0 text-emerald-300" />
 
-          {/* Search */}
-          <div className="mx-auto mt-8 flex max-w-lg items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3.5 shadow-lg backdrop-blur-md transition focus-within:border-emerald-400/50 focus-within:bg-white/[0.07]">
-            <FaSearch className="shrink-0 text-emerald-300" />
+    <input
+      type="search"
+      value={query}
+      onChange={(e) => setQuery(e.target.value)}
+      placeholder="Search scholars by name..."
+      aria-label="Search scholars"
+      className="w-full bg-transparent text-sm text-white outline-none placeholder:text-gray-500"
+    />
 
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search scholars by name..."
-              aria-label="Search scholars"
-              className="w-full bg-transparent text-sm text-white outline-none placeholder:text-gray-500"
-            />
+    {query && (
+      <button
+        type="button"
+        onClick={() => setQuery("")}
+        aria-label="Clear search"
+        className="shrink-0 rounded-full p-1 text-gray-400 transition hover:bg-white/10 hover:text-white"
+      >
+        <FaTimes />
+      </button>
+    )}
+  </div>
 
-            {query && (
-              <button
-                type="button"
-                onClick={() => setQuery("")}
-                aria-label="Clear search"
-                className="shrink-0 rounded-full p-1 text-gray-400 transition hover:bg-white/10 hover:text-white"
-              >
-                <FaTimes />
-              </button>
-            )}
-          </div>
+  {!loading && !error && (
+    <p className="mt-4 text-xs text-gray-500">
+      Showing {filtered.length} of {scholars.length} scholars
+    </p>
+  )}
+</div>
 
-          {!loading && !error && (
-            <p className="mt-4 text-xs text-gray-500">
-              Showing {filtered.length} of {scholars.length} scholars
-            </p>
-          )}
-        </div>
 
         {/* Loading Skeleton */}
         {loading && (

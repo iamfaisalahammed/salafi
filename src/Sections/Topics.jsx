@@ -6,7 +6,6 @@ import {
   FaHistory,
   FaLandmark,
   FaMosque,
- 
   FaScroll,
 } from "react-icons/fa";
 
@@ -57,37 +56,38 @@ const topics = [
 
 export default function Topics() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#06140e] via-[#09251a] to-[#06111a] px-4 py-20 text-white sm:px-6 lg:py-24">
-
+    <section className="relative overflow-hidden bg-[#07130f] px-4  text-white sm:px-6 ">
       {/* Background Decoration */}
-      <div className="pointer-events-none absolute -left-32 top-20 h-72 w-72 rounded-full bg-emerald-500/10 blur-[100px]" />
-      <div className="pointer-events-none absolute -right-32 bottom-10 h-72 w-72 rounded-full bg-amber-400/10 blur-[100px]" />
+      <div className="pointer-events-none absolute -left-40 top-20 h-96 w-96 rounded-full bg-emerald-500/[0.07] blur-[100px]" />
+      <div className="pointer-events-none absolute -right-40 bottom-0 h-96 w-96 rounded-full bg-amber-400/[0.05] blur-[100px]" />
 
       <div className="relative mx-auto max-w-7xl">
+        {/* Heading */}
+        <div className="mb-14 flex flex-col gap-6 md:mb-16 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-2xl">
+            <div className="mb-5 flex items-center gap-3">
+              <span className="h-px w-9 bg-amber-400" />
+              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-amber-300">
+                Knowledge & Guidance
+              </span>
+            </div>
 
-        {/* Section Heading */}
-        <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="text-3xl font-semibold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+              Explore the Path to
+              <span className="mt-2 block font-serif italic text-emerald-300">
+                Islamic Knowledge
+              </span>
+            </h2>
+          </div>
 
-        
-
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            Discover the Beauty of{" "}
-            <span className="bg-gradient-to-r from-emerald-300 via-green-200 to-amber-300 bg-clip-text text-transparent">
-              Islam
-            </span>
-          </h2>
-
-          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-gray-300 sm:text-base">
-            Explore authentic Islamic teachings, deepen your understanding,
-            and strengthen your connection with your faith.
+          <p className="max-w-md text-sm leading-7 text-gray-400 sm:text-base md:pb-1">
+            A journey of learning begins with understanding. Discover
+            authentic teachings and build a stronger connection with Islam.
           </p>
-
-          <div className="mx-auto mt-7 h-1 w-20 rounded-full bg-gradient-to-r from-emerald-400 to-amber-400" />
         </div>
 
-        {/* Topic Cards */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-
+        {/* Topics */}
+        <div className="grid grid-cols-1 gap-x-10 md:grid-cols-2">
           {topics.map((topic) => {
             const Icon = topic.icon;
 
@@ -95,63 +95,46 @@ export default function Topics() {
               <Link
                 key={topic.path}
                 to={topic.path}
-                className="group relative overflow-hidden rounded-2xl border border-white/[0.09] bg-white/[0.04] p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-emerald-400/40 hover:bg-emerald-400/[0.07] hover:shadow-xl hover:shadow-emerald-950/30 sm:p-7"
+                className="group relative flex gap-5 border-t border-white/10 py-7 transition-colors duration-300 hover:border-emerald-400/50 sm:gap-7 sm:py-9"
               >
-                {/* Decorative Number */}
-                <span className="absolute right-5 top-4 text-5xl font-bold text-white/[0.045] transition-colors duration-300 group-hover:text-emerald-300/[0.12]">
-                  {topic.number}
-                </span>
+                {/* Number */}
+                <div className="w-10 shrink-0 pt-1 sm:w-12">
+                  <span className="font-mono text-sm tracking-wider text-amber-400/80 transition-colors duration-300 group-hover:text-amber-300">
+                    {topic.number}
+                  </span>
+                </div>
 
                 {/* Icon */}
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-emerald-400/20 bg-gradient-to-br from-emerald-400/20 to-emerald-900/20 text-2xl text-emerald-300 transition-all duration-300 group-hover:scale-110 group-hover:border-emerald-300/40 group-hover:bg-emerald-400/20">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/[0.045] text-lg text-emerald-300 transition-all duration-300 group-hover:bg-emerald-400 group-hover:text-[#07130f] sm:h-14 sm:w-14">
                   <Icon />
                 </div>
 
                 {/* Content */}
-                <h3 className="mb-2 text-xl font-semibold tracking-tight text-white transition-colors duration-300 group-hover:text-emerald-300">
-                  {topic.title}
-                </h3>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-lg font-semibold tracking-tight text-white transition-colors duration-300 group-hover:text-emerald-300 sm:text-xl">
+                    {topic.title}
+                  </h3>
 
-                <p className="min-h-12 text-sm leading-6 text-gray-400">
-                  {topic.subtitle}
-                </p>
+                  <p className="mt-2 text-sm leading-6 text-gray-400">
+                    {topic.subtitle}
+                  </p>
 
-                {/* Card Footer */}
-                <div className="mt-6 flex items-center justify-between border-t border-white/[0.08] pt-4">
-                  <span className="text-sm font-medium text-emerald-300/90 transition-colors group-hover:text-emerald-200">
-                    Explore Topic
-                  </span>
-
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-gray-400 transition-all duration-300 group-hover:border-emerald-400/40 group-hover:bg-emerald-400/10 group-hover:text-emerald-300">
-                    <FaArrowRight className="text-sm transition-transform duration-300 group-hover:translate-x-1" />
+                  <span className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-300/80 transition-colors group-hover:text-emerald-200">
+                    Discover More
+                    <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-1.5" />
                   </span>
                 </div>
 
-                {/* Bottom Accent */}
-                <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-emerald-400 to-amber-400 transition-all duration-500 group-hover:w-full" />
+                {/* Right Arrow */}
+                <div className="flex shrink-0 items-center self-center text-gray-600 transition-all duration-300 group-hover:translate-x-1 group-hover:text-amber-300">
+                  <FaArrowRight className="text-sm" />
+                </div>
               </Link>
             );
           })}
-
         </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-12 text-center">
-
-          <p className="mb-5 text-sm text-gray-400">
-            Every step toward knowledge brings you closer to understanding.
-          </p>
-
-          <Link
-            to="/ExploreLibrary"
-            className="group inline-flex items-center justify-center gap-3 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-7 py-3.5 font-semibold text-emerald-200 transition-all duration-300 hover:border-emerald-300 hover:bg-emerald-400 hover:text-[#06140e] hover:shadow-lg hover:shadow-emerald-900/30"
-          >
-            <FaBookOpen />
-            Explore Islamic Library
-            <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
-
-        </div>
+       
       </div>
     </section>
   );

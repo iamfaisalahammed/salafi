@@ -5,7 +5,6 @@ import { Autoplay, FreeMode } from "swiper/modules";
 import {
   FaYoutube,
   FaArrowRight,
-
 } from "react-icons/fa";
 
 import "swiper/css";
@@ -29,7 +28,9 @@ const Channel = () => {
       .then((result) => {
         setData({
           sectionTitle: result.sectionTitle || "Islamic YouTube Channels",
-          channels: Array.isArray(result.channels) ? result.channels : [],
+          channels: Array.isArray(result.channels)
+            ? result.channels
+            : [],
         });
       })
       .catch(() => setError(true))
@@ -38,33 +39,36 @@ const Channel = () => {
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#06140e] via-[#0a2118] to-[#07131b] px-4 py-16 text-white sm:px-6 md:py-20">
-
       {/* Background Decoration */}
       <div className="pointer-events-none absolute -left-32 top-10 h-72 w-72 rounded-full bg-emerald-500/10 blur-[100px]" />
       <div className="pointer-events-none absolute -right-32 bottom-0 h-72 w-72 rounded-full bg-amber-400/[0.07] blur-[100px]" />
 
       <div className="relative mx-auto max-w-7xl">
+        {/* Section Header - Updated */}
+        <div className="mb-10 border-b border-white/10 pb-8 text-left sm:mb-12 sm:pb-10">
+          <div className="mb-5 flex items-center gap-3">
+            <span className="h-px w-8 bg-amber-400" />
 
-        {/* Section Header */}
-        <div className="mb-12 text-center">
+            <span className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
+              The Knowledge Directory
+            </span>
+          </div>
 
-         
+          <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+            <div>
+              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
+                Islamic YouTube
+                <span className="mt-1 block text-emerald-300">
+                  Channels.
+                </span>
+              </h2>
+            </div>
 
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            {data.sectionTitle || "Islamic "}
-            {!data.sectionTitle && (
-              <span className="bg-gradient-to-r from-emerald-300 via-green-200 to-amber-300 bg-clip-text text-transparent">
-                YouTube Channels
-              </span>
-            )}
-          </h2>
-
-          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-gray-400 sm:text-base">
-            Explore beneficial lectures, authentic Islamic knowledge,
-            and educational videos from Islamic channels.
-          </p>
-
-          <div className="mx-auto mt-7 h-1 w-20 rounded-full bg-gradient-to-r from-emerald-400 to-amber-400" />
+            <p className="max-w-md text-sm leading-7 text-gray-400 sm:text-base">
+              Explore beneficial lectures, authentic Islamic knowledge,
+              and educational videos from trusted Islamic channels.
+            </p>
+          </div>
         </div>
 
         {/* Loading */}
@@ -186,7 +190,6 @@ const Channel = () => {
             ))}
           </Swiper>
         )}
-
       </div>
     </section>
   );

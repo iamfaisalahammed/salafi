@@ -2,6 +2,8 @@ import Apps from "../../Sections/Apps";
 import Banner from "../../Sections/Banner";
 import Channel from "../../Sections/Channel";
 import Footer from "../../Sections/Footer";
+// import IslamicDonation from "../../Sections/IslamicDonation";
+
 import Nav from "../../Sections/Nav";
 import Resources from "../../Sections/Resources";
 import Scholars from "../../Sections/Scholars";
@@ -27,6 +29,8 @@ const Home = () => {
         <Scholars></Scholars>
       </div>
       <div id="channels"> <Channel> </Channel> </div>
+
+     {/* <IslamicDonation></IslamicDonation> */}
       <Footer></Footer>
     </div>
    

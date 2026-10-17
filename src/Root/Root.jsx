@@ -12,6 +12,7 @@ import ExploreLibrary from "../Pages/ExploreLibrary/ExploreLibrary";
 import NotFound from "../Pages/NotFound";
 
 
+
 export default function Root() {
 
   return (
@@ -22,6 +23,7 @@ export default function Root() {
         path="/" 
         element={<Home />} 
       />
+   
 
 
       {/* Topics Pages */}

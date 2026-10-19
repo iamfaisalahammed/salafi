@@ -8,8 +8,11 @@ import {
   FaGraduationCap,
   FaBookOpen,
   FaUserGraduate,
- 
+  FaExternalLinkAlt,
 } from "react-icons/fa";
+
+const FALLBACK_IMAGE =
+  "https://placehold.co/300x300/f0fdf4/166534?text=Scholar";
 
 export default function Scholars() {
   const [scholars, setScholars] = useState([]);
@@ -17,322 +20,360 @@ export default function Scholars() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [retry, setRetry] = useState(0);
 
+  // Load scholars data
   useEffect(() => {
-    fetch("/data/scholars.json")
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to load scholars");
-        return res.json();
-      })
-      .then((data) => {
-        if (!Array.isArray(data)) throw new Error("Invalid data");
-        setScholars(data);
-      })
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, []);
+    const controller = new AbortController();
 
+    const fetchScholars = async () => {
+      setLoading(true);
+      setError(false);
+
+      try {
+        const response = await fetch("/data/scholars.json", {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to load scholars");
+        }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid scholars data");
+        }
+
+        setScholars(data);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          setError(true);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchScholars();
+
+    return () => controller.abort();
+  }, [retry]);
+
+  // Close modal with Escape key
   useEffect(() => {
     if (!selected) return;
 
-    const onKey = (e) => {
-      if (e.key === "Escape") setSelected(null);
+    const previousOverflow = document.body.style.overflow;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setSelected(null);
+      }
     };
 
     document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKey);
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [selected]);
 
-  const filtered = useMemo(() => {
+  // Search scholars
+  const filteredScholars = useMemo(() => {
     const search = query.trim().toLowerCase();
+
+    if (!search) return scholars;
 
     return scholars.filter((scholar) =>
       scholar.name?.toLowerCase().includes(search)
     );
   }, [scholars, query]);
 
+  // Fallback image
+  const handleImageError = (event) => {
+    event.currentTarget.onerror = null;
+    event.currentTarget.src = FALLBACK_IMAGE;
+  };
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#06140e] via-[#0a2118] to-[#07131b] px-4 py-16 text-white sm:px-6 md:py-20 lg:px-10">
+    <section className="bg-[#f8faf8] px-4 py-14 text-gray-800 sm:px-6 sm:py-16 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-emerald-700">
+            <FaBookOpen />
+            <span>হিকমাহ লাইব্রেরি</span>
+          </div>
 
-      {/* Background Decoration */}
-      <div className="pointer-events-none absolute -left-32 top-20 h-80 w-80 rounded-full bg-emerald-500/10 blur-[110px]" />
-      <div className="pointer-events-none absolute -right-32 bottom-20 h-80 w-80 rounded-full bg-amber-400/[0.07] blur-[110px]" />
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h2 className="text-2xl font-bold leading-tight text-gray-900 sm:text-3xl lg:text-4xl">
+                ইসলামিক স্কলারগণ
+              </h2>
 
-      <div className="relative mx-auto max-w-7xl">
+              <p className="mt-3 max-w-xl text-sm leading-7 text-gray-600 sm:text-base">
+                অভিজ্ঞ ইসলামিক স্কলারদের পরিচিতি জানুন এবং তাঁদের
+                আলোচনা ও শিক্ষামূলক কনটেন্ট থেকে উপকারী জ্ঞান অর্জন করুন।
+              </p>
+            </div>
 
-      
-{/* Header */}
-<div className="mb-10 border-b border-white/10 pb-8 text-left sm:mb-12 sm:pb-10">
-  <div className="mb-5 flex items-center gap-3">
-    <span className="h-px w-8 bg-amber-400" />
+            {!loading && !error && (
+              <div className="inline-flex w-fit items-center gap-2 rounded-lg border border-emerald-100 bg-white px-3 py-2 text-sm text-gray-600">
+                <FaUserGraduate className="text-emerald-600" />
+                <span>
+                  মোট{" "}
+                  <strong className="text-gray-900">
+                    {scholars.length}
+                  </strong>{" "}
+                  জন
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
 
-    <span className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
-      Knowledge • Wisdom • Guidance
-    </span>
-  </div>
+        {/* Search */}
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full sm:max-w-md">
+            <FaSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
 
-  <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
-    <div>
-      <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
-        Learn From Islamic
-        <span className="mt-1 block text-emerald-300">
-          Scholars.
-        </span>
-      </h2>
-    </div>
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="স্কলারের নাম লিখে খুঁজুন..."
+              aria-label="স্কলারের নাম দিয়ে খুঁজুন"
+              className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-11 text-sm text-gray-800 outline-none transition placeholder:text-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            />
 
-    <p className="max-w-md text-sm leading-7 text-gray-400 sm:text-base">
-      Explore Islamic teachings, listen to lectures, and gain
-      beneficial knowledge from Islamic scholars and their educational content.
-    </p>
-  </div>
-
-  {/* Search */}
-  <div className="mt-8 flex max-w-lg items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3.5 shadow-lg backdrop-blur-md transition focus-within:border-emerald-400/50 focus-within:bg-white/[0.07]">
-    <FaSearch className="shrink-0 text-emerald-300" />
-
-    <input
-      type="search"
-      value={query}
-      onChange={(e) => setQuery(e.target.value)}
-      placeholder="Search scholars by name..."
-      aria-label="Search scholars"
-      className="w-full bg-transparent text-sm text-white outline-none placeholder:text-gray-500"
-    />
-
-    {query && (
-      <button
-        type="button"
-        onClick={() => setQuery("")}
-        aria-label="Clear search"
-        className="shrink-0 rounded-full p-1 text-gray-400 transition hover:bg-white/10 hover:text-white"
-      >
-        <FaTimes />
-      </button>
-    )}
-  </div>
-
-  {!loading && !error && (
-    <p className="mt-4 text-xs text-gray-500">
-      Showing {filtered.length} of {scholars.length} scholars
-    </p>
-  )}
-</div>
-
-
-        {/* Loading Skeleton */}
-        {loading && (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="animate-pulse rounded-2xl border border-white/[0.08] bg-white/[0.04] p-5 sm:p-6"
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                aria-label="সার্চ মুছুন"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
               >
-                <div className="mx-auto h-24 w-24 rounded-full bg-white/10 sm:h-28 sm:w-28" />
-                <div className="mx-auto mt-5 h-4 w-3/4 rounded bg-white/10" />
-                <div className="mx-auto mt-3 h-3 w-1/2 rounded bg-white/[0.06]" />
-                <div className="mt-6 h-9 rounded-xl bg-white/[0.06]" />
+                <FaTimes />
+              </button>
+            )}
+          </div>
+
+          {!loading && !error && (
+            <p className="text-sm text-gray-500">
+              {filteredScholars.length} জন স্কলার পাওয়া গেছে
+            </p>
+          )}
+        </div>
+
+        {/* Loading */}
+        {loading && (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div
+                key={index}
+                className="animate-pulse rounded-2xl border border-gray-100 bg-white p-4 sm:p-5"
+              >
+                <div className="mx-auto h-20 w-20 rounded-full bg-gray-200 sm:h-24 sm:w-24" />
+                <div className="mx-auto mt-5 h-4 w-3/4 rounded bg-gray-200" />
+                <div className="mx-auto mt-3 h-3 w-1/2 rounded bg-gray-100" />
+                <div className="mt-5 h-9 rounded-lg bg-gray-100" />
               </div>
             ))}
           </div>
         )}
 
-        {/* Error State */}
+        {/* Error */}
         {!loading && error && (
-          <div className="mx-auto max-w-md rounded-2xl border border-red-400/20 bg-red-500/[0.06] px-6 py-10 text-center">
-            <FaBookOpen className="mx-auto text-3xl text-red-300" />
-            <h3 className="mt-4 text-lg font-semibold">
-              Unable to Load Scholars
+          <div className="rounded-2xl border border-red-100 bg-white px-5 py-12 text-center">
+            <FaBookOpen className="mx-auto text-3xl text-red-500" />
+
+            <h3 className="mt-4 text-lg font-bold text-gray-900">
+              স্কলারদের তথ্য লোড করা যায়নি
             </h3>
-            <p className="mt-2 text-sm text-gray-400">
-              Please refresh the page and try again.
+
+            <p className="mt-2 text-sm text-gray-500">
+              ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।
             </p>
+
             <button
               type="button"
-              onClick={() => window.location.reload()}
-              className="mt-5 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-400 hover:text-gray-950"
+              onClick={() => setRetry((value) => value + 1)}
+              className="mt-5 rounded-lg bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
             >
-              Try Again
+              আবার চেষ্টা করুন
             </button>
           </div>
         )}
 
-        {/* Empty State */}
-        {!loading && !error && filtered.length === 0 && (
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-14 text-center">
-            <FaSearch className="mx-auto text-3xl text-gray-500" />
-            <h3 className="mt-4 text-xl font-semibold">
-              No Scholars Found
+        {/* Empty */}
+        {!loading && !error && filteredScholars.length === 0 && (
+          <div className="rounded-2xl border border-gray-100 bg-white px-5 py-12 text-center">
+            <FaSearch className="mx-auto text-3xl text-gray-300" />
+
+            <h3 className="mt-4 text-lg font-bold text-gray-900">
+              কোনো স্কলার পাওয়া যায়নি
             </h3>
-            <p className="mt-2 text-sm text-gray-400">
-              No results for "{query}". Try another name.
+
+            <p className="mt-2 text-sm text-gray-500">
+              {query
+                ? `"${query}" নামে কোনো ফলাফল নেই। অন্য নাম দিয়ে খুঁজুন।`
+                : "এখনো কোনো স্কলারের তথ্য যোগ করা হয়নি।"}
             </p>
-            <button
-              type="button"
-              onClick={() => setQuery("")}
-              className="mt-5 rounded-xl border border-emerald-400/30 px-5 py-2.5 text-sm font-medium text-emerald-300 transition hover:bg-emerald-400/10"
-            >
-              Clear Search
-            </button>
+
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                className="mt-4 text-sm font-semibold text-emerald-700 hover:text-emerald-900"
+              >
+                সার্চ মুছে ফেলুন
+              </button>
+            )}
           </div>
         )}
 
         {/* Scholars Grid */}
-        {!loading && !error && filtered.length > 0 && (
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
-
-            {filtered.map((scholar, index) => (
+        {!loading && !error && filteredScholars.length > 0 && (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
+            {filteredScholars.map((scholar) => (
               <button
-                key={scholar.name}
+                key={scholar.id ?? scholar.name}
                 type="button"
                 onClick={() => setSelected(scholar)}
-                aria-label={`View details for ${scholar.name}`}
-                className="group relative flex min-w-0 flex-col items-center overflow-hidden rounded-2xl border border-white/[0.09] bg-white/[0.035] p-4 text-center transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-400/40 hover:bg-emerald-400/[0.06] hover:shadow-xl hover:shadow-emerald-950/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-400 sm:p-6"
+                aria-label={`${scholar.name} সম্পর্কে জানুন`}
+                className="group flex min-w-0 flex-col items-center rounded-2xl border border-gray-100 bg-white p-4 text-center shadow-sm transition duration-200 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:p-5"
               >
-                {/* Card Number */}
-                <span className="absolute right-3 top-3 text-xs font-semibold tracking-widest text-white/20">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-
-                {/* Scholar Image */}
-                <div className="relative mt-3">
-                  <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-emerald-400/60 to-amber-300/40 opacity-50 blur-sm transition duration-300 group-hover:opacity-100" />
-
+                <div className="rounded-full border-2 border-emerald-100 p-1 transition group-hover:border-emerald-400">
                   <img
-                    src={scholar.image}
-                    alt={scholar.name}
+                    src={scholar.image || FALLBACK_IMAGE}
+                    alt={scholar.name || "Islamic Scholar"}
                     loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src =
-                        "https://placehold.co/200x200/10251c/d1fae5?text=Scholar";
-                    }}
-                    className="relative h-20 w-20 rounded-full border-2 border-[#17392a] object-cover transition duration-300 group-hover:scale-105 sm:h-28 sm:w-28"
+                    onError={handleImageError}
+                    className="h-20 w-20 rounded-full object-cover sm:h-24 sm:w-24"
                   />
                 </div>
 
-                {/* Name */}
-                <h3 className="mt-5 line-clamp-2 min-h-10 text-sm font-semibold leading-5 text-white transition-colors group-hover:text-emerald-300 sm:text-base">
+                <h3 className="mt-4 line-clamp-2 min-h-10 w-full break-words text-sm font-bold leading-5 text-gray-900 transition group-hover:text-emerald-800 sm:text-base">
                   {scholar.name}
                 </h3>
 
-                <div className="mt-3 flex items-center gap-2 text-xs text-gray-400">
-                  <FaUserGraduate className="text-emerald-400" />
-                  Islamic Scholar
+                <div className="mt-2 flex items-center gap-1.5 text-xs text-gray-500">
+                  <FaGraduationCap className="shrink-0 text-emerald-600" />
+                  <span>ইসলামিক স্কলার</span>
                 </div>
 
-                {/* Action */}
-                <div className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-2 py-2.5 text-xs font-semibold text-emerald-300 transition group-hover:border-emerald-400/30 group-hover:bg-emerald-400/10 sm:text-sm">
-                  View Profile
-                  <FaArrowRight className="transition-transform group-hover:translate-x-1" />
-                </div>
-
-                <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-emerald-400 to-amber-300 transition-all duration-500 group-hover:w-full" />
+                <span className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-50 px-2 py-2.5 text-xs font-semibold text-emerald-800 transition group-hover:bg-emerald-700 group-hover:text-white sm:text-sm">
+                  প্রোফাইল দেখুন
+                  <FaArrowRight className="text-[10px] transition group-hover:translate-x-1" />
+                </span>
               </button>
             ))}
-
           </div>
         )}
 
         {/* Bottom Note */}
         {!loading && !error && scholars.length > 0 && (
-          <div className="mt-12 flex items-center justify-center gap-2 text-center text-xs leading-6 text-gray-500 sm:text-sm">
-            <FaBookOpen className="shrink-0 text-emerald-400" />
-            Explore lectures and educational resources from Islamic scholars.
+          <div className="mt-10 flex items-start justify-center gap-2 border-t border-gray-200 pt-6 text-center text-xs leading-6 text-gray-500 sm:text-sm">
+            <FaBookOpen className="mt-1 shrink-0 text-emerald-600" />
+            <p>
+              ইসলাম সম্পর্কে জানুন, উপকারী জ্ঞান অর্জন করুন এবং নির্ভরযোগ্য
+              শিক্ষামূলক কনটেন্ট অনুসরণ করুন।
+            </p>
           </div>
         )}
       </div>
 
-      {/* Scholar Modal */}
+      {/* Scholar Profile Modal */}
       {selected && (
         <div
           onClick={() => setSelected(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/80 p-4 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-gray-950/60 p-3 backdrop-blur-sm sm:p-5"
         >
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="scholar-modal-title"
-            onClick={(e) => e.stopPropagation()}
-            className="relative my-auto max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-white/10 bg-gradient-to-b from-[#10271c] to-[#09151b] p-5 shadow-2xl shadow-black/50 sm:p-8"
+            onClick={(event) => event.stopPropagation()}
+            className="relative my-auto max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl sm:p-7"
           >
-            {/* Close */}
             <button
               type="button"
               onClick={() => setSelected(null)}
-              aria-label="Close scholar profile"
-              className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-gray-300 transition hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-300"
+              aria-label="প্রোফাইল বন্ধ করুন"
+              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition hover:bg-red-50 hover:text-red-600"
             >
               <FaTimes />
             </button>
 
             {/* Profile Header */}
-            <div className="pt-3 text-center">
-              <div className="relative mx-auto h-28 w-28 sm:h-32 sm:w-32">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-emerald-400 to-amber-300 opacity-60 blur-sm" />
-
+            <div className="px-5 pt-3 text-center">
+              <div className="mx-auto h-24 w-24 rounded-full border-4 border-emerald-100 p-1 sm:h-28 sm:w-28">
                 <img
-                  src={selected.image}
-                  alt={selected.name}
-                  className="relative h-full w-full rounded-full border-4 border-[#153b29] object-cover"
+                  src={selected.image || FALLBACK_IMAGE}
+                  alt={selected.name || "Islamic Scholar"}
+                  onError={handleImageError}
+                  className="h-full w-full rounded-full object-cover"
                 />
               </div>
 
-              <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/[0.08] px-3 py-1.5 text-xs font-medium text-emerald-300">
+              <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800">
                 <FaGraduationCap />
-                Scholar Profile
-              </div>
+                স্কলারের পরিচিতি
+              </span>
 
               <h2
                 id="scholar-modal-title"
-                className="mt-4 px-6 text-xl font-bold leading-snug text-white sm:text-2xl"
+                className="mt-3 break-words text-xl font-bold leading-snug text-gray-900 sm:text-2xl"
               >
                 {selected.name}
               </h2>
 
-              <p className="mt-2 text-sm text-gray-400">
-                Islamic Knowledge & Education
+              <p className="mt-2 text-sm text-gray-500">
+                ইসলামিক জ্ঞান ও শিক্ষা
               </p>
             </div>
 
-            {/* Divider */}
-            <div className="my-6 h-px bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent" />
+            <div className="my-6 border-t border-gray-100" />
 
             {/* Information */}
-            <div className="rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4 sm:p-5">
-              <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-emerald-300">
-                <FaBookOpen />
-                About the Scholar
+            <div className="rounded-xl bg-gray-50 p-4 sm:p-5">
+              <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-gray-900">
+                <FaBookOpen className="text-emerald-700" />
+                স্কলার সম্পর্কে
               </h3>
 
-              <p className="whitespace-pre-line text-sm leading-7 text-gray-300">
+              <p className="whitespace-pre-line break-words text-sm leading-7 text-gray-600">
                 {selected.information ||
-                  "Explore this scholar's lectures and educational content."}
+                  "এই স্কলারের আলোচনা ও শিক্ষামূলক কনটেন্ট থেকে ইসলাম সম্পর্কে জানুন।"}
               </p>
             </div>
 
-            {/* YouTube CTA */}
+            {/* YouTube Button */}
             {selected.youtube && (
               <a
                 href={selected.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-6 flex w-full items-center justify-center gap-3 rounded-xl bg-red-600 px-5 py-3.5 font-semibold text-white shadow-lg shadow-red-950/20 transition hover:bg-red-500"
+                className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-red-700"
               >
-                <FaYoutube size={23} />
-                Watch Lectures on YouTube
-                <FaArrowRight className="text-sm" />
+                <FaYoutube className="text-xl" />
+                YouTube-এ আলোচনা দেখুন
+                <FaExternalLinkAlt className="ml-1 text-xs" />
               </a>
             )}
 
-            <p className="mt-4 text-center text-xs leading-5 text-gray-500">
-              Continue learning through available educational resources.
-            </p>
+            <button
+              type="button"
+              onClick={() => setSelected(null)}
+              className="mt-3 w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
+            >
+              বন্ধ করুন
+            </button>
           </div>
         </div>
       )}

@@ -41,7 +41,10 @@ const InstallApp = () => {
       handleBeforeInstallPrompt
     );
 
-    window.addEventListener("appinstalled", handleAppInstalled);
+    window.addEventListener(
+      "appinstalled",
+      handleAppInstalled
+    );
 
     return () => {
       standalone.removeEventListener("change", checkInstalled);
@@ -69,7 +72,7 @@ const InstallApp = () => {
       Swal.fire({
         icon: "info",
         title: "Install HIKMAH App",
-        text: "Tap the Share button ⬆️, then select 'Add to Home Screen' to install this app.",
+        text: "Tap the Share button, then select 'Add to Home Screen' to install this app.",
         confirmButtonText: "OK",
       });
 
@@ -105,7 +108,7 @@ const InstallApp = () => {
     }
   };
 
-  // Hide the button completely after installation
+  // Hide the button after installation
   if (isInstalled) return null;
 
   return (
@@ -114,13 +117,16 @@ const InstallApp = () => {
       onClick={handleInstall}
       disabled={isInstalling}
       aria-label="Download HIKMAH app"
-      className="flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-3 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-400/20 disabled:cursor-wait disabled:opacity-70"
+      title="Download App"
+      className="flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-3 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-400/20 disabled:cursor-wait disabled:opacity-70"
     >
       <FaDownload
         className={isInstalling ? "animate-bounce" : ""}
       />
 
-      {isInstalling ? "Installing..." : "Download App"}
+      <span className="hidden sm:inline">
+        {isInstalling ? "Installing..." : "Download App"}
+      </span>
     </button>
   );
 };

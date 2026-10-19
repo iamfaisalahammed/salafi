@@ -11,7 +11,7 @@ const IslamicDonation = () => {
   const [copied, setCopied] = useState(false);
 
   // Replace this with your actual bKash number
-  const bkashNumber = "01820037321";
+  const bkashNumber = "xxxxxxxxxxx";
 
   const handleCopy = async () => {
     try {

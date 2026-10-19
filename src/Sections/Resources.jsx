@@ -182,12 +182,12 @@ const Resources = () => {
 
         {/* Resource List */}
         {!loading && !error && resources.length > 0 && (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2  sm:gap-x-6 sm:gap-y-2">
             {resources.map((resource, index) => {
               const content = (
                 <>
                   {/* Resource Icon */}
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-emerald-50 text-emerald-700 sm:h-12 sm:w-12">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center  overflow-hidden rounded-xl bg-emerald-50 text-emerald-700 sm:h-12 sm:w-12">
                     {resource.image ? (
                       <img
                         src={resource.image}

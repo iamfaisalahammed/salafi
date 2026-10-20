@@ -33,27 +33,26 @@ const videos = [
   {
     category: "seerah",
     title: "Life of Prophet Muhammad ﷺ",
-    image:
-      "https://i.ibb.co.com/hRDJjJxK/f0a62ab2-c43c-4a7c-85eb-d6e0c324a540.png",
+    videoId: "DW-00ckCAPI",
     link: "https://www.youtube.com/show/VLPLlZazEh_c4nScNCvGBn8OEf6ujk-sDUpg?sbp=KgtEVy0wMGNrQ0FQSUAB",
   },
 
   {
     category: "sahabah",
     title: "Biography of Abu Bakr رضي الله عنه",
-    image: "https://i.ibb.co.com/example.jpg",
+    videoId: "example_video_id",
     link: "https://youtube.com",
   },
   {
     category: "scholars",
     title: "Imam Bukhari Biography",
-    image: "https://i.ibb.co.com/example.jpg",
+    videoId: "example_video_id",
     link: "https://youtube.com",
   },
   {
     category: "history",
     title: "Ottoman Empire History",
-    image: "https://i.ibb.co.com/example.jpg",
+    videoId: "example_video_id",
     link: "https://youtube.com",
   },
 ];
@@ -302,7 +301,7 @@ const SeerahHistory = () => {
                     className="relative block aspect-video overflow-hidden bg-slate-100"
                   >
                     <img
-                      src={video.image}
+                     src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
                       alt={video.title}
                       loading="lazy"
                       className="h-full w-full object-cover"

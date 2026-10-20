@@ -8,6 +8,7 @@ import {
   FaLandmark,
   FaMosque,
   FaScroll,
+  FaHands,
 } from "react-icons/fa";
 
 const topics = [
@@ -46,20 +47,27 @@ const topics = [
     icon: FaHistory,
     number: "05",
   },
+   {
+    title: "দোয়া ও জিকির",
+    subtitle: "দৈনন্দিন দোয়া, সকাল-সন্ধ্যার জিকির ও আমল",
+    path: "/topics/dua-dhikr",
+    icon: FaHands,
+    number: "06",
+  },
   {
     title: "ইসলাম কেন?",
     subtitle: "ইসলামের বার্তা ও সৌন্দর্য সম্পর্কে জানুন",
     path: "/topics/why-islam",
     icon: FaLandmark,
-    number: "06",
+    number: "07",
   },
+ 
 ];
 
 export default function Topics() {
   return (
     <section className="bg-[#f8faf8] px-4 py-12 text-gray-800 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-6xl">
-
         {/* Section Heading */}
         <div className="mb-8">
           <div className="mb-3 flex items-center gap-2 text-emerald-700">
@@ -128,7 +136,6 @@ export default function Topics() {
             );
           })}
         </div>
-
       </div>
     </section>
   );

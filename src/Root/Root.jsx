@@ -10,6 +10,7 @@ import SeerahHistory from "../Pages/TopicPages/SeerahHistory";
 import WhyIslam from "../Pages/TopicPages/WhyIslam";
 import ExploreLibrary from "../Pages/ExploreLibrary/ExploreLibrary";
 import NotFound from "../Pages/NotFound";
+import DuaDhikr from "../Pages/TopicPages/DuaDhikr";
 
 
 
@@ -54,6 +55,10 @@ export default function Root() {
       <Route 
         path="/topics/seerah-history" 
         element={<SeerahHistory />} 
+      />
+      <Route 
+        path="/topics/dua-dhikr" 
+        element={<DuaDhikr />} 
       />
 
 

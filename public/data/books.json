@@ -3,21 +3,112 @@
     "id": 1,
     "title": "আহইয়াউস সুনান",
     "author": "ড. খোন্দকার আব্দুল্লাহ জাহাঙ্গীর (রহ.)",
-    "category": "ইসলামিক জ্ঞান",
-    "fileId": "https://drive.google.com/file/d/1_qWQFzL2TNchjVGk26uLwzeyXySGZEbR/view?usp=drive_link"
+    "category": "সুন্নতের পুনরুজ্জীবন ও বিদআতের বিসর্জন",
+    "fileId": "https://drive.google.com/file/d/1_qWQFzL2TNchjVGk26uLwzeyXySGZEbR/view?usp=drivesdk"
   },
   {
     "id": 2,
-    "title": "আল-ফিকহুল আকবার",
+    "title": "আল মাউযূআত",
     "author": "ড. খোন্দকার আব্দুল্লাহ জাহাঙ্গীর (রহ.)",
-    "category": "ইসলামি আকিদা",
-    "fileId": "https://drive.google.com/file/d/1Xvrfps2vIp46DpODeshF5R-FY5SBaB32/view?usp=sharing"
+    "category": "জাল হাদিস সমূহ",
+    "fileId": "https://drive.google.com/file/d/1GNbi9xhAcR8ddSxb1TCUUW8YRYFFf3Ko/view?usp=drivesdk"
   },
   {
     "id": 3,
-    "title": "ইসলামি আকিদা",
+    "title": "আল্লাহ পথে দাওয়াত",
     "author": "ড. খোন্দকার আব্দুল্লাহ জাহাঙ্গীর (রহ.)",
-    "category": "ইসলামি আকিদা",
-    "fileId": "https://drive.google.com/file/d/1WdxHqXuTUou7-QfIc3wp7VycmqTZU8zr/view?usp=drive_link"
+    "category": "কোরআন সুন্নাহর দাওয়াত",
+    "fileId": "https://drive.google.com/file/d/1y-DgnTB6ez7Djr1oTv_uzf8rVWVjAT7D/view?usp=drivesdk"
+  },
+  {
+    "id": 4,
+    "title": "উশর বা ফসলের যাকাত",
+    "author": "ড. খোন্দকার আব্দুল্লাহ জাহাঙ্গীর (রহ.)",
+    "category": "যাকাত",
+    "fileId": "https://drive.google.com/file/d/1oi9-0hyoW7mAzeGXiUYDaEgylGtMJnWO/view?usp=drivesdk"
+  },
+  {
+    "id": 5,
+    "title": "পবিত্র বাইবেল পরিচিতি ও পর্যালোচনা",
+    "author": "ড. খোন্দকার আব্দুল্লাহ জাহাঙ্গীর (রহ.)",
+    "category": "ইসলাম ও খ্রিস্টধর্ম",
+    "fileId": "https://drive.google.com/file/d/1eP-gBzH_1QDYPd9DQg3x_sm7KA7qdagw/view?usp=drivesdk"
+  },
+  {
+    "id": 6,
+    "title": "আল্লাহ তাআলার হক বা প্রাপ্য (পর্ব ১)",
+    "author": "ড. আবু বকর মোহাম্মদ জাকারিয়া",
+    "category": "আল্লাহ অধিকার",
+    "fileId": "https://drive.google.com/file/d/1eZqzOBaj2VGFOyB4t91UUaokwiyXm0lY/view?usp=drivesdk"
+  },
+  {
+    "id": 7,
+    "title": "আপনার সন্তানকে তাওহীদের শিক্ষা দিন",
+    "author": "ড. আবু বকর মোহাম্মদ জাকারিয়া",
+    "category": "তাওহীদের দাওয়াত",
+    "fileId": "https://drive.google.com/file/d/1evymu2PbSiJ3NvjUrx94AqwHW4FXduAY/view?usp=drivesdk"
+  },
+  {
+    "id": 8,
+    "title": "দ্বিনে প্রতি বিদ্রূপ ও তার পবিত্রতাহানি করার হুকুম",
+    "author": "ড. আবু বকর মোহাম্মদ জাকারিয়া",
+    "category": "ইসলাম বিরোধী কর্মকাণ্ড",
+    "fileId": "https://drive.google.com/file/d/1LnDTgKP9CKjZgE9QDFQh-C6XdCb5V4M6/view?usp=drivesdk"
+  },
+  {
+    "id": 9,
+    "title": "কিভাবে আমরা রাসূল সাল্লাল্লাহু আলাইহি ওয়াসাল্লামকে ভালোবাসবো?",
+    "author": "আবু বকর মোহাম্মদ জাকারিয়া",
+    "category": "রাসূলের প্রতি ভালোবাসা",
+    "fileId": "https://drive.google.com/file/d/1OB7WdAE0nsxs4UMN4Bn_jmZmHioI0wS6/view?usp=drivesdk"
+  },
+  {
+    "id": 10,
+    "title": "কুফুরীর সংজ্ঞা ও প্রকারভেদ",
+    "author": "ড. আবু বকর মোহাম্মদ জাকারিয়া",
+    "category": "কুফর",
+    "fileId": "https://drive.google.com/file/d/1julcW0ud9CEFThUgVfxm1yl5VJu5nMPL/view?usp=drivesdk"
+  },
+  {
+    "id": 11,
+    "title": "নিফাস এর সংজ্ঞা ও প্রকারভেদ",
+    "author": "ড. আবু বকর মোহাম্মদ জাকারিয়া",
+    "category": "নিফাস",
+    "fileId": "https://drive.google.com/file/d/1WUarzwvjcChskIQN9cWMC4j5gK6HnKFB/view?usp=drivesdk"
+  },
+  {
+    "id": 12,
+    "title": "ইসলাম সম্পর্কে অমুসলিমদের সাধারণ প্রশ্নের জবাব",
+    "author": "ড. জাকির নায়েক",
+    "category": "অমুসলিমদের প্রশ্নের জবাব",
+    "fileId": "https://drive.google.com/file/d/1GgKuCZqhbqzfCyj-JrqhOd4lPgrhxiUG/view?usp=drivesdk"
+  },
+  {
+    "id": 13,
+    "title": "শির্কের সংজ্ঞা ও প্রকারভেদ",
+    "author": "ড. আবু বকর মোহাম্মদ জাকারিয়া",
+    "category": "শিরক",
+    "fileId": "https://drive.google.com/file/d/16NnTAi_qo32cf29iu65ocYQWpkGqGW3N/view?usp=drivesdk"
+  },
+  {
+    "id": 14,
+    "title": "সহীহ হাদিসের আলোকে ঈদের অতিরিক্ত তাকবীর",
+    "author": "ড. খোন্দকার আব্দুল্লাহ জাহাঙ্গীর (রহ.)",
+    "category": "ঈদের তাকবীর",
+    "fileId": "https://drive.google.com/file/d/1T_z4eSa1tgmin9sM8Aen915F4zyAsepw/view?usp=drivesdk"
+  },
+  {
+    "id": 15,
+    "title": "ইসলামে আকীদার প্রাচীনতম গ্রন্থ",
+    "author": "ইমাম আবু হানিফা (রহ.)",
+    "category": "আকিদা",
+    "fileId": "https://drive.google.com/file/d/1Xvrfps2vIp46DpODeshF5R-FY5SBaB32/view?usp=drivesdk"
+  },
+  {
+    "id": 16,
+    "title": "ফিকহুস সুনানি ওয়াল আসার (১ খন্ড)",
+    "author": "ড. খন্দকার আব্দুল্লাহ জাহাঙ্গীর (রহ.)",
+    "category": "ফিকাহ",
+    "fileId": "https://drive.google.com/file/d/1KLnrLvp4ukzmI7u1ixMT1eXeN8Mjnnaw/view?usp=drivesdk"
   }
 ]

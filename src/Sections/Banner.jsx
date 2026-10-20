@@ -409,9 +409,9 @@ const Banner = () => {
             <div className="mt-7 flex justify-center lg:justify-start">
               <Link
                 to="/ExploreLibrary"
-                className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-xl bg-emerald-700 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2"
+                className="group inline-flex min-h-12 items-center justify-center  btn btn-outline gap-3 rounded-xl bg-emerald-700 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2"
               >
-                <FaBookOpen className="text-lg" />
+                <FaBookOpen className="text-lg animate-bounce" />
               ডিজিটাল লাইব্রেরি
                 <FaArrowRight className="transition-transform group-hover:translate-x-1" />
               </Link>

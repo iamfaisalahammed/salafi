@@ -7,13 +7,7 @@ import {
   FaArrowUpRightFromSquare,
 } from "react-icons/fa6";
 
-const categories = [
-  "সকল বই",
-  "কুরআন ও তাফসির",
-  "হাদিস",
-  "ইসলামিক জ্ঞান",
-  "ইসলামি আকিদা",
-];
+
 
 const getDriveFileId = (fileUrl) => {
   if (!fileUrl || typeof fileUrl !== "string") {
@@ -187,24 +181,7 @@ const ExploreLibrary = () => {
           </div>
         </div>
 
-        {/* Categories */}
-        <div className="mb-8 flex flex-wrap justify-center gap-2">
-          {categories.map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => setCategory(item)}
-              aria-pressed={category === item}
-              className={`rounded-full border px-4 py-2 text-sm transition ${
-                category === item
-                  ? "border-green-700 bg-green-700 text-white"
-                  : "border-gray-200 bg-white text-gray-700 hover:border-green-600 hover:text-green-700"
-              }`}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
+       
 
         {/* Loading */}
         {loading ? (

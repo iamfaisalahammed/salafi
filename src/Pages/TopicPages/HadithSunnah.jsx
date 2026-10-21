@@ -9,7 +9,7 @@ import {
   FaExternalLinkAlt,
   FaArrowRight,
   FaDatabase,
-  FaShieldAlt,
+
 } from "react-icons/fa";
 
 const tabs = [
@@ -238,19 +238,7 @@ const HadithSunnah = () => {
         {/* Books */}
         {active === "books" && (
           <>
-            <div className="mb-5 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
-              <FaShieldAlt className="mt-1 shrink-0 text-amber-700" />
-              <div>
-                <h2 className="text-sm font-bold text-slate-900">
-                  বইয়ের বিষয়বস্তু অনুযায়ী বিভাগ
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-slate-600">
-                  সুন্নাহ ও বিদআত এবং জাল হাদিস গবেষণার বইগুলো আলাদাভাবে
-                  সাজানো হয়েছে। জাল হাদিস নিয়ে আলোচনা করা বই মানেই
-                  সেটিতে জাল হাদিস সমর্থন করা হয়—এমন নয়।
-                </p>
-              </div>
-            </div>
+           
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
               {books.map((book, i) => (

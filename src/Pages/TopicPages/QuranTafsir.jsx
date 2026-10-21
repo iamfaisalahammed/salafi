@@ -9,34 +9,14 @@ import {
   FaSearch,
   FaArrowRight,
   FaExternalLinkAlt,
-
 } from "react-icons/fa";
 
 const tabs = [
-  {
-    id: "learn",
-    name: "Learn Quran",
-    subtitle: "কুরআন শিক্ষা",
-    icon: FaPlayCircle,
-  },
-  {
-    id: "audio",
-    name: "Quran Audio",
-    subtitle: "তিলাওয়াত",
-    icon: FaHeadphones,
-  },
-  {
-    id: "tafsir",
-    name: "Tafsir",
-    subtitle: "তাফসির",
-    icon: FaBookOpen,
-  },
-  {
-    id: "sciences",
-    name: "Quran Sciences",
-    subtitle: "উলূমুল কুরআন",
-    icon: FaGraduationCap,
-  },
+   { id: "tafsir", name: "Quran & Tafsir", subtitle: "কুরআন  & তাফসির", icon: FaBookOpen },
+  { id: "learn", name: "Learn Quran", subtitle: "কুরআন শিক্ষা", icon: FaPlayCircle },
+  { id: "audio", name: "Quran Audio", subtitle: "তিলাওয়াত", icon: FaHeadphones },
+ 
+  // { id: "sciences", name: "Quran Sciences", subtitle: "উলূমুল কুরআন", icon: FaGraduationCap },
 ];
 
 const videos = [
@@ -64,13 +44,11 @@ const tafsirSources = [
   {
     id: "ibn-kathir",
     title: "তাফসির ইবনে কাসির",
-    description: "বাংলা তাফসির",
     slug: "bn-tafseer-ibn-e-kaseer",
   },
   {
     id: "abu-bakr-zakaria",
     title: "তাফসির আবু বকর জাকারিয়া",
-    description: "বাংলা তাফসির",
     slug: "bn-tafsir-abu-bakr-zakaria",
   },
 ];
@@ -197,8 +175,6 @@ const surahs = [
   ar,
 }));
 
-
-
 export default function QuranTafsir() {
   const [active, setActive] = useState("learn");
   const [search, setSearch] = useState("");
@@ -220,12 +196,10 @@ export default function QuranTafsir() {
   }, [search]);
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-emerald-50/60 via-white to-white px-3 py-10 text-slate-800 sm:px-6 sm:py-14 lg:px-8">
-      <div className="mx-auto max-w-6xl">
+    <section className="min-h-screen bg-gradient-to-b from-emerald-50/60 via-white to-white px-3 py-8 text-slate-800 sm:px-6 sm:py-12 lg:px-8">
+      <div className="mx-auto max-w-5xl">
         {/* Heading */}
-        <div className="mb-8 text-center sm:mb-10">
-          
-
+        <div className="mb-7 text-center sm:mb-9">
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
             কুরআন ও তাফসির
           </h1>
@@ -236,8 +210,8 @@ export default function QuranTafsir() {
           </p>
         </div>
 
-        {/* Tabs */}
-        <div className="mx-auto mb-10 flex w-fit max-w-full flex-wrap justify-center gap-1.5 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm sm:mb-12">
+        {/* Module Tabs */}
+        <div className="mx-auto mb-8 flex w-fit max-w-full flex-wrap justify-center gap-1.5 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm sm:mb-10">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = active === tab.id;
@@ -251,13 +225,13 @@ export default function QuranTafsir() {
                   setSearch("");
                 }}
                 aria-pressed={isActive}
-                className={`flex min-h-11 items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-all sm:px-5 ${
+                className={`flex min-h-10 items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-colors sm:px-4 ${
                   isActive
-                    ? "bg-emerald-700 text-white shadow-md shadow-emerald-700/20"
+                    ? "bg-emerald-700 text-white shadow-sm"
                     : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-800"
                 }`}
               >
-                <Icon className="shrink-0 text-base" />
+                <Icon className="shrink-0" />
                 <span>{tab.name}</span>
                 <span className="hidden text-xs opacity-75 sm:inline">
                   ({tab.subtitle})
@@ -270,7 +244,7 @@ export default function QuranTafsir() {
         {/* Learn Quran */}
         {active === "learn" && (
           <div>
-            <div className="mb-6">
+            <div className="mb-5">
               <h2 className="text-xl font-bold text-slate-900">
                 কুরআন শিক্ষা
               </h2>
@@ -279,42 +253,39 @@ export default function QuranTafsir() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {videos.map((video) => (
                 <a
                   key={video.id}
                   href={video.link}
                   target="_blank"
                   rel="noreferrer"
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-700/10"
+                  className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-emerald-300 hover:shadow-md"
                 >
                   <div className="relative aspect-video overflow-hidden bg-slate-100">
                     <img
                       src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
                       alt={video.title}
                       loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="h-full w-full object-cover"
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-red-600 text-2xl text-white shadow-xl transition-transform group-hover:scale-110">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-xl text-white">
                         <FaYoutube />
                       </span>
                     </div>
-                    <span className="absolute bottom-3 left-3 rounded-md bg-black/70 px-2.5 py-1 text-xs font-semibold text-white">
-                      {video.tag}
-                    </span>
                   </div>
 
-                  <div className="flex flex-1 flex-col p-5">
-                    <h3 className="text-lg font-bold text-slate-900">
+                  <div className="p-4">
+                    <h3 className="font-bold text-slate-900">
                       {video.title}
                     </h3>
-                    <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
                       {video.description}
                     </p>
-                    <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700">
+                    <span className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700">
                       প্লেলিস্ট দেখুন
-                      <FaArrowRight className="transition-transform group-hover:translate-x-1" />
+                      <FaArrowRight />
                     </span>
                   </div>
                 </a>
@@ -326,7 +297,7 @@ export default function QuranTafsir() {
         {/* Quran Audio */}
         {active === "audio" && (
           <div>
-            <div className="mb-6">
+            <div className="mb-5">
               <h2 className="text-xl font-bold text-slate-900">
                 কুরআন তিলাওয়াত
               </h2>
@@ -335,36 +306,32 @@ export default function QuranTafsir() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {audioResources.map((audio) => (
                 <a
                   key={audio.id}
                   href={audio.link}
                   target="_blank"
                   rel="noreferrer"
-                  className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-emerald-300 hover:shadow-lg"
+                  className="group rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-emerald-300 hover:shadow-md"
                 >
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-2xl text-emerald-700 transition-colors group-hover:bg-emerald-700 group-hover:text-white">
+                  <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-700">
                     <FaHeadphones />
                   </div>
 
-                  <h3 className="text-lg font-bold text-slate-900">
+                  <h3 className="font-bold text-slate-900">
                     {audio.title}
                   </h3>
-                  <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
                     {audio.description}
                   </p>
 
-                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700">
+                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700">
                     তিলাওয়াত শুনুন
                     <FaExternalLinkAlt className="text-xs" />
                   </span>
                 </a>
               ))}
-            </div>
-
-            <div className="mt-6 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-5">
-            
             </div>
           </div>
         )}
@@ -372,17 +339,17 @@ export default function QuranTafsir() {
         {/* Tafsir */}
         {active === "tafsir" && (
           <div>
-            <div className="mb-6">
+            <div className="mb-5">
               <h2 className="text-xl font-bold text-slate-900">
                 কুরআনের তাফসির
               </h2>
               <p className="mt-1 text-sm leading-6 text-slate-600">
-                ১১৪টি সূরার মধ্য থেকে সূরা নির্বাচন করে বাংলা তাফসির পড়ুন।
+                সূরা নির্বাচন করে বাংলা তাফসির পড়ুন অথবা সরাসরি কুরআন পাঠ করুন।
               </p>
             </div>
 
-            {/* Tafsir selector */}
-            <div className="mb-5 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+            {/* Tafsir Selector and Search */}
+            <div className="mb-4 rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
               <label
                 htmlFor="tafsir-source"
                 className="mb-2 block text-sm font-semibold text-slate-700"
@@ -394,7 +361,7 @@ export default function QuranTafsir() {
                 id="tafsir-source"
                 value={selectedTafsir}
                 onChange={(event) => setSelectedTafsir(event.target.value)}
-                className="min-h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 sm:max-w-md"
+                className="min-h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
               >
                 {tafsirSources.map((source) => (
                   <option key={source.id} value={source.slug}>
@@ -403,35 +370,38 @@ export default function QuranTafsir() {
                 ))}
               </select>
 
-              <div className="relative mt-4">
-                <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+              <div className="relative mt-3">
+                <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+
                 <input
                   type="search"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="সূরার নাম বা নম্বর দিয়ে খুঁজুন..."
-                  className="min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100"
+                  className="min-h-11 w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100"
                 />
               </div>
 
-              <p className="mt-3 text-xs text-slate-500">
+              <p className="mt-2 text-xs text-slate-500">
                 মোট {filteredSurahs.length}টি সূরা
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Compact Surah List */}
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
               {filteredSurahs.map((surah) => (
-                <article
+                <div
                   key={surah.id}
-                  className="group rounded-2xl border border-slate-200 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-700/5 sm:p-5"
+                  className="flex flex-col gap-3 border-b border-slate-100 px-3 py-3 last:border-b-0 transition-colors hover:bg-emerald-50/40 sm:flex-row sm:items-center sm:gap-4 sm:px-4"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-sm font-bold text-emerald-800 transition-colors group-hover:bg-emerald-700 group-hover:text-white">
+                  {/* Surah Information */}
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-emerald-100 bg-emerald-50 text-xs font-bold text-emerald-800">
                       {String(surah.id).padStart(3, "0")}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <h3 className="truncate font-bold text-slate-900">
+                      <h3 className="truncate text-sm font-semibold text-slate-900">
                         {surah.bn}
                       </h3>
                       <p className="mt-0.5 truncate text-xs text-slate-500">
@@ -441,55 +411,63 @@ export default function QuranTafsir() {
 
                     <p
                       dir="rtl"
-                      className="shrink-0 text-xl text-emerald-800"
+                      className="shrink-0 text-lg text-emerald-800 sm:text-xl"
                     >
                       {surah.ar}
                     </p>
                   </div>
 
-                  <div className="mt-4 grid grid-cols-2 gap-2">
-                    {tafsirSources.map((source) => (
-                      <a
-                        key={source.id}
-                        href={`https://quran.com/bn/${surah.id}/1/tafsirs/${source.slug}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex min-h-10 items-center justify-center rounded-lg border border-emerald-100 bg-emerald-50/60 px-2 py-2 text-center text-xs font-semibold text-emerald-800 transition-colors hover:bg-emerald-700 hover:text-white"
-                      >
-                        {source.id === "ibn-kathir"
-                          ? "ইবনে কাসির"
-                          : "আবু বকর জাকারিয়া"}
-                      </a>
-                    ))}
+                  {/* Action Buttons */}
+                  <div className="grid grid-cols-2 gap-2 sm:w-[250px] sm:shrink-0">
+                    <a
+                      href={`https://quran.com/bn/${surah.id}/1/tafsirs/${selectedTafsir}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex min-h-9 items-center justify-center gap-1.5 rounded-lg   bg-white px-2 py-2 text-center text-xs font-semibold text-emerald-800 transition-colors hover:bg-emerald-50"
+                    >
+                      <a className="shrink-0" />
+                      তাফসির পড়ুন
+                    </a>
+
+                    <a
+                      href={`https://quran.com/bn/${surah.id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex min-h-9 items-center justify-center gap-1.5 rounded-lg   bg-white px-2 py-2 text-center text-xs font-semibold text-emerald-800 transition-colors hover:bg-emerald-50"
+                    >
+                      Read Quran
+                      <FaExternalLinkAlt className="shrink-0 text-[10px]" />
+                    </a>
                   </div>
-                </article>
+                </div>
               ))}
+
+              {/* No Results */}
+              {filteredSurahs.length === 0 && (
+                <div className="px-4 py-10 text-center">
+                  <FaSearch className="mx-auto mb-3 text-2xl text-slate-300" />
+                  <p className="font-semibold text-slate-700">
+                    কোনো সূরা পাওয়া যায়নি
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    অন্য নাম বা সূরার নম্বর দিয়ে চেষ্টা করুন।
+                  </p>
+                </div>
+              )}
             </div>
-
-            {filteredSurahs.length === 0 && (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-12 text-center">
-                <FaSearch className="mx-auto mb-3 text-2xl text-slate-300" />
-                <p className="font-semibold text-slate-700">
-                  কোনো সূরা পাওয়া যায়নি
-                </p>
-                <p className="mt-1 text-sm text-slate-500">
-                  অন্য নাম বা সূরার নম্বর দিয়ে চেষ্টা করুন।
-                </p>
-              </div>
-            )}
-
-        
           </div>
         )}
 
-        {/* Sciences of Quran */}
+        {/* Quran Sciences */}
         {active === "sciences" && (
-          <div>
-          
-
-          <h2 className="text-xl font-bold">Comming Soon</h2>
-
-            
+          <div className="rounded-xl border border-slate-200 bg-white px-5 py-12 text-center">
+            <FaGraduationCap className="mx-auto mb-3 text-3xl text-emerald-700" />
+            <h2 className="text-xl font-bold text-slate-900">
+              উলূমুল কুরআন
+            </h2>
+            <p className="mt-2 text-sm text-slate-600">
+              এই বিভাগে কুরআনবিষয়ক জ্ঞান ও শিক্ষামূলক রিসোর্স যুক্ত করা হবে।
+            </p>
           </div>
         )}
       </div>

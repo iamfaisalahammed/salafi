@@ -81,7 +81,7 @@ const videos = [
     id: 8,
     title: "ইসলাম সম্পর্কে অমুসলিমদের সাধারণ প্রশ্নের জবাব",
     category: "questions",
-    videoId: "",
+    videoId: "sp3q6foNMtY",
     link: "https://www.youtube.com/playlist?list=PLHun7ABvrklVdiOEIxhI5_Q-EYoNKeGKB",
     type: "playlist",
     speaker: "ড. জাকির নায়েক",
@@ -326,10 +326,7 @@ export default function WhyIslam() {
                 {book.title}
               </h3>
 
-              <p className="mt-2 flex-1 text-sm text-slate-600">
-                লেখক: {book.author}
-              </p>
-
+              
               <a
                 href={book.fileId}
                 target="_blank"

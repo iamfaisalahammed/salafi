@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FaGraduationCap } from "react-icons/fa";
 import { FaPlay, FaBookQuran } from "react-icons/fa6";
 
 const categories = [
@@ -17,11 +18,11 @@ const categories = [
   //   name: "Sahabah",
   //   icon: <FaUserFriends />,
   // },
-  // {
-  //   id: "scholars",
-  //   name: "Great Scholars",
-  //   icon: <FaGraduationCap />,
-  // },
+  {
+    id: "scholars",
+    name: "Great Scholars",
+    icon: <FaGraduationCap />,
+  },
   // {
   //   id: "history",
   //   name: "Islamic History",
@@ -43,12 +44,12 @@ const videos = [
     videoId: "example_video_id",
     link: "https://youtube.com",
   },
-  {
-    category: "scholars",
-    title: "Imam Bukhari Biography",
-    videoId: "example_video_id",
-    link: "https://youtube.com",
-  },
+{
+  category: "scholars",
+  title: "বিখ্যাত মুহাদ্দিসগণ",
+  videoId: "Ifgy6vZ98hY",
+  link: "https://www.youtube.com/playlist?list=PLh00bXGWSenmmOTbYJqpboeCopZgOf7kV",
+},
   {
     category: "history",
     title: "Ottoman Empire History",
@@ -175,15 +176,17 @@ const SeerahHistory = () => {
   return (
     <section className="min-h-screen bg-white px-3 py-10 text-slate-800 sm:px-6 sm:py-14 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        {/* Title */}
-        <div className="mb-8 text-center sm:mb-10">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
-            Islamic Legacy
-          </h1>
-          <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-600 sm:text-base">
-            Explore Prophets, Seerah, Sahabah & Islamic History
-          </p>
-        </div>
+  {/* Heading */}
+<div className="mb-8 text-center sm:mb-10">
+  <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
+    ইসলামের ইতিহাস ও ঐতিহ্য
+  </h1>
+
+  <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
+    ইসলামের সমৃদ্ধ ইতিহাস, ঐতিহ্য, শিক্ষা ও গৌরবময় অধ্যায়গুলো জানুন এবং
+    অতীতের মূল্যবান জ্ঞান থেকে নিজের জীবনকে আলোকিত করুন।
+  </p>
+</div>
 
         {/* Category Buttons */}
         <div className="mb-9 flex flex-wrap justify-center gap-2 sm:mb-12 sm:gap-3">

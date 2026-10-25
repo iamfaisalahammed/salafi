@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-
   FaPlayCircle,
   FaBook,
   FaStar,
@@ -10,10 +9,12 @@ import {
   FaArrowRight,
 } from "react-icons/fa";
 
+const FONT = { fontFamily: "'Hind Siliguri', sans-serif" };
+
 const tabs = [
   { id: "videos", name: "Videos", subtitle: "ভিডিও", icon: FaPlayCircle },
   { id: "books", name: "Books", subtitle: "বই", icon: FaBook },
-{ id: "names", name: "Asmaul Husna", subtitle: "আল্লাহর নাম", icon: FaStar },
+  { id: "names", name: "Asmaul Husna", subtitle: "আল্লাহর নাম", icon: FaStar },
 ];
 
 const videos = [
@@ -21,23 +22,21 @@ const videos = [
     id: 1,
     title: "আকীদাহ ভিডিও প্লেলিস্ট",
     speaker: "ডক্টর আবু বক্কর মুহাম্মাদ জাকারিয়া",
-    videoId: "Q-SWXifqCaA", // thumbnail is generated from this ID
+    videoId: "Q-SWXifqCaA",
     link: "https://www.youtube.com/watch?v=Q-SWXifqCaA&list=PLJGZ7rO4bSMfzNG1WOgRgBTNKXzVj4tlc",
-    tag: "Full Playlist", // optional
+    tag: "Full Playlist",
   },
   {
     id: 2,
     title: "আকীদাহ ভিডিও প্লেলিস্ট",
-    speaker: "ডক্টর  ইমাম হোসাইন",
-    videoId: "2XKnypZ7H40", // thumbnail is generated from this ID
+    speaker: "ডক্টর ইমাম হোসাইন",
+    videoId: "2XKnypZ7H40",
     link: "https://www.youtube.com/watch?v=2XKnypZ7H40&list=PLrIXHGCtjCath5_p7NdZgfWDbcL8W3HTY",
-    tag: "Full Playlist", // optional
+    tag: "Full Playlist",
   },
-  // Add a new video by adding another object here
 ];
 
 const books = [
- 
   {
     id: 1,
     title: "আল-ফিকহুল আকবার",
@@ -50,9 +49,7 @@ const books = [
     author: "ড. খোন্দকার আব্দুল্লাহ জাহাঙ্গীর (রহ.)",
     link: "https://drive.google.com/file/d/1WdxHqXuTUou7-QfIc3wp7VycmqTZU8zr/view?usp=drive_link",
   },
-
 ];
-
 
 const names = [
   { ar: "الله", bn: "আল্লাহ", transliteration: "Allah", meaning: "আল্লাহ" },
@@ -153,49 +150,54 @@ const names = [
   { ar: "ٱلْبَاقِي", bn: "আল-বাক্বী", transliteration: "Al-Baqi", meaning: "চিরস্থায়ী, অবিনশ্বর" },
   { ar: "ٱلْوَارِثُ", bn: "আল-ওয়ারিস'", transliteration: "Al-Warith", meaning: "উত্তরাধিকারী" },
   { ar: "ٱلرَّشِيدُ", bn: "আর-রাশীদ", transliteration: "Ar-Rashid", meaning: "সঠিক পথ-প্রদর্শক, বিচক্ষণ, সচেতন" },
-  { ar: "ٱلصَّبُورُ", bn: "আস-সবুর", transliteration: "As-Sabur", meaning: "অত্যধিক ধৈর্যধারণকারী" }
+  { ar: "ٱلصَّبُورُ", bn: "আস-সবুর", transliteration: "As-Sabur", meaning: "অত্যধিক ধৈর্যধারণকারী" },
 ];
+
 const ImanAqeedah = () => {
   const [active, setActive] = useState("videos");
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-emerald-50/60 via-white to-white px-3 py-10 text-slate-800 sm:px-6 sm:py-14 lg:px-8">
+    <section
+      style={FONT}
+      className="min-h-screen bg-[#081b22] px-3 py-8 text-slate-200 sm:px-6 sm:py-12 lg:px-8"
+    >
       <div className="mx-auto max-w-6xl">
-       {/* Heading */}
-<div className="mb-8 text-center sm:mb-10">
-  
+        {/* Heading */}
+        <div className="mb-8 text-center sm:mb-10">
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
+            আকিদা ও ঈমান
+          </h1>
 
-  <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
-    আকিদা ও ঈমান
-  </h1>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-slate-400 sm:text-base">
+            ইসলামী বিশ্বাসের মৌলিক বিষয়গুলো জানুন, বিশুদ্ধ আকিদা অর্জন করুন এবং
+            কুরআন ও সুন্নাহর আলোকে নিজের ঈমানকে আরও দৃঢ় করুন।
+          </p>
+        </div>
 
-  <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
-    ইসলামী বিশ্বাসের মৌলিক বিষয়গুলো জানুন, বিশুদ্ধ আকিদা অর্জন করুন এবং
-    কুরআন ও সুন্নাহর আলোকে নিজের ঈমানকে আরও দৃঢ় করুন।
-  </p>
-</div>
-
-        {/* Tabs */}
-        <div className="mx-auto mb-10 flex w-fit max-w-full flex-wrap justify-center gap-1.5 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm sm:mb-12">
+        {/* Mobile-friendly Tabs */}
+        <div className="mx-auto mb-8 grid w-full max-w-2xl grid-cols-3 gap-2 rounded-2xl border border-emerald-400/15 bg-[#10252d] p-2 sm:mb-10 sm:flex sm:w-fit sm:justify-center">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = active === tab.id;
+
             return (
               <button
                 key={tab.id}
                 type="button"
                 onClick={() => setActive(tab.id)}
                 aria-pressed={isActive}
-                className={`flex min-h-11 items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all sm:px-6 ${
+                className={`flex min-h-[76px] min-w-0 flex-col items-center justify-center gap-1.5 rounded-xl px-1.5 py-3 text-center transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 sm:min-h-11 sm:flex-row sm:gap-2 sm:px-5 sm:py-2 ${
                   isActive
-                    ? "bg-emerald-700 text-white shadow-md shadow-emerald-700/25"
-                    : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-800"
+                    ? "bg-emerald-400 text-[#081b22] shadow-md shadow-emerald-950/30"
+                    : "text-slate-400 hover:bg-white/5 hover:text-emerald-300"
                 }`}
               >
-                <Icon className="text-base" />
-                <span>{tab.name}</span>
-                <span className="hidden text-xs opacity-75 sm:inline">
-                  ({tab.subtitle})
+                <Icon className="shrink-0 text-lg sm:text-base" />
+                <span className="text-xs font-bold leading-tight sm:text-sm">
+                  {tab.name}
+                </span>
+                <span className="text-[10px] leading-tight opacity-80 sm:text-xs">
+                  {tab.subtitle}
                 </span>
               </button>
             );
@@ -204,45 +206,51 @@ const ImanAqeedah = () => {
 
         {/* Videos */}
         {active === "videos" && (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
             {videos.map((video) => (
               <a
                 key={video.id}
                 href={video.link}
                 target="_blank"
-                rel="noreferrer"
-                className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-700/10"
+                rel="noopener noreferrer"
+                className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-emerald-400/15 bg-[#10252d] transition-colors duration-200 hover:border-emerald-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
               >
-                <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
+                <div className="relative aspect-video w-full overflow-hidden bg-[#081b22]">
                   <img
                     src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
                     alt={video.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-red-600 text-2xl text-white shadow-xl transition-transform group-hover:scale-110">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-xl text-white shadow-lg sm:h-14 sm:w-14">
                       <FaYoutube />
                     </span>
                   </div>
+
                   {video.tag && (
-                    <span className="absolute bottom-3 left-3 rounded-md bg-black/70 px-2.5 py-1 text-xs font-semibold text-white">
+                    <span className="absolute bottom-3 left-3 rounded-lg border border-white/10 bg-black/70 px-2.5 py-1 text-xs font-semibold text-white">
                       {video.tag}
                     </span>
                   )}
                 </div>
 
-                <div className="flex flex-1 flex-col gap-3 p-5">
-                  <h2 className="text-base font-bold leading-snug text-slate-900 sm:text-lg">
+                <div className="flex flex-1 flex-col p-4 sm:p-5">
+                  <h2 className="text-base font-bold leading-snug text-white sm:text-lg">
                     {video.title}
                   </h2>
-                  <p className="flex items-center gap-2 text-sm text-slate-600">
-                    <FaUserTie className="text-emerald-700" />
-                    {video.speaker}
+
+                  <p className="mt-3 flex items-start gap-2 text-sm leading-6 text-slate-400">
+                    <FaUserTie className="mt-1 shrink-0 text-emerald-400" />
+                    <span>{video.speaker}</span>
                   </p>
-                  <span className="mt-auto inline-flex w-fit items-center gap-2 text-sm font-semibold text-emerald-700 group-hover:text-emerald-900">
+
+                  <span className="mt-5 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-sm font-semibold text-emerald-300 transition-colors group-hover:bg-emerald-400 group-hover:text-[#081b22] sm:mt-6">
                     YouTube-এ দেখুন
-                    <FaArrowRight className="text-xs transition-transform group-hover:translate-x-1" />
+                    <FaArrowRight className="text-xs" />
                   </span>
                 </div>
               </a>
@@ -252,32 +260,36 @@ const ImanAqeedah = () => {
 
         {/* Books */}
         {active === "books" && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
             {books.map((book, i) => (
               <article
                 key={book.id}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:-translate-y-1 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-700/10 sm:p-6"
+                className="group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-emerald-400/15 bg-[#10252d] p-4 transition-colors duration-200 hover:border-emerald-400/40 sm:p-5"
               >
-                <span className="absolute right-4 top-3 text-sm font-semibold text-slate-200">
+                <span className="absolute right-4 top-3 text-sm font-bold text-[#d6aa62]/50">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-700 transition-colors group-hover:bg-emerald-700 group-hover:text-white">
+
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-400/15 bg-emerald-400/10 text-lg text-emerald-300 sm:h-12 sm:w-12">
                   <FaBook />
                 </div>
-                <h2 className="pr-6 text-lg font-bold leading-snug text-slate-900">
+
+                <h2 className="pr-7 text-base font-bold leading-7 text-white sm:text-lg">
                   {book.title}
                 </h2>
-                <p className="mt-1.5 flex-1 text-sm leading-6 text-slate-600">
+
+                <p className="mt-1.5 flex-1 text-sm leading-6 text-slate-400">
                   {book.author}
                 </p>
+
                 <a
                   href={book.link}
                   target="_blank"
-                  rel="noreferrer"
-                  className="mt-5 inline-flex w-fit items-center gap-2 text-sm font-semibold text-emerald-700 transition-colors hover:text-emerald-900"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-3 py-2.5 text-sm font-semibold text-emerald-300 transition-colors hover:bg-emerald-400 hover:text-[#081b22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 sm:mt-6"
                 >
                   পড়ুন / ডাউনলোড
-                  <FaExternalLinkAlt className="text-xs" />
+                  <FaExternalLinkAlt className="shrink-0 text-xs" />
                 </a>
               </article>
             ))}
@@ -286,30 +298,51 @@ const ImanAqeedah = () => {
 
         {/* Names of Allah */}
         {active === "names" && (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {names.map((name, i) => (
-              <div
-                key={name.bn}
-                className="group relative overflow-hidden rounded-xl  border border-slate-200 bg-white px-3 py-5 text-center transition-all hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-700/20"
-              >
-                <span className="absolute left-2 top-1.5 text-[10px] font-semibold text-slate-300 group-hover:text-emerald-200">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <p
-                  className="text-2xl font-bold  text-emerald-700 transition-colors group-hover:text-white"
-                  dir="rtl"
-                >
-                  {name.ar}
-                </p>
-                <p className="mt-2 text-sm font-semibold text-slate-900 transition-colors group-hover:text-white">
-                  {name.bn}
-                </p>
-                <p className="mt-0.5 text-xs text-slate-500 transition-colors group-hover:text-emerald-100">
-                  {name.meaning}
+          <>
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-bold text-white sm:text-xl">
+                  আল্লাহর সুন্দর নামসমূহ
+                </h2>
+                <p className="mt-1 text-xs leading-5 text-slate-400 sm:text-sm">
+                  প্রতিটি নামের আরবি, বাংলা নাম ও অর্থ পড়ুন।
                 </p>
               </div>
-            ))}
-          </div>
+
+              <span className="shrink-0 rounded-full border border-[#d6aa62]/25 bg-[#d6aa62]/10 px-3 py-1.5 text-xs font-semibold text-[#d6aa62]">
+                {names.length} নাম
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+              {names.map((name, i) => (
+                <article
+                  key={name.bn}
+                  className="group relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-emerald-400/15 bg-[#10252d] px-3 pb-4 pt-5 text-center transition-colors duration-200 hover:border-emerald-400/40 hover:bg-[#14313a] sm:px-3.5 sm:pb-5 sm:pt-6"
+                >
+                  <span className="absolute left-2 top-2 text-[10px] font-semibold text-[#d6aa62]/70">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+
+                  <p
+                    className="break-words text-2xl font-bold leading-relaxed text-emerald-300 sm:text-3xl"
+                    dir="rtl"
+                    lang="ar"
+                  >
+                    {name.ar}
+                  </p>
+
+                  <p className="mt-2 break-words text-sm font-bold leading-6 text-white">
+                    {name.bn}
+                  </p>
+
+                  <p className="mt-1 break-words text-xs leading-5 text-slate-400">
+                    {name.meaning}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </section>

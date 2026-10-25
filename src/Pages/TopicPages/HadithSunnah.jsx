@@ -9,26 +9,24 @@ import {
   FaExternalLinkAlt,
   FaArrowRight,
   FaDatabase,
-
 } from "react-icons/fa";
+
+const FONT = { fontFamily: "'Hind Siliguri', sans-serif" };
 
 const tabs = [
   {
     id: "collections",
-    name: "Hadith Collections",
-    subtitle: "হাদিসের সংকলন",
+    name: "হাদিসের সংকলন",
     icon: FaDatabase,
   },
   {
     id: "videos",
-    name: "Videos",
-    subtitle: "ভিডিও",
+    name: "ভিডিও",
     icon: FaPlayCircle,
   },
   {
     id: "books",
-    name: "Books",
-    subtitle: "বই",
+    name: "বই",
     icon: FaBook,
   },
 ];
@@ -96,27 +94,33 @@ const books = [
   },
 ];
 
+const compactButton =
+  "inline-flex min-h-9 items-center justify-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-xs font-semibold text-emerald-300 transition-colors hover:border-emerald-400/40 hover:bg-emerald-400/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400";
+
 const HadithSunnah = () => {
   const [active, setActive] = useState("collections");
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-emerald-50/60 via-white to-white px-3 py-10 text-slate-800 sm:px-6 sm:py-14 lg:px-8">
-      <div className="mx-auto max-w-6xl">
+    <section
+      style={FONT}
+      className="min-h-screen overflow-x-clip bg-[#081b22] px-3 py-8 text-slate-200 sm:px-6 sm:py-10 lg:px-8"
+    >
+      <div className="mx-auto max-w-5xl">
         {/* Heading */}
-        <div className="mb-8 text-center sm:mb-10">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
+        <div className="mb-7 text-center sm:mb-9">
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
             হাদিস ও সুন্নাহ
           </h1>
 
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">
             রাসুলুল্লাহ ﷺ-এর হাদিস অধ্যয়ন করুন, সুন্নাহ সম্পর্কে জানুন
             এবং নির্ভরযোগ্য সূত্রের আলোকে জাল হাদিস ও বিদআত সম্পর্কে
             সচেতন হোন।
           </p>
         </div>
 
-        {/* Tabs */}
-        <div className="mx-auto mb-10 flex w-fit max-w-full flex-wrap justify-center gap-1.5 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm sm:mb-12">
+        {/* Compact Tabs */}
+        <div className="mb-8 flex flex-wrap justify-center gap-2 sm:mb-9">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = active === tab.id;
@@ -127,17 +131,17 @@ const HadithSunnah = () => {
                 type="button"
                 onClick={() => setActive(tab.id)}
                 aria-pressed={isActive}
-                className={`flex min-h-11 items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all sm:px-5 ${
+                className={`inline-flex min-h-9 items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                   isActive
-                    ? "bg-emerald-700 text-white shadow-md shadow-emerald-700/25"
-                    : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-800"
+                    ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-300"
+                    : "border-emerald-400/15 bg-[#10252d] text-slate-300 hover:border-emerald-400/40 hover:text-white"
                 }`}
               >
-                <Icon className="text-base" />
+                <Icon className="shrink-0" />
                 <span>{tab.name}</span>
-                <span className="hidden text-xs opacity-75 sm:inline">
-                  ({tab.subtitle})
-                </span>
+                {isActive && (
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                )}
               </button>
             );
           })}
@@ -145,124 +149,147 @@ const HadithSunnah = () => {
 
         {/* Hadith Collections */}
         {active === "collections" && (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            {collections.map((item, i) => (
-              <article
-                key={item.id}
-                className="group relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-700/10 sm:p-6"
-              >
-                <span className="absolute right-5 top-4 text-sm font-semibold text-slate-200">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
+          <div>
+            <div className="mb-5">
+              <h2 className="text-xl font-bold text-white">
+                হাদিসের সংকলন
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-slate-400">
+                নির্ভরযোগ্য অনলাইন সূত্র থেকে হাদিস অধ্যয়ন করুন।
+              </p>
+            </div>
 
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-700 transition-colors group-hover:bg-emerald-700 group-hover:text-white">
-                  <FaBookOpen />
-                </div>
-
-                <h2 className="pr-8 text-lg font-bold text-slate-900">
-                  {item.title}
-                </h2>
-
-                <p className="mt-2 flex-1 text-sm leading-7 text-slate-600">
-                  {item.description}
-                </p>
-
-                <a
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-5 inline-flex w-fit items-center gap-2 text-sm font-semibold text-emerald-700 transition-colors hover:text-emerald-900"
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+              {collections.map((item, index) => (
+                <article
+                  key={item.id}
+                  className="group relative flex min-w-0 flex-col rounded-2xl border border-emerald-400/15 bg-[#10252d] p-4 transition-colors hover:border-emerald-400/35 sm:p-5"
                 >
-                  অধ্যয়ন করুন
-                  <FaExternalLinkAlt className="text-xs" />
-                </a>
-              </article>
-            ))}
+                  <span className="absolute right-4 top-3 text-xs font-semibold text-slate-600">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+
+                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-400/10 text-lg text-emerald-300">
+                    <FaBookOpen />
+                  </div>
+
+                  <h3 className="pr-7 text-base font-bold text-white sm:text-lg">
+                    {item.title}
+                  </h3>
+
+                  <p className="mt-2 flex-1 text-sm leading-6 text-slate-400">
+                    {item.description}
+                  </p>
+
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${compactButton} mt-4 w-fit`}
+                  >
+                    অধ্যয়ন করুন
+                    <FaExternalLinkAlt className="text-[10px]" />
+                  </a>
+                </article>
+              ))}
+            </div>
           </div>
         )}
 
         {/* Videos */}
         {active === "videos" && (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {videos.map((video) => (
-              <a
-                key={video.id}
-                href={video.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-700/10"
-              >
-                <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
-                  <img
-                    src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
-                    alt={video.title}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+          <div>
+            <div className="mb-5">
+              <h2 className="text-xl font-bold text-white">
+                সুন্নাহ ও বিদআত বিষয়ক ভিডিও
+              </h2>
+              <p className="mt-1 text-sm text-slate-400">
+                ভিডিও ও প্লেলিস্টের মাধ্যমে বিষয়গুলো সম্পর্কে জানুন।
+              </p>
+            </div>
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {videos.map((video) => (
+                <a
+                  key={video.id}
+                  href={video.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-emerald-400/15 bg-[#10252d] transition-colors hover:border-emerald-400/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                >
+                  <div className="relative aspect-video overflow-hidden bg-[#081b22]">
+                    <img
+                      src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
+                      alt={video.title}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                    />
 
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-red-600 text-2xl text-white shadow-xl transition-transform group-hover:scale-110">
-                      <FaYoutube />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/25">
+                      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-red-600 text-xl text-white">
+                        <FaYoutube />
+                      </span>
+                    </div>
+
+                    <span className="absolute bottom-2 left-2 max-w-[90%] truncate rounded-md bg-black/70 px-2 py-1 text-[11px] font-medium text-white">
+                      {video.tag}
                     </span>
                   </div>
 
-                  {video.tag && (
-                    <span className="absolute bottom-3 left-3 rounded-md bg-black/70 px-2.5 py-1 text-xs font-semibold text-white">
-                      {video.tag}
+                  <div className="flex flex-1 flex-col p-4">
+                    <h3 className="text-base font-bold leading-6 text-white">
+                      {video.title}
+                    </h3>
+
+                    <p className="mt-2 flex items-center gap-2 text-sm text-slate-400">
+                      <FaUserTie className="shrink-0 text-emerald-300" />
+                      {video.speaker}
+                    </p>
+
+                    <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-emerald-300">
+                      YouTube-এ দেখুন
+                      <FaArrowRight className="text-xs transition-transform group-hover:translate-x-1" />
                     </span>
-                  )}
-                </div>
-
-                <div className="flex flex-1 flex-col gap-3 p-5">
-                  <h2 className="text-base font-bold leading-snug text-slate-900 sm:text-lg">
-                    {video.title}
-                  </h2>
-
-                  <p className="flex items-center gap-2 text-sm text-slate-600">
-                    <FaUserTie className="shrink-0 text-emerald-700" />
-                    {video.speaker}
-                  </p>
-
-                  <span className="mt-auto inline-flex w-fit items-center gap-2 text-sm font-semibold text-emerald-700 group-hover:text-emerald-900">
-                    YouTube-এ দেখুন
-                    <FaArrowRight className="text-xs transition-transform group-hover:translate-x-1" />
-                  </span>
-                </div>
-              </a>
-            ))}
+                  </div>
+                </a>
+              ))}
+            </div>
           </div>
         )}
 
         {/* Books */}
         {active === "books" && (
-          <>
-           
+          <div>
+            <div className="mb-5">
+              <h2 className="text-xl font-bold text-white">ইসলামি বই</h2>
+              <p className="mt-1 text-sm leading-6 text-slate-400">
+                হাদিস, সুন্নাহ ও জাল হাদিস সম্পর্কে বই পড়ুন।
+              </p>
+            </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
-              {books.map((book, i) => (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+              {books.map((book, index) => (
                 <article
                   key={book.id}
-                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:-translate-y-1 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-700/10 sm:p-6"
+                  className="group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-emerald-400/15 bg-[#10252d] p-4 transition-colors hover:border-emerald-400/35 sm:p-5"
                 >
-                  <span className="absolute right-4 top-3 text-sm font-semibold text-slate-200">
-                    {String(i + 1).padStart(2, "0")}
+                  <span className="absolute right-4 top-3 text-xs font-semibold text-slate-600">
+                    {String(index + 1).padStart(2, "0")}
                   </span>
 
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-700 transition-colors group-hover:bg-emerald-700 group-hover:text-white">
+                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-400/20 bg-emerald-400/10 text-lg text-emerald-300">
                     <FaBook />
                   </div>
 
-                  <span className="mb-3 w-fit rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
+                  <span className="mb-3 w-fit max-w-full rounded-lg border border-emerald-400/15 bg-emerald-400/[0.07] px-2.5 py-1 text-xs font-medium leading-5 text-emerald-300">
                     {book.type}
                   </span>
 
-                  <h2 className="pr-6 text-lg font-bold leading-snug text-slate-900">
+                  <h3 className="pr-6 text-base font-bold leading-6 text-white sm:text-lg">
                     {book.title}
-                  </h2>
+                  </h3>
 
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                  <p className="mt-2 text-sm leading-6 text-slate-400">
                     {book.author}
                   </p>
 
@@ -275,20 +302,20 @@ const HadithSunnah = () => {
                       href={book.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-5 inline-flex w-fit items-center gap-2 text-sm font-semibold text-emerald-700 transition-colors hover:text-emerald-900"
+                      className={`${compactButton} mt-4 w-fit`}
                     >
                       পড়ুন / ডাউনলোড
-                      <FaExternalLinkAlt className="text-xs" />
+                      <FaExternalLinkAlt className="text-[10px]" />
                     </a>
                   ) : (
-                    <span className="mt-5 inline-flex w-fit cursor-not-allowed items-center gap-2 text-sm font-medium text-slate-400">
+                    <span className="mt-4 text-xs text-slate-500">
                       লিংক যোগ করা হয়নি
                     </span>
                   )}
                 </article>
               ))}
             </div>
-          </>
+          </div>
         )}
       </div>
     </section>

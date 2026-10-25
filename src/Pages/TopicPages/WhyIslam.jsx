@@ -13,6 +13,11 @@ import {
   FaCompass,
 } from "react-icons/fa";
 
+const FONT = { fontFamily: "'Hind Siliguri', sans-serif" };
+
+const compactButton =
+  "inline-flex min-h-9 shrink-0 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400";
+
 const categories = [
   { id: "all", label: "সব রিসোর্স", icon: FaCompass },
   { id: "God Exist", label: "ডাজ গড এগজিস্ট?", icon: FaGlobe },
@@ -21,30 +26,30 @@ const categories = [
 ];
 
 const videos = [
- {
-  id: 1,
-  title: "Does God Exist? — স্রষ্টা কি আছেন?",
-  category: "God Exist",
-  videoId: "pythOMyPcHw",
-  link: "https://www.youtube.com/live/pythOMyPcHw?si=NsaSPnZ72TRmNBbJ",
-  type: "video",
-},
-{
-  id: 2,
-  title: "Does God Exist? — স্রষ্টার অস্তিত্ব",
-  category: "God Exist",
-  videoId: "Ir7utAdXYNg",
-  link: "https://www.youtube.com/watch?v=Ir7utAdXYNg",
-  type: "video",
-},
-{
-  id: 3,
-  title: "Does God Exist? — স্রষ্টার অস্তিত্বের প্রমাণ",
-  category: "God Exist",
-  videoId: "8ZG2-0sRFVA",
-  link: "https://youtu.be/8ZG2-0sRFVA?si=HJEb__6XZynWLms8",
-  type: "video",
-},
+  {
+    id: 1,
+    title: "Does God Exist? — স্রষ্টা কি আছেন?",
+    category: "God Exist",
+    videoId: "pythOMyPcHw",
+    link: "https://www.youtube.com/live/pythOMyPcHw?si=NsaSPnZ72TRmNBbJ",
+    type: "video",
+  },
+  {
+    id: 2,
+    title: "Does God Exist? — স্রষ্টার অস্তিত্ব",
+    category: "God Exist",
+    videoId: "Ir7utAdXYNg",
+    link: "https://www.youtube.com/watch?v=Ir7utAdXYNg",
+    type: "video",
+  },
+  {
+    id: 3,
+    title: "Does God Exist? — স্রষ্টার অস্তিত্বের প্রমাণ",
+    category: "God Exist",
+    videoId: "8ZG2-0sRFVA",
+    link: "https://youtu.be/8ZG2-0sRFVA?si=HJEb__6XZynWLms8",
+    type: "video",
+  },
   {
     id: 4,
     title: "৪৩০০ ধর্মের মাঝে শুধু ইসলামই কেন সত্য ধর্ম?",
@@ -110,69 +115,70 @@ export default function WhyIslam() {
   const [search, setSearch] = useState("");
 
   const filteredVideos = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
     return videos.filter((video) => {
       const matchesCategory =
         activeCategory === "all" ||
         video.category === activeCategory;
 
-      const matchesSearch = video.title
-        .toLowerCase()
-        .includes(search.trim().toLowerCase());
+      const matchesSearch =
+        `${video.title} ${video.speaker || ""} ${
+          categoryLabels[video.category] || ""
+        }`
+          .toLowerCase()
+          .includes(query);
 
       return matchesCategory && matchesSearch;
     });
   }, [activeCategory, search]);
 
+  const resetFilters = () => {
+    setActiveCategory("all");
+    setSearch("");
+  };
+
   return (
-    <section className="min-h-screen bg-gradient-to-b from-emerald-50/70 via-white to-white px-3 py-10 text-slate-800 sm:px-6 sm:py-14 lg:px-8">
+    <section
+      className="min-h-screen overflow-x-clip bg-[#081b22] px-3 py-8 text-slate-200 sm:px-6 sm:py-12 lg:px-8"
+      style={FONT}
+    >
       <div className="mx-auto max-w-7xl">
-        {/* Hero */}
-        <div className="relative mb-8 overflow-hidden rounded-2xl  px-5 py-7 text-center shadow-sm sm:px-8">
-  <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full " />
+        {/* Heading */}
+        <header className="mb-8 text-center sm:mb-10">
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-100 sm:text-3xl md:text-4xl">
+              কেন ইসলাম?
+          </h1>
 
-  <div className="relative">
-   
+        
 
- 
-
-    <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-      Why Islam?
-    </h1>
-
-    <p className="mt-1 text-base font-semibold text-emerald-800">
-      কেন ইসলাম?
-    </p>
-
-    <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">
-      ইসলাম, কুরআনের সত্যতা ও বিভিন্ন প্রশ্নের উত্তর জানুন
-      নির্ভরযোগ্য জ্ঞান ও তথ্যের আলোকে।
-    </p>
-
-   
-  </div>
-</div>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-slate-400 sm:text-base">
+            ইসলাম, কুরআনের সত্যতা ও বিভিন্ন প্রশ্নের উত্তর জানুন
+            নির্ভরযোগ্য জ্ঞান ও তথ্যের আলোকে।
+          </p>
+        </header>
 
         {/* Video section heading */}
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="mb-1 text-xs font-bold uppercase tracking-widest text-emerald-700">
-              Explore & Learn
+            <p className="mb-1 text-xs font-bold tracking-wide text-emerald-400">
+              ভিডিও ও প্লেলিস্ট
             </p>
-            <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+            <h2 className="text-xl font-bold text-slate-100 sm:text-2xl">
               ভিডিও লাইব্রেরি
             </h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+            <p className="mt-1.5 text-sm leading-6 text-slate-400">
               বিষয় নির্বাচন করে ভিডিও ও প্লেলিস্ট দেখুন।
             </p>
           </div>
 
-          <div className="text-sm font-medium text-slate-500">
-            {filteredVideos.length} টি রিসোর্স
-          </div>
+          <p className="text-xs text-slate-500">
+            মোট {filteredVideos.length}টি রিসোর্স
+          </p>
         </div>
 
-        {/* Category filters */}
-        <div className="mb-5 flex gap-2 overflow-x-auto pb-2">
+        {/* Compact category filters */}
+        <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
           {categories.map((category) => {
             const Icon = category.icon;
             const isActive = activeCategory === category.id;
@@ -183,163 +189,184 @@ export default function WhyIslam() {
                 type="button"
                 onClick={() => setActiveCategory(category.id)}
                 aria-pressed={isActive}
-                className={`flex shrink-0 items-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold transition-all ${
+                className={`${compactButton} ${
                   isActive
-                    ? "border-emerald-700 bg-emerald-700 text-white shadow-md shadow-emerald-700/15"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800"
+                    ? "border-emerald-400/40 bg-emerald-400/15 text-emerald-300"
+                    : "border-emerald-400/15 bg-[#10252d] text-slate-300 hover:border-emerald-400/35 hover:text-emerald-300"
                 }`}
               >
-                <Icon />
+                <Icon className="text-xs" />
                 {category.label}
+                {isActive && (
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                )}
               </button>
             );
           })}
         </div>
 
         {/* Search */}
-        <div className="relative mb-8 max-w-md">
-          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+        <div className="relative mb-6 max-w-md">
+          <FaSearch
+            aria-hidden="true"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-500"
+          />
           <input
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="ভিডিও বা বিষয় খুঁজুন..."
             aria-label="ভিডিও খুঁজুন"
-            className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            className="min-h-10 w-full rounded-xl border border-emerald-400/15 bg-[#10252d] py-2.5 pl-10 pr-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-400/50 focus:ring-2 focus:ring-emerald-400/10"
           />
         </div>
 
-        {/* Videos grid */}
+        {/* Videos */}
         {filteredVideos.length > 0 ? (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {filteredVideos.map((video) => (
-              <a
+              <article
                 key={video.id}
-                href={video.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-900/10"
+                className="group flex min-w-0 flex-col overflow-hidden rounded-xl border border-emerald-400/15 bg-[#10252d] transition-colors hover:border-emerald-400/35"
               >
-                <div className="relative aspect-video overflow-hidden bg-slate-100">
+                <a
+                  href={video.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${video.title} YouTube-এ দেখুন`}
+                  className="relative block aspect-video overflow-hidden bg-[#0b2027]"
+                >
                   {video.videoId ? (
                     <img
                       src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
                       alt={video.title}
                       loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center bg-gradient-to-br from-emerald-100 to-teal-50">
-                      <FaYoutube className="text-6xl text-emerald-700/70" />
+                    <div className="flex h-full items-center justify-center">
+                      <FaYoutube className="text-5xl text-emerald-400" />
                     </div>
                   )}
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-lg text-white shadow-xl transition-transform group-hover:scale-110 sm:h-14 sm:w-14">
-                      <FaPlay className="ml-1" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition-transform group-hover:scale-110 sm:h-11 sm:w-11">
+                      <FaPlay className="ml-0.5 text-sm" />
                     </span>
                   </div>
 
-                  <span className="absolute bottom-3 left-3 rounded-md bg-black/70 px-2.5 py-1 text-xs font-semibold text-white">
-                    {video.type === "playlist" ? "Playlist" : "Video"}
+                  <span className="absolute bottom-2 left-2 rounded-md border border-white/10 bg-black/70 px-2 py-1 text-[10px] font-semibold text-white">
+                    {video.type === "playlist" ? "প্লেলিস্ট" : "ভিডিও"}
                   </span>
-                </div>
+                </a>
 
-                <div className="flex flex-1 flex-col p-5">
-                  <span className="mb-2 w-fit rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800">
+                <div className="flex flex-1 flex-col p-3.5 sm:p-4">
+                  <span className="mb-2 w-fit rounded-md border border-emerald-400/15 bg-emerald-400/10 px-2 py-1 text-[10px] font-medium text-emerald-300">
                     {categoryLabels[video.category]}
                   </span>
 
-                  <h3 className="text-base font-bold leading-7 text-slate-900 transition-colors group-hover:text-emerald-800">
+                  <h3 className="text-sm font-bold leading-6 text-slate-100 sm:text-base">
                     {video.title}
                   </h3>
 
                   {video.speaker && (
-                    <p className="mt-2 text-sm text-slate-500">
+                    <p className="mt-1.5 text-xs text-slate-400">
                       {video.speaker}
                     </p>
                   )}
 
-                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700">
+                  <a
+                    href={video.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex min-h-8 w-fit items-center gap-2 rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-2 text-xs font-semibold text-emerald-300 transition hover:bg-emerald-400/20"
+                  >
                     {video.type === "playlist"
                       ? "প্লেলিস্ট দেখুন"
                       : "ভিডিও দেখুন"}
-                    <FaArrowRight className="text-xs transition-transform group-hover:translate-x-1" />
-                  </span>
+                    <FaArrowRight className="text-[10px]" />
+                  </a>
                 </div>
-              </a>
+              </article>
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-12 text-center">
-            <FaSearch className="mx-auto mb-3 text-2xl text-slate-400" />
-            <p className="font-semibold text-slate-700">
+          <div className="rounded-xl border border-dashed border-emerald-400/20 bg-[#10252d] px-4 py-10 text-center">
+            <FaSearch className="mx-auto text-2xl text-slate-500" />
+            <p className="mt-3 text-sm font-semibold text-slate-200">
               কোনো রিসোর্স পাওয়া যায়নি
             </p>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-xs text-slate-400">
               অন্য কোনো শব্দ দিয়ে খুঁজে দেখুন।
             </p>
+            <button
+              type="button"
+              onClick={resetFilters}
+              className={`${compactButton} mt-3 border-emerald-400/20 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20`}
+            >
+              সব রিসোর্স দেখুন
+            </button>
           </div>
         )}
 
         {/* Books section */}
-        <div className="mb-6 mt-16 border-t border-slate-200 pt-10 sm:mt-20">
-          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-emerald-700">
-            Read & Understand
-          </p>
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-xl text-emerald-800">
+        <section className="mt-12 border-t border-emerald-400/15 pt-8 sm:mt-16 sm:pt-10">
+          <div className="mb-5 flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-400/15 bg-emerald-400/10 text-lg text-emerald-300">
               <FaBookOpen />
             </div>
+
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+              <p className="text-xs font-semibold text-emerald-400">
+                পড়ুন ও জানুন
+              </p>
+              <h2 className="mt-1 text-xl font-bold text-slate-100 sm:text-2xl">
                 বই ও পাঠ্যসামগ্রী
               </h2>
-              <p className="mt-1 text-sm text-slate-600">
+              <p className="mt-1 text-xs leading-5 text-slate-400 sm:text-sm">
                 ইসলাম সম্পর্কে আরও জানতে নির্বাচিত বই পড়ুন।
               </p>
             </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {books.map((book, index) => (
-            <article
-              key={book.id}
-              className="group relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:-translate-y-1 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-900/10 sm:p-6"
-            >
-              <span className="absolute right-4 top-4 text-sm font-bold text-slate-200">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-
-              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-700 transition-colors group-hover:bg-emerald-700 group-hover:text-white">
-                <FaBookOpen />
-              </div>
-
-              <span className="mb-2 w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                {book.category}
-              </span>
-
-              <h3 className="pr-5 text-lg font-bold leading-7 text-slate-900">
-                {book.title}
-              </h3>
-
-              
-              <a
-                href={book.fileId}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-6 inline-flex w-fit items-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-800"
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {books.map((book, index) => (
+              <article
+                key={book.id}
+                className="flex min-w-0 flex-col rounded-xl border border-emerald-400/15 bg-[#10252d] p-4 transition-colors hover:border-emerald-400/35 sm:p-5"
               >
-                বই পড়ুন
-                <FaExternalLinkAlt className="text-xs" />
-              </a>
-            </article>
-          ))}
-        </div>
-      
+                <div className="mb-3 flex items-center justify-between">
+                  <FaBookOpen className="text-xl text-emerald-400" />
+                  <span className="text-xs text-slate-500">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                </div>
+
+                <span className="mb-2 w-fit rounded-md border border-emerald-400/15 bg-emerald-400/10 px-2 py-1 text-[10px] text-emerald-300">
+                  {book.category}
+                </span>
+
+                <h3 className="text-sm font-bold leading-6 text-slate-100 sm:text-base">
+                  {book.title}
+                </h3>
+
+                <p className="mt-2 text-xs text-slate-400">
+                  {book.author}
+                </p>
+
+                <a
+                  href={book.fileId}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`${compactButton} mt-4 w-fit border-emerald-400/20 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20`}
+                >
+                  বই পড়ুন
+                  <FaExternalLinkAlt className="text-[10px]" />
+                </a>
+              </article>
+            ))}
+          </div>
+        </section>
       </div>
     </section>
   );

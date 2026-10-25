@@ -1,33 +1,29 @@
+
 import { useEffect, useState } from "react";
 import { FaGraduationCap } from "react-icons/fa";
 import { FaPlay, FaBookQuran } from "react-icons/fa6";
 
+const FONT = { fontFamily: "'Hind Siliguri', sans-serif" };
+
+const compactButton =
+  "inline-flex min-h-9 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400";
+
 const categories = [
   {
     id: "prophets",
-    name: "25 Prophets",
+    name: "২৫ নবী",
     icon: <FaBookQuran />,
   },
   {
     id: "seerah",
-    name: "Seerah of Prophet ﷺ",
+    name: "নবী ﷺ-এর জীবনী",
     icon: <FaBookQuran />,
   },
-  // {
-  //   id: "sahabah",
-  //   name: "Sahabah",
-  //   icon: <FaUserFriends />,
-  // },
   {
     id: "scholars",
-    name: "Great Scholars",
+    name: "ইসলামের আলেমগণ",
     icon: <FaGraduationCap />,
   },
-  // {
-  //   id: "history",
-  //   name: "Islamic History",
-  //   icon: <FaLandmark />,
-  // },
 ];
 
 const videos = [
@@ -37,19 +33,18 @@ const videos = [
     videoId: "DW-00ckCAPI",
     link: "https://www.youtube.com/show/VLPLlZazEh_c4nScNCvGBn8OEf6ujk-sDUpg?sbp=KgtEVy0wMGNrQ0FQSUAB",
   },
-
   {
     category: "sahabah",
     title: "Biography of Abu Bakr رضي الله عنه",
     videoId: "example_video_id",
     link: "https://youtube.com",
   },
-{
-  category: "scholars",
-  title: "বিখ্যাত মুহাদ্দিসগণ",
-  videoId: "Ifgy6vZ98hY",
-  link: "https://www.youtube.com/playlist?list=PLh00bXGWSenmmOTbYJqpboeCopZgOf7kV",
-},
+  {
+    category: "scholars",
+    title: "বিখ্যাত মুহাদ্দিসগণ",
+    videoId: "Ifgy6vZ98hY",
+    link: "https://www.youtube.com/playlist?list=PLh00bXGWSenmmOTbYJqpboeCopZgOf7kV",
+  },
   {
     category: "history",
     title: "Ottoman Empire History",
@@ -58,8 +53,6 @@ const videos = [
   },
 ];
 
-// 25 Prophets mentioned in the Qur'an, each paired with a symbol from
-// their story and a distinct accent color, in traditional chronological order.
 const prophets = [
   { name: "Adam", arabic: "عليه السلام", icon: "🌳", color: "#4ADE80", link: "https://youtu.be/ywHoaKVf0E4" },
   { name: "Idris", arabic: "عليه السلام", icon: "⛰️", color: "#38BDF8", link: "https://youtu.be/Qe9ylM6fNYM" },
@@ -88,23 +81,16 @@ const prophets = [
   { name: "Muhammad", arabic: "ﷺ", icon: "🕋", color: "#F87171", link: "https://youtu.be/MxkQM92MSzI" },
 ];
 
-// Snake the 25 prophets through a 4-column grid, alternating direction
-// each row, so the connecting path winds left-right-left like a river.
 const COLS = 4;
 const ROW_HEIGHT = 145;
 
-// Build a smooth dashed path through every node's center.
 const buildPath = (nodes, columns, width, rowHeight) => {
-  if (nodes.length === 0) return "";
+  if (!nodes.length) return "";
 
   const toXY = (index) => {
     const row = Math.floor(index / columns);
     const posInRow = index % columns;
-    const countInRow = Math.min(
-      columns,
-      nodes.length - row * columns
-    );
-
+    const countInRow = Math.min(columns, nodes.length - row * columns);
     const col =
       row % 2 === 0 ? posInRow : countInRow - 1 - posInRow;
 
@@ -127,18 +113,13 @@ const buildPath = (nodes, columns, width, rowHeight) => {
   return d;
 };
 
-const SeerahHistory = () => {
+export default function SeerahHistory() {
   const [active, setActive] = useState("prophets");
   const [columns, setColumns] = useState(COLS);
 
-  // Keep four columns on mobile and adjust the timeline for larger screens.
   useEffect(() => {
     const updateColumns = () => {
-      if (window.innerWidth >= 1024) {
-        setColumns(5);
-      } else {
-        setColumns(4);
-      }
+      setColumns(window.innerWidth >= 1024 ? 5 : 4);
     };
 
     updateColumns();
@@ -155,9 +136,9 @@ const SeerahHistory = () => {
   const rows = Math.ceil(prophets.length / columns);
   const pathHeight = rows * rowHeight;
 
-  const prophetNodes = prophets.map((p, i) => {
-    const row = Math.floor(i / columns);
-    const posInRow = i % columns;
+  const prophetNodes = prophets.map((prophet, index) => {
+    const row = Math.floor(index / columns);
+    const posInRow = index % columns;
     const countInRow = Math.min(
       columns,
       prophets.length - row * columns
@@ -167,60 +148,68 @@ const SeerahHistory = () => {
       row % 2 === 0 ? posInRow : countInRow - 1 - posInRow;
 
     return {
-      ...p,
+      ...prophet,
       x: ((col + 0.5) / columns) * 100,
       y: row * rowHeight + rowHeight / 2,
     };
   });
 
   return (
-    <section className="min-h-screen bg-white px-3 py-10 text-slate-800 sm:px-6 sm:py-14 lg:px-8">
+    <section
+      className="min-h-screen overflow-x-clip bg-[#081b22] px-3 py-8 text-slate-200 sm:px-6 sm:py-12 lg:px-8"
+      style={FONT}
+    >
       <div className="mx-auto max-w-6xl">
-  {/* Heading */}
-<div className="mb-8 text-center sm:mb-10">
-  <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl md:text-4xl">
-    ইসলামের ইতিহাস ও ঐতিহ্য
-  </h1>
+        {/* Heading */}
+        <header className="mb-7 text-center sm:mb-9">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-100 sm:text-3xl md:text-4xl">
+            ইসলামের ইতিহাস ও ঐতিহ্য
+          </h1>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-slate-400 sm:text-base">
+            ইসলামের ইতিহাস, নবী-রাসূলদের জীবন এবং ইসলামী জ্ঞান-ঐতিহ্যের
+            গুরুত্বপূর্ণ অধ্যায়গুলো জানুন।
+          </p>
+        </header>
 
-  <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-slate-600 sm:text-base">
-    ইসলামের সমৃদ্ধ ইতিহাস, ঐতিহ্য, শিক্ষা ও গৌরবময় অধ্যায়গুলো জানুন এবং
-    অতীতের মূল্যবান জ্ঞান থেকে নিজের জীবনকে আলোকিত করুন।
-  </p>
-</div>
+        {/* Compact category buttons */}
+        <div className="mb-8 flex flex-wrap justify-center gap-2 sm:mb-10">
+          {categories.map((item) => {
+            const isActive = active === item.id;
 
-        {/* Category Buttons */}
-        <div className="mb-9 flex flex-wrap justify-center gap-2 sm:mb-12 sm:gap-3">
-          {categories.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => setActive(item.id)}
-              aria-pressed={active === item.id}
-              className={`flex min-h-10 items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold transition-colors sm:px-5 sm:text-sm ${
-                active === item.id
-                  ? "border-emerald-700 bg-emerald-700 text-white"
-                  : "border-slate-200 bg-white text-slate-600 hover:bg-emerald-50"
-              }`}
-            >
-              {item.icon}
-              {item.name}
-            </button>
-          ))}
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActive(item.id)}
+                aria-pressed={isActive}
+                className={`${compactButton} ${
+                  isActive
+                    ? "border-emerald-400/40 bg-emerald-400/15 text-emerald-300"
+                    : "border-emerald-400/15 bg-[#10252d] text-slate-300 hover:border-emerald-400/35 hover:text-emerald-300"
+                }`}
+              >
+                {item.icon}
+                {item.name}
+                {isActive && (
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                )}
+              </button>
+            );
+          })}
         </div>
 
-        {/* All Prophets — winding path timeline (now on all devices, including mobile) */}
+        {/* Prophets timeline */}
         {active === "prophets" && (
           <div className="mx-auto max-w-5xl">
-            <div className="mb-6 text-center sm:mb-8">
-              <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">
-                Prophets in Islam
+            <div className="mb-6 text-center">
+              <h2 className="text-xl font-bold text-slate-100 sm:text-2xl">
+                কুরআনে উল্লেখিত ২৫ জন নবী
               </h2>
-              <p className="mt-2 text-sm text-slate-500">
-                25 Prophets mentioned in the Qur'an
+              <p className="mt-2 text-xs text-slate-400 sm:text-sm">
+                যেকোনো নবীর নাম নির্বাচন করে সংশ্লিষ্ট ভিডিও দেখুন
               </p>
             </div>
 
-            {/* Winding snake path — shared by desktop, tablet, and mobile */}
             <div
               className="relative mx-auto"
               style={{ height: pathHeight, maxWidth: 1000 }}
@@ -234,50 +223,50 @@ const SeerahHistory = () => {
                 <path
                   d={buildPath(prophets, columns, 1000, rowHeight)}
                   fill="none"
-                  stroke="#a7d9bd"
+                  stroke="#246453"
                   strokeWidth="2.5"
-                  strokeDasharray="6 7"
+                  strokeDasharray="5 7"
                   strokeLinecap="round"
                 />
               </svg>
 
-              {prophetNodes.map((p, index) => (
+              {prophetNodes.map((prophet, index) => (
                 <a
-                  key={p.name}
-                  href={p.link}
+                  key={prophet.name}
+                  href={prophet.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`Watch the story of Prophet ${p.name}`}
-                  className="group absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5 rounded-lg px-0.5 py-1 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+                  aria-label={`Watch the story of Prophet ${prophet.name}`}
+                  className="group absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5 rounded-lg px-0.5 py-1 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
                   style={{
-                    left: `${p.x}%`,
-                    top: p.y,
+                    left: `${prophet.x}%`,
+                    top: prophet.y,
                     width: `${100 / columns}%`,
                   }}
                 >
                   <div
-                    className="flex h-9 w-9 items-center justify-center rounded-full border-2 bg-white text-base shadow-sm transition-transform duration-200 group-hover:scale-110 sm:h-11 sm:w-11 sm:text-xl lg:h-14 lg:w-14 lg:text-2xl"
-                    style={{ borderColor: p.color }}
+                    className="flex h-9 w-9 items-center justify-center rounded-full border-2 bg-[#10252d] text-base shadow-sm transition-transform duration-200 group-hover:scale-110 sm:h-11 sm:w-11 sm:text-xl lg:h-14 lg:w-14 lg:text-2xl"
+                    style={{ borderColor: prophet.color }}
                   >
-                    {p.icon}
+                    {prophet.icon}
                   </div>
 
                   <div className="w-full leading-tight">
                     <p
                       className="break-words text-[10px] font-bold sm:text-xs lg:text-sm"
-                      style={{ color: p.color }}
+                      style={{ color: prophet.color }}
                     >
-                      {p.name}
+                      {prophet.name}
                     </p>
                     <p
                       dir="rtl"
-                      className="mt-1 text-[8px] text-slate-500 sm:text-[10px]"
+                      className="mt-1 text-[8px] text-slate-400 sm:text-[10px]"
                     >
-                      {p.arabic}
+                      {prophet.arabic}
                     </p>
                   </div>
 
-                  <span className="absolute right-0 top-0 flex h-3.5 w-3.5 items-center justify-center rounded-full border border-slate-200 bg-white text-[8px] text-slate-500 sm:right-1 sm:h-4 sm:w-4 sm:text-[9px]">
+                  <span className="absolute right-0 top-0 flex h-3.5 w-3.5 items-center justify-center rounded-full border border-emerald-400/20 bg-[#10252d] text-[8px] text-slate-400 sm:right-1 sm:h-4 sm:w-4 sm:text-[9px]">
                     {index + 1}
                   </span>
                 </a>
@@ -286,62 +275,59 @@ const SeerahHistory = () => {
           </div>
         )}
 
-        {/* Video Cards */}
+        {/* Video resources */}
         {active !== "prophets" && (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {filteredVideos.length > 0 ? (
               filteredVideos.map((video) => (
                 <article
                   key={video.title}
-                  className="overflow-hidden rounded-xl border border-slate-200 bg-white transition-colors hover:border-emerald-300"
+                  className="overflow-hidden rounded-xl border border-emerald-400/15 bg-[#10252d] transition-colors hover:border-emerald-400/35"
                 >
-                  {/* Image */}
                   <a
                     href={video.link}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Watch ${video.title} on YouTube`}
-                    className="relative block aspect-video overflow-hidden bg-slate-100"
+                    className="relative block aspect-video overflow-hidden bg-[#0b2027]"
                   >
                     <img
-                     src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
+                      src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
                       alt={video.title}
                       loading="lazy"
                       className="h-full w-full object-cover"
                     />
-
-                    <span className="absolute inset-0 flex items-center justify-center bg-black/20">
-                      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-red-600 text-white">
-                        <FaPlay />
+                    <span className="absolute inset-0 flex items-center justify-center bg-black/25">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 text-white">
+                        <FaPlay className="text-sm" />
                       </span>
                     </span>
                   </a>
 
-                  <div className="p-4 sm:p-5">
-                    <h3 className="text-base font-bold text-slate-900 sm:text-lg">
+                  <div className="p-3.5 sm:p-4">
+                    <h3 className="text-sm font-bold leading-6 text-slate-100 sm:text-base">
                       {video.title}
                     </h3>
-
                     <a
                       href={video.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-3 inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-900"
+                      className={`${compactButton} mt-3 border-emerald-400/20 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/15`}
                     >
-                      <FaPlay className="text-xs" />
-                      Watch on YouTube →
+                      <FaPlay className="text-[10px]" />
+                      YouTube-এ দেখুন
                     </a>
                   </div>
                 </article>
               ))
             ) : (
-              <div className="col-span-full py-12 text-center">
-                <FaBookQuran className="mx-auto text-3xl text-emerald-700" />
-                <h3 className="mt-3 font-semibold text-slate-900">
-                  No resources available yet
+              <div className="col-span-full rounded-xl border border-emerald-400/15 bg-[#10252d] px-4 py-10 text-center">
+                <FaBookQuran className="mx-auto text-3xl text-emerald-400" />
+                <h3 className="mt-3 font-semibold text-slate-100">
+                  এখনো কোনো রিসোর্স নেই
                 </h3>
-                <p className="mt-2 text-sm text-slate-500">
-                  Resources for this category will appear here when available.
+                <p className="mt-2 text-sm text-slate-400">
+                  এই বিভাগের রিসোর্স যোগ করা হলে এখানে দেখা যাবে।
                 </p>
               </div>
             )}
@@ -350,6 +336,4 @@ const SeerahHistory = () => {
       </div>
     </section>
   );
-};
-
-export default SeerahHistory;
+}

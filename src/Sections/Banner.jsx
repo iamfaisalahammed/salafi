@@ -383,239 +383,200 @@ const Banner = () => {
   };
 
   return (
-    <section className="relative overflow-hidden bg-white px-4 py-10 text-slate-800 sm:px-6 sm:py-14 lg:py-20">
+    <section className="relative isolate overflow-hidden bg-[#081b22] px-3 py-7 text-slate-100 sm:px-6 sm:py-12 lg:py-16">
+      <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-24 -z-10 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl" />
+      <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 -left-20 -z-10 h-64 w-64 rounded-full bg-amber-400/10 blur-3xl" />
+
       <div className="mx-auto max-w-6xl">
-        <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-14">
+        <div className="grid items-start gap-7 lg:grid-cols-2 lg:items-center lg:gap-12">
           {/* Introduction */}
-          <div className="text-center lg:text-left">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800">
-              <FaMosque className="text-emerald-700" />
+          <div className="min-w-0 text-center lg:text-left">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-xs font-medium text-emerald-300 sm:text-sm">
+              <FaMosque />
               <span>ইসলামি জ্ঞান ও রিসোর্সের ঠিকানা</span>
             </div>
 
-            <h1 className="text-3xl font-bold leading-snug tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+            <h1 className="mx-auto max-w-xl text-3xl font-bold leading-[1.35] tracking-tight text-white sm:text-4xl lg:mx-0 lg:text-5xl">
               জ্ঞান অর্জন করুন,
-              <span className="mt-1 block text-emerald-700">
-                সুন্নাহর পথে চলুন
-              </span>
+              <span className="mt-1 block text-[#d6aa62]">সুন্নাহর পথে চলুন</span>
             </h1>
 
-            <p className="mx-auto mt-5 max-w-xl text-base leading-8 text-slate-600 sm:text-lg lg:mx-0">
-              কুরআন, হাদিস, আলেমদের আলোচনা, ইসলামি অ্যাপ,
-              বই ও প্রয়োজনীয় ওয়েবসাইট—সবকিছু খুঁজে নিন
-              এক জায়গায়, সহজেই।
+            <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-slate-300 sm:mt-5 sm:text-base sm:leading-8 lg:mx-0">
+              কুরআন, হাদিস, আলেমদের আলোচনা, ইসলামি অ্যাপ, বই ও প্রয়োজনীয় ওয়েবসাইট—সবকিছু খুঁজে নিন এক জায়গায়, সহজেই।
             </p>
 
-            <div className="mt-7 flex justify-center lg:justify-start">
+            <div className="mt-6 flex flex-col justify-center gap-3 min-[380px]:flex-row lg:mt-7 lg:justify-start">
               <Link
                 to="/ExploreLibrary"
-                className="group inline-flex min-h-12 items-center justify-center  btn btn-outline gap-3 rounded-xl bg-emerald-700 px-6 py-3 font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2"
+                className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-xl bg-[#c99a54] px-5 py-3 text-sm font-semibold text-[#102127] shadow-sm transition-colors hover:bg-[#ddb36f] focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-[#081b22] sm:px-6"
               >
-                <FaBookOpen className="text-lg animate-bounce" />
-              ডিজিটাল লাইব্রেরি
+                <FaBookOpen className="text-base" />
+                ডিজিটাল লাইব্রেরি
                 <FaArrowRight className="transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
 
-            <p className="mt-4 text-sm text-slate-500">
+            <p className="mt-4 text-xs leading-6 text-slate-400 sm:text-sm">
               আপনার প্রয়োজনীয় ইসলামি রিসোর্স, সহজে এক জায়গায়।
             </p>
           </div>
 
           {/* Prayer Times */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex min-w-0 items-start gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-                  <FaMosque className="text-xl" />
+          <div id="prayer-times" className="min-w-0 scroll-mt-5 overflow-hidden rounded-2xl border border-white/10 bg-[#10252d] shadow-xl shadow-black/20 sm:rounded-3xl">
+            <div className="p-4 sm:p-6">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 items-start gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-300/15 bg-emerald-400/10 text-emerald-300 sm:h-12 sm:w-12">
+                    <FaMosque className="text-xl" />
+                  </div>
+
+                  <div className="min-w-0">
+                    <h2 className="text-base font-bold text-white sm:text-lg">নামাজের সময়সূচি</h2>
+                    <p className="mt-1 flex items-start gap-1.5 break-words text-xs leading-5 text-slate-400 sm:text-sm">
+                      <IoLocationOutline className="mt-0.5 shrink-0 text-base text-emerald-300" />
+                      <span>
+                        {loadingLocation
+                          ? "আপনার অবস্থান খোঁজা হচ্ছে..."
+                          : locationName || "অবস্থান পাওয়া যায়নি"}
+                      </span>
+                    </p>
+                  </div>
                 </div>
-
-                <div className="min-w-0">
-                  <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
-                    নামাজের সময়সূচি
-                  </h2>
-
-                  <p className="mt-1 flex items-start gap-1.5 break-words text-sm leading-6 text-slate-500">
-                    <IoLocationOutline className="mt-1 shrink-0 text-base" />
-                    <span>
-                      {loadingLocation
-                        ? "আপনার অবস্থান খোঁজা হচ্ছে..."
-                        : locationName || "অবস্থান পাওয়া যায়নি"}
-                    </span>
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setShowSettings((previous) => !previous)}
-                aria-label="নামাজের সময়ের সেটিংস"
-                aria-expanded={showSettings}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition hover:bg-slate-50 hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-600"
-              >
-                {showSettings ? (
-                  <IoCloseOutline className="text-xl" />
-                ) : (
-                  <IoSettingsOutline className="text-xl" />
-                )}
-              </button>
-            </div>
-
-            {showSettings && (
-              <div className="mt-4 rounded-xl border border-emerald-100 bg-emerald-50/60 p-4">
-                <p className="mb-3 text-sm font-semibold text-slate-800">
-                  আসরের সময় গণনার পদ্ধতি
-                </p>
-
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={() => changeSchool(1)}
-                    aria-pressed={school === 1}
-                    className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
-                      school === 1
-                        ? "border-emerald-700 bg-emerald-700 text-white"
-                        : "border-slate-200 bg-white text-slate-700 hover:border-emerald-400"
-                    }`}
-                  >
-                    হানাফি
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => changeSchool(0)}
-                    aria-pressed={school === 0}
-                    className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
-                      school === 0
-                        ? "border-emerald-700 bg-emerald-700 text-white"
-                        : "border-slate-200 bg-white text-slate-700 hover:border-emerald-400"
-                    }`}
-                  >
-                    শাফেয়ি / মালিকি / হাম্বলী
-                  </button>
-                </div>
-
-                <p className="mt-3 text-xs leading-5 text-slate-500">
-                  আপনার অনুসৃত মাযহাব অনুযায়ী আসরের সময়ের হিসাব নির্বাচন করুন।
-                </p>
-              </div>
-            )}
-
-            <div className="my-5 border-t border-slate-100" />
-
-            {error && (
-              <div className="mb-4 rounded-xl bg-amber-50 p-4 text-sm leading-6 text-amber-800">
-                <p>{error}</p>
-
-                {!loadingLocation && (
-                  <button
-                    type="button"
-                    onClick={getLocation}
-                    className="mt-3 inline-flex items-center gap-2 font-semibold text-emerald-800 hover:underline"
-                  >
-                    <IoRefreshOutline className="text-base" />
-                    আবার চেষ্টা করুন
-                  </button>
-                )}
-              </div>
-            )}
-
-            {loadingLocation && !prayerTimes && (
-              <div className="flex flex-col items-center justify-center py-10 text-center">
-                <span
-                  className="loading loading-spinner loading-md text-emerald-700"
-                  role="status"
-                  aria-label="লোড হচ্ছে"
-                />
-                <p className="mt-3 text-sm text-slate-500">
-                  নামাজের সময় সংগ্রহ করা হচ্ছে...
-                </p>
-              </div>
-            )}
-
-            {!loadingLocation && !prayerTimes && !error && (
-              <div className="py-8 text-center">
-                <FaSun className="mx-auto text-3xl text-emerald-700" />
-                <p className="mt-3 text-sm text-slate-500">
-                  নামাজের সময় দেখতে আপনার অবস্থান চালু করুন।
-                </p>
 
                 <button
                   type="button"
-                  onClick={getLocation}
-                  className="mt-4 inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2"
+                  onClick={() => setShowSettings((previous) => !previous)}
+                  aria-label="নামাজের সময়ের সেটিংস"
+                  aria-expanded={showSettings}
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-slate-300 transition hover:border-emerald-300/30 hover:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400"
                 >
-                  <IoLocationOutline className="text-lg" />
-                  অবস্থান শনাক্ত করুন
+                  {showSettings ? <IoCloseOutline className="text-xl" /> : <IoSettingsOutline className="text-xl" />}
                 </button>
               </div>
-            )}
 
-            {prayerTimes && (
-              <>
-                <div className="mb-3 flex items-center justify-between gap-2">
-                  <p className="text-sm font-medium text-slate-500">
-                    আজকের পাঁচ ওয়াক্ত নামাজ
+              {showSettings && (
+                <div className="mt-4 rounded-xl border border-emerald-300/15 bg-[#0b2027] p-3 sm:p-4">
+                  <p className="mb-3 text-sm font-semibold text-slate-200">আসরের সময় গণনার পদ্ধতি</p>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => changeSchool(1)}
+                      aria-pressed={school === 1}
+                      className={`min-h-10 rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
+                        school === 1
+                          ? "border-[#c99a54] bg-[#c99a54] text-[#102127]"
+                          : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-emerald-300/40"
+                      }`}
+                    >
+                      হানাফি
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => changeSchool(0)}
+                      aria-pressed={school === 0}
+                      className={`min-h-10 rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
+                        school === 0
+                          ? "border-[#c99a54] bg-[#c99a54] text-[#102127]"
+                          : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-emerald-300/40"
+                      }`}
+                    >
+                      শাফেয়ি / মালিকি / হাম্বলী
+                    </button>
+                  </div>
+                  <p className="mt-3 text-xs leading-5 text-slate-400">
+                    আপনার অনুসৃত মাযহাব অনুযায়ী আসরের সময়ের হিসাব নির্বাচন করুন।
                   </p>
+                </div>
+              )}
 
+              <div className="my-4 border-t border-white/[0.08] sm:my-5" />
+
+              {error && (
+                <div className="mb-4 rounded-xl border border-amber-300/20 bg-amber-300/[0.07] p-3 text-sm leading-6 text-amber-200">
+                  <p>{error}</p>
+                  {!loadingLocation && (
+                    <button
+                      type="button"
+                      onClick={getLocation}
+                      className="mt-2 inline-flex items-center gap-2 font-semibold text-amber-300 hover:text-amber-200"
+                    >
+                      <IoRefreshOutline className="text-base" />
+                      আবার চেষ্টা করুন
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {loadingLocation && !prayerTimes && (
+                <div className="flex flex-col items-center justify-center py-10 text-center">
+                  <span className="loading loading-spinner loading-md text-emerald-300" role="status" aria-label="লোড হচ্ছে" />
+                  <p className="mt-3 text-sm text-slate-400">নামাজের সময় সংগ্রহ করা হচ্ছে...</p>
+                </div>
+              )}
+
+              {!loadingLocation && !prayerTimes && !error && (
+                <div className="py-8 text-center">
+                  <FaSun className="mx-auto text-3xl text-[#d6aa62]" />
+                  <p className="mt-3 text-sm leading-6 text-slate-300">নামাজের সময় দেখতে আপনার অবস্থান চালু করুন।</p>
                   <button
                     type="button"
                     onClick={getLocation}
-                    disabled={loadingLocation}
-                    title="সময় আপডেট করুন"
-                    aria-label="নামাজের সময় আপডেট করুন"
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-emerald-50 hover:text-emerald-700 disabled:opacity-50"
+                    className="mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-[#071b20] transition hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300"
                   >
-                    <IoRefreshOutline
-                      className={`text-xl ${
-                        loadingLocation ? "animate-spin" : ""
-                      }`}
-                    />
+                    <IoLocationOutline className="text-lg" />
+                    অবস্থান শনাক্ত করুন
                   </button>
                 </div>
+              )}
 
-                <div className="space-y-2">
-                  {PRAYERS.map((prayer, index) => (
-                    <div
-                      key={prayer.key}
-                      className={`rounded-xl border p-3 ${
-                        index === 0
-                          ? "border-emerald-200 bg-emerald-50"
-                          : "border-slate-100 bg-white"
-                      }`}
+              {prayerTimes && (
+                <>
+                  <div className="mb-3 flex items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-slate-200">আজকের পাঁচ ওয়াক্ত নামাজ</p>
+                    <button
+                      type="button"
+                      onClick={getLocation}
+                      disabled={loadingLocation}
+                      title="সময় আপডেট করুন"
+                      aria-label="নামাজের সময় আপডেট করুন"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 text-slate-400 transition hover:border-emerald-300/30 hover:text-emerald-300 disabled:opacity-50"
                     >
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-sm font-bold text-emerald-800">
-                            {index + 1}
-                          </span>
+                      <IoRefreshOutline className={`text-xl ${loadingLocation ? "animate-spin" : ""}`} />
+                    </button>
+                  </div>
 
-                          <span className="font-semibold text-slate-800">
-                            {prayer.name}
+                  <div className="space-y-2">
+                    {PRAYERS.map((prayer, index) => (
+                      <div
+                        key={prayer.key}
+                        className={`rounded-xl border p-3 sm:p-3.5 ${
+                          index === 0
+                            ? "border-emerald-300/25 bg-emerald-400/[0.08]"
+                            : "border-white/[0.07] bg-[#142b34] hover:border-white/15"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex min-w-0 items-center gap-3">
+                            <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${index === 0 ? "bg-emerald-300/10 text-emerald-300" : "bg-white/[0.04] text-slate-300"}`}>
+                              {index + 1}
+                            </span>
+                            <span className="font-semibold text-slate-100">{prayer.name}</span>
+                          </div>
+                          <span className={`shrink-0 text-sm font-bold tabular-nums sm:text-base ${index === 0 ? "text-emerald-300" : "text-[#e0b875]"}`}>
+                            {formatTime(prayerTimes[prayer.key])}
                           </span>
                         </div>
 
-                        <span className="text-sm font-bold text-emerald-800 sm:text-base">
-                          {formatTime(prayerTimes[prayer.key])}
-                        </span>
+                        <div className="mt-3 flex items-center justify-between gap-2 border-t border-white/[0.07] pt-3 text-xs sm:text-sm">
+                          <span className="text-slate-400">শেষ সময়</span>
+                          <span className="font-semibold tabular-nums text-slate-300">{getPrayerEndTime(prayer)}</span>
+                        </div>
                       </div>
-
-                      <div className="mt-3 flex items-center justify-between gap-2 border-t border-slate-200/70 pt-3 text-xs sm:text-sm">
-                        <span className="text-slate-500">
-                          শেষ সময়
-                        </span>
-
-                        <span className="font-semibold text-slate-700">
-                          {getPrayerEndTime(prayer)}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-             
-              </>
-            )}
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>

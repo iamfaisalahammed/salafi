@@ -7,6 +7,7 @@ import Footer from "../../Sections/Footer";
 import Nav from "../../Sections/Nav";
 import Resources from "../../Sections/Resources";
 import Scholars from "../../Sections/Scholars";
+import Tools from "../Tools/Tools";
 import Topics from "../../Sections/Topics";
 
 const Home = () => {
@@ -14,7 +15,10 @@ const Home = () => {
     <div className="">
       <Nav></Nav>
       <Banner></Banner>
-    
+      
+      <div id="tools">
+      <Tools></Tools>
+      </div>
       <div id="apps">
         <Apps></Apps>
       </div>

@@ -1,391 +1,289 @@
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import {
   FaBookOpen,
   FaMosque,
   FaArrowRight,
-  FaSun,
+  FaQuran,
 } from "react-icons/fa";
 import {
-  IoLocationOutline,
-  IoSettingsOutline,
-  IoRefreshOutline,
-  IoCloseOutline,
+  IoArrowBack,
+  IoArrowForward,
+  IoLanguageOutline,
+  IoBookOutline,
 } from "react-icons/io5";
 
-const PRAYERS = [
-  { key: "Fajr", name: "ফজর", endKey: "Sunrise" },
-  { key: "Dhuhr", name: "যোহর", endKey: "Asr" },
-  { key: "Asr", name: "আসর", endKey: "Maghrib" },
-  { key: "Maghrib", name: "মাগরিব", endKey: "Isha" },
-  { key: "Isha", name: "ইশা", endKey: "Fajr" },
+const SLIDES = [
+  {
+    title: "কুরআন তিলাওয়াত",
+    desc: "আরবি আয়াতের সাথে সহজ বাংলা অনুবাদ",
+    infoA: { label: "ভাষা", value: "আরবি ও বাংলা" },
+    infoB: { label: "ধরন", value: "তিলাওয়াত" },
+    primary: {
+      text: "কুরআন পড়ুন",
+      to: "https://quran.com/bn/al-fatihah",
+    },
+    secondary: {
+      text: "বিস্তারিত দেখুন",
+      to: "https://quran.com/bn/al-fatihah",
+    },
+  },
+  {
+    title: "তাফসির ও ব্যাখ্যা",
+    desc: "আয়াতের প্রেক্ষাপট ও অর্থ গভীরভাবে বুঝুন",
+    infoA: { label: "ভাষা", value: "বাংলা" },
+    infoB: { label: "ধরন", value: "তাফসির" },
+    primary: {
+      text: "তাফসির পড়ুন",
+      to: "https://quran.com/bn/tafsirs",
+    },
+    secondary: {
+      text: "বিস্তারিত দেখুন",
+      to: "https://quran.com/bn/tafsirs",
+    },
+  },
+  {
+    title: "অডিও তিলাওয়াত",
+    desc: "প্রিয় ক্বারীদের সুমধুর তিলাওয়াত শুনুন",
+    infoA: { label: "ভাষা", value: "আরবি" },
+    infoB: { label: "ধরন", value: "অডিও" },
+    primary: {
+      text: "শুনুন",
+      to: "https://quranicaudio.com/",
+    },
+    secondary: {
+      text: "বিস্তারিত দেখুন",
+      to: "https://quranicaudio.com/",
+    },
+  },
 ];
 
-const getSavedSchool = () => {
-  try {
-    return localStorage.getItem("madhhab") === "0" ? 0 : 1;
-  } catch {
-    return 1;
-  }
-};
+const Sparkle = ({
+  className,
+  delay = "0s",
+  color = "#e0b875",
+}) => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    className={`q-twinkle pointer-events-none absolute ${className}`}
+    style={{ animationDelay: delay }}
+    fill={color}
+  >
+    <path d="M12 0 L14.5 9.5 L24 12 L14.5 14.5 L12 24 L9.5 14.5 L0 12 L9.5 9.5Z" />
+  </svg>
+);
 
-const parseTime = (time) => {
-  if (!time) return null;
+const QuranArt = () => (
+  <div className="relative mx-auto flex h-44 w-full max-w-xs items-center justify-center sm:h-52">
+    <div className="q-glow absolute h-40 w-40 rounded-full bg-emerald-400/25 blur-3xl" />
 
-  const match = String(time).match(/^(\d{1,2}):(\d{2})/);
-  if (!match) return null;
+    <Sparkle className="left-4 top-3 h-4 w-4" />
+    <Sparkle
+      className="right-6 top-8 h-3 w-3"
+      delay="0.8s"
+      color="#6ee7b7"
+    />
+    <Sparkle
+      className="bottom-4 left-10 h-3 w-3"
+      delay="1.5s"
+      color="#6ee7b7"
+    />
+    <Sparkle
+      className="bottom-6 right-8 h-4 w-4"
+      delay="2.1s"
+    />
 
-  const hours = Number(match[1]);
-  const minutes = Number(match[2]);
+    <svg
+      viewBox="0 0 320 200"
+      className="q-float relative h-full w-full"
+      role="img"
+      aria-label="খোলা কুরআন"
+    >
+      <defs>
+        <linearGradient id="qPage" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#fffaf0" />
+          <stop offset="1" stopColor="#ecdcb8" />
+        </linearGradient>
 
-  if (hours > 23 || minutes > 59) return null;
+        <linearGradient id="qCover" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#0f5b46" />
+          <stop offset="1" stopColor="#073528" />
+        </linearGradient>
 
-  return hours * 60 + minutes;
-};
+        <linearGradient id="qStand" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#7a3b2e" />
+          <stop offset="1" stopColor="#4a1f19" />
+        </linearGradient>
+      </defs>
 
-const formatMinutes = (totalMinutes) => {
-  const normalized = ((totalMinutes % 1440) + 1440) % 1440;
-  const hours = Math.floor(normalized / 60);
-  const minutes = normalized % 60;
+      {/* Stand */}
+      <path
+        d="M112 150 L160 188 L208 150 L198 146 L160 174 L122 146 Z"
+        fill="url(#qStand)"
+      />
+      <path
+        d="M96 152 L160 196 L224 152 L218 148 L160 186 L102 148 Z"
+        fill="#4a1f19"
+        opacity="0.7"
+      />
 
-  const date = new Date();
-  date.setHours(hours, minutes, 0, 0);
+      {/* Cover */}
+      <polygon
+        points="22,90 160,148 298,90 298,102 160,162 22,102"
+        fill="url(#qCover)"
+      />
 
-  return date.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
-};
+      {/* Left page */}
+      <polygon
+        points="30,60 160,112 160,148 30,92"
+        fill="url(#qPage)"
+      />
 
-const formatTime = (time) => {
-  const minutes = parseTime(time);
-  return minutes === null ? "--:--" : formatMinutes(minutes);
-};
+      {/* Right page */}
+      <g
+        className="q-page"
+        style={{
+          transformOrigin: "160px 112px",
+          transformBox: "view-box",
+        }}
+      >
+        <polygon
+          points="290,60 160,112 160,148 290,92"
+          fill="url(#qPage)"
+        />
+        <polygon
+          points="290,60 160,112 160,148 290,92"
+          fill="#000"
+          opacity="0.04"
+        />
+      </g>
 
-const previousMinute = (time) => {
-  const minutes = parseTime(time);
-  return minutes === null ? "--:--" : formatMinutes(minutes - 1);
-};
+      {/* Text lines */}
+      <g
+        stroke="#6b5a3a"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        opacity="0.55"
+      >
+        {[8, 14, 20, 26].map((off, i) => (
+          <g key={off}>
+            <line
+              className="q-line"
+              style={{ animationDelay: `${i * 0.3}s` }}
+              x1="44"
+              y1={65 + off}
+              x2="148"
+              y2={107 + off}
+            />
+            <line
+              className="q-line"
+              style={{ animationDelay: `${i * 0.3 + 0.15}s` }}
+              x1="276"
+              y1={65 + off}
+              x2="172"
+              y2={107 + off}
+            />
+          </g>
+        ))}
+      </g>
 
-const getPlaceName = (address = {}) => {
-  const city =
-    address.city ||
-    address.town ||
-    address.village ||
-    address.municipality ||
-    address.county ||
-    address.state ||
-    "";
+      {/* Spine */}
+      <path
+        d="M160 112 L160 148"
+        stroke="#b9a273"
+        strokeWidth="2"
+      />
 
-  return [city, address.country].filter(Boolean).join(", ");
-};
-
-const getNextDayFajr = async (latitude, longitude, school, signal) => {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  const dateString = [
-    String(tomorrow.getDate()).padStart(2, "0"),
-    String(tomorrow.getMonth() + 1).padStart(2, "0"),
-    tomorrow.getFullYear(),
-  ].join("-");
-
-  const params = new URLSearchParams({
-    latitude: String(latitude),
-    longitude: String(longitude),
-    method: "1",
-    school: String(school),
-  });
-
-  const response = await fetch(
-    `https://api.aladhan.com/v1/timings/${dateString}?${params}`,
-    { signal }
-  );
-
-  if (!response.ok) {
-    throw new Error("পরের দিনের ফজরের সময় পাওয়া যায়নি।");
-  }
-
-  const result = await response.json();
-  const fajr = result?.data?.timings?.Fajr;
-
-  if (result.code !== 200 || parseTime(fajr) === null) {
-    throw new Error("পরের দিনের ফজরের সময় পাওয়া যায়নি।");
-  }
-
-  return fajr;
-};
+      {/* Ribbon */}
+      <path
+        d="M160 128 L152 176 L160 170 L168 176 L164 128 Z"
+        fill="#e0b875"
+      />
+    </svg>
+  </div>
+);
 
 const Banner = () => {
-  const [prayerTimes, setPrayerTimes] = useState(null);
-  const [locationName, setLocationName] = useState("");
-  const [loadingLocation, setLoadingLocation] = useState(true);
-  const [error, setError] = useState("");
-  const [showSettings, setShowSettings] = useState(false);
-  const [school, setSchool] = useState(getSavedSchool);
+  const [index, setIndex] = useState(0);
+  const slide = SLIDES[index];
 
-  const controllerRef = useRef(null);
-  const requestIdRef = useRef(0);
+  const goPrev = () => {
+    setIndex((i) => (i - 1 + SLIDES.length) % SLIDES.length);
+  };
 
-  const fetchPrayerData = useCallback(
-    async (latitude, longitude, signal) => {
-      const params = new URLSearchParams({
-        latitude: String(latitude),
-        longitude: String(longitude),
-        method: "1",
-        school: String(school),
-      });
-
-      const response = await fetch(
-        `https://api.aladhan.com/v1/timings?${params}`,
-        { signal }
-      );
-
-      if (!response.ok) {
-        throw new Error("নামাজের সময় আনা যায়নি।");
-      }
-
-      const result = await response.json();
-      const timings = result?.data?.timings;
-
-      const requiredTimes = [
-        "Fajr",
-        "Sunrise",
-        "Dhuhr",
-        "Asr",
-        "Maghrib",
-        "Isha",
-      ];
-
-      if (
-        result.code !== 200 ||
-        !timings ||
-        !requiredTimes.every(
-          (key) => parseTime(timings[key]) !== null
-        )
-      ) {
-        throw new Error("নামাজের সময় পাওয়া যায়নি।");
-      }
-
-      const nextFajr = await getNextDayFajr(
-        latitude,
-        longitude,
-        school,
-        signal
-      );
-
-      if (signal.aborted) return;
-
-      setPrayerTimes({
-        ...timings,
-        NextFajr: nextFajr,
-      });
-
-      try {
-        const locationResponse = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`,
-          { signal }
-        );
-
-        if (locationResponse.ok) {
-          const locationData = await locationResponse.json();
-
-          if (!signal.aborted) {
-            setLocationName(
-              getPlaceName(locationData.address) ||
-                "আপনার বর্তমান অবস্থান"
-            );
-          }
-        } else if (!signal.aborted) {
-          setLocationName("আপনার বর্তমান অবস্থান");
-        }
-      } catch (locationError) {
-        if (locationError.name === "AbortError") {
-          throw locationError;
-        }
-
-        if (!signal.aborted) {
-          setLocationName("আপনার বর্তমান অবস্থান");
-        }
-      }
-    },
-    [school]
-  );
-
-  const getLocation = useCallback(() => {
-    if (!navigator.geolocation) {
-      setLoadingLocation(false);
-      setError("আপনার ব্রাউজারে লোকেশন সুবিধা নেই।");
-      return;
-    }
-
-    controllerRef.current?.abort();
-
-    const controller = new AbortController();
-    controllerRef.current = controller;
-
-    const requestId = ++requestIdRef.current;
-
-    setLoadingLocation(true);
-    setError("");
-
-    navigator.geolocation.getCurrentPosition(
-      async ({ coords }) => {
-        try {
-          await fetchPrayerData(
-            coords.latitude,
-            coords.longitude,
-            controller.signal
-          );
-
-          if (
-            !controller.signal.aborted &&
-            requestId === requestIdRef.current
-          ) {
-            setError("");
-          }
-        } catch (fetchError) {
-          if (
-            fetchError.name !== "AbortError" &&
-            requestId === requestIdRef.current
-          ) {
-            setError(
-              "নামাজের সময় আনা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।"
-            );
-          }
-        } finally {
-          if (requestId === requestIdRef.current) {
-            setLoadingLocation(false);
-          }
-        }
-      },
-      (locationError) => {
-        if (requestId !== requestIdRef.current) return;
-
-        setLoadingLocation(false);
-
-        if (locationError.code === 1) {
-          setError("নামাজের সময় জানতে ব্রাউজারের লোকেশন অনুমতি দিন।");
-        } else if (locationError.code === 3) {
-          setError("লোকেশন পেতে দেরি হচ্ছে। আবার চেষ্টা করুন।");
-        } else {
-          setError("আপনার অবস্থান শনাক্ত করা যায়নি। আবার চেষ্টা করুন।");
-        }
-      },
-      {
-        enableHighAccuracy: false,
-        timeout: 15000,
-        maximumAge: 300000,
-      }
-    );
-  }, [fetchPrayerData]);
+  const goNext = () => {
+    setIndex((i) => (i + 1) % SLIDES.length);
+  };
 
   useEffect(() => {
-  try {
-    localStorage.setItem("madhhab", String(school));
-  } catch {
-    // Local storage unavailable.
-  }
+    const timer = setInterval(() => {
+      setIndex((i) => (i + 1) % SLIDES.length);
+    }, 6000);
 
-  let cancelled = false;
-  const controller = new AbortController();
-  controllerRef.current = controller;
-
-  if (!navigator.geolocation) {
-  Promise.resolve().then(() => {
-    setLoadingLocation(false);
-    setError("আপনার ব্রাউজারে লোকেশন সুবিধা নেই।");
-  });
-
-  return () => {
-    cancelled = true;
-    controller.abort();
-  };
-}
-
-  navigator.geolocation.getCurrentPosition(
-    async ({ coords }) => {
-      try {
-        await fetchPrayerData(
-          coords.latitude,
-          coords.longitude,
-          controller.signal
-        );
-
-        if (!cancelled) {
-          setError("");
-        }
-      } catch (fetchError) {
-        if (!cancelled && fetchError.name !== "AbortError") {
-          setError(
-            "নামাজের সময় আনা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।"
-          );
-        }
-      } finally {
-        if (!cancelled) {
-          setLoadingLocation(false);
-        }
-      }
-    },
-    (locationError) => {
-      if (cancelled) return;
-
-      setLoadingLocation(false);
-
-      if (locationError.code === 1) {
-        setError("নামাজের সময় জানতে ব্রাউজারের লোকেশন অনুমতি দিন।");
-      } else if (locationError.code === 3) {
-        setError("লোকেশন পেতে দেরি হচ্ছে। আবার চেষ্টা করুন।");
-      } else {
-        setError("আপনার অবস্থান শনাক্ত করা যায়নি। আবার চেষ্টা করুন।");
-      }
-    },
-    {
-      enableHighAccuracy: false,
-      timeout: 15000,
-      maximumAge: 300000,
-    }
-  );
-
-  return () => {
-    cancelled = true;
-    controller.abort();
-  };
-}, [school, fetchPrayerData]);
-
-  const changeSchool = (value) => {
-    if (value === school) {
-      setShowSettings(false);
-      return;
-    }
-
-    setSchool(value);
-    setPrayerTimes(null);
-    setLoadingLocation(true);
-    setError("");
-    setShowSettings(false);
-  };
-
-  const getPrayerEndTime = (prayer) => {
-    if (!prayerTimes) return "--:--";
-
-    if (prayer.key === "Fajr") {
-      return formatTime(prayerTimes.Sunrise);
-    }
-
-    if (prayer.key === "Isha") {
-      return previousMinute(prayerTimes.NextFajr);
-    }
-
-    return previousMinute(prayerTimes[prayer.endKey]);
-  };
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <section className="relative isolate overflow-hidden bg-[#081b22] px-3 py-7 text-slate-100 sm:px-6 sm:py-12 lg:py-16">
-      <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-24 -z-10 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl" />
-      <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 -left-20 -z-10 h-64 w-64 rounded-full bg-amber-400/10 blur-3xl" />
+      <style>{`
+        @keyframes qFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+
+        @keyframes qGlow {
+          0%, 100% { opacity: .5; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes qTwinkle {
+          0%, 100% { opacity: .2; transform: scale(.6) rotate(0); }
+          50% { opacity: 1; transform: scale(1.15) rotate(45deg); }
+        }
+
+        @keyframes qPage {
+          0%, 100% { transform: scaleX(1) skewY(0); }
+          50% { transform: scaleX(.95) skewY(-1.5deg); }
+        }
+
+        @keyframes qLine {
+          0%, 100% { opacity: .35; }
+          50% { opacity: 1; }
+        }
+
+        @keyframes qFade {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .q-float { animation: qFloat 4s ease-in-out infinite; }
+        .q-glow { animation: qGlow 4s ease-in-out infinite; }
+        .q-twinkle { animation: qTwinkle 3s ease-in-out infinite; }
+        .q-page { animation: qPage 5s ease-in-out infinite; }
+        .q-line { animation: qLine 3s ease-in-out infinite; }
+        .q-fade { animation: qFade .45s ease both; }
+
+        @media (prefers-reduced-motion: reduce) {
+          .q-float,
+          .q-glow,
+          .q-twinkle,
+          .q-page,
+          .q-line,
+          .q-fade {
+            animation: none;
+          }
+        }
+      `}</style>
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-24 -top-24 -z-10 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-24 -left-20 -z-10 h-64 w-64 rounded-full bg-amber-400/10 blur-3xl"
+      />
 
       <div className="mx-auto max-w-6xl">
         <div className="grid items-start gap-7 lg:grid-cols-2 lg:items-center lg:gap-12">
@@ -398,22 +296,26 @@ const Banner = () => {
 
             <h1 className="mx-auto max-w-xl text-3xl font-bold leading-[1.35] tracking-tight text-white sm:text-4xl lg:mx-0 lg:text-5xl">
               জ্ঞান অর্জন করুন,
-              <span className="mt-1 block text-[#d6aa62]">সুন্নাহর পথে চলুন</span>
+              <span className="mt-1 block text-[#d6aa62]">
+                সুন্নাহর পথে চলুন
+              </span>
             </h1>
 
             <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-slate-300 sm:mt-5 sm:text-base sm:leading-8 lg:mx-0">
-              কুরআন, হাদিস, আলেমদের আলোচনা, ইসলামি অ্যাপ, বই ও প্রয়োজনীয় ওয়েবসাইট—সবকিছু খুঁজে নিন এক জায়গায়, সহজেই।
+              কুরআন, হাদিস, আলেমদের আলোচনা, ইসলামি অ্যাপ, বই ও
+              প্রয়োজনীয় ওয়েবসাইট—সবকিছু খুঁজে নিন এক জায়গায়,
+              সহজেই।
             </p>
 
             <div className="mt-6 flex flex-col justify-center gap-3 min-[380px]:flex-row lg:mt-7 lg:justify-start">
-              <Link
-                to="/ExploreLibrary"
+              <a
+                href="/ExploreLibrary"
                 className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-xl bg-[#c99a54] px-5 py-3 text-sm font-semibold text-[#102127] shadow-sm transition-colors hover:bg-[#ddb36f] focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-[#081b22] sm:px-6"
               >
                 <FaBookOpen className="text-base" />
                 ডিজিটাল লাইব্রেরি
                 <FaArrowRight className="transition-transform group-hover:translate-x-1" />
-              </Link>
+              </a>
             </div>
 
             <p className="mt-4 text-xs leading-6 text-slate-400 sm:text-sm">
@@ -421,161 +323,102 @@ const Banner = () => {
             </p>
           </div>
 
-          {/* Prayer Times */}
-          <div id="prayer-times" className="min-w-0 scroll-mt-5 overflow-hidden rounded-2xl border border-white/10 bg-[#10252d] shadow-xl shadow-black/20 sm:rounded-3xl">
-            <div className="p-4 sm:p-6">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 items-start gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-300/15 bg-emerald-400/10 text-emerald-300 sm:h-12 sm:w-12">
-                    <FaMosque className="text-xl" />
+          {/* Quran Card */}
+          <div id="quran" className="relative min-w-0 scroll-mt-5">
+            <button
+              type="button"
+              onClick={goPrev}
+              aria-label="আগের স্লাইড"
+              className="absolute left-2 top-24 z-10 flex h-9 w-10 items-center justify-center rounded-md bg-white text-[#102127] shadow-lg transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-300 sm:-left-5 sm:top-28 sm:w-12"
+            >
+              <IoArrowBack className="text-lg" />
+            </button>
+
+            <button
+              type="button"
+              onClick={goNext}
+              aria-label="পরের স্লাইড"
+              className="absolute right-2 top-24 z-10 flex h-9 w-10 items-center justify-center rounded-md bg-[#e0b875] text-[#102127] shadow-lg transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-300 sm:-right-5 sm:top-28 sm:w-12"
+            >
+              <IoArrowForward className="text-lg" />
+            </button>
+
+            <div className="overflow-hidden rounded-3xl border border-white/15 bg-[#10252d] p-5 shadow-xl shadow-black/20 sm:p-7">
+              <QuranArt />
+
+              <div key={index} className="q-fade mt-4">
+                <h2 className="text-2xl font-bold text-white sm:text-3xl">
+                  {slide.title}
+                </h2>
+
+                <p className="mt-2 text-sm leading-7 text-slate-300 sm:text-base">
+                  {slide.desc}
+                </p>
+
+                <div className="mt-5 grid grid-cols-2 divide-x divide-white/10 rounded-xl border border-white/15 bg-white/[0.03]">
+                  <div className="flex items-center gap-3 p-3">
+                    <IoLanguageOutline className="shrink-0 text-xl text-slate-400" />
+                    <div className="min-w-0">
+                      <p className="text-xs text-slate-400">
+                        {slide.infoA.label}
+                      </p>
+                      <p className="truncate text-sm font-semibold text-[#e0b875]">
+                        {slide.infoA.value}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="min-w-0">
-                    <h2 className="text-base font-bold text-white sm:text-lg">নামাজের সময়সূচি</h2>
-                    <p className="mt-1 flex items-start gap-1.5 break-words text-xs leading-5 text-slate-400 sm:text-sm">
-                      <IoLocationOutline className="mt-0.5 shrink-0 text-base text-emerald-300" />
-                      <span>
-                        {loadingLocation
-                          ? "আপনার অবস্থান খোঁজা হচ্ছে..."
-                          : locationName || "অবস্থান পাওয়া যায়নি"}
-                      </span>
-                    </p>
+                  <div className="flex items-center gap-3 p-3">
+                    <IoBookOutline className="shrink-0 text-xl text-slate-400" />
+                    <div className="min-w-0">
+                      <p className="text-xs text-slate-400">
+                        {slide.infoB.label}
+                      </p>
+                      <p className="truncate text-sm font-semibold text-[#e0b875]">
+                        {slide.infoB.value}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setShowSettings((previous) => !previous)}
-                  aria-label="নামাজের সময়ের সেটিংস"
-                  aria-expanded={showSettings}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-slate-300 transition hover:border-emerald-300/30 hover:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                >
-                  {showSettings ? <IoCloseOutline className="text-xl" /> : <IoSettingsOutline className="text-xl" />}
-                </button>
+                <div className="mt-5 flex flex-col gap-3 min-[380px]:flex-row">
+                  <a
+                    href={slide.primary.to}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-[#071b20] transition hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+                  >
+                    <FaQuran />
+                    {slide.primary.text}
+                  </a>
+
+                  <a
+                    href={slide.secondary.to}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-white/25 px-5 py-2.5 text-sm font-semibold text-white transition hover:border-emerald-300/60 hover:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+                  >
+                    {slide.secondary.text}
+                  </a>
+                </div>
               </div>
 
-              {showSettings && (
-                <div className="mt-4 rounded-xl border border-emerald-300/15 bg-[#0b2027] p-3 sm:p-4">
-                  <p className="mb-3 text-sm font-semibold text-slate-200">আসরের সময় গণনার পদ্ধতি</p>
-                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    <button
-                      type="button"
-                      onClick={() => changeSchool(1)}
-                      aria-pressed={school === 1}
-                      className={`min-h-10 rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
-                        school === 1
-                          ? "border-[#c99a54] bg-[#c99a54] text-[#102127]"
-                          : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-emerald-300/40"
-                      }`}
-                    >
-                      হানাফি
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => changeSchool(0)}
-                      aria-pressed={school === 0}
-                      className={`min-h-10 rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
-                        school === 0
-                          ? "border-[#c99a54] bg-[#c99a54] text-[#102127]"
-                          : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-emerald-300/40"
-                      }`}
-                    >
-                      শাফেয়ি / মালিকি / হাম্বলী
-                    </button>
-                  </div>
-                  <p className="mt-3 text-xs leading-5 text-slate-400">
-                    আপনার অনুসৃত মাযহাব অনুযায়ী আসরের সময়ের হিসাব নির্বাচন করুন।
-                  </p>
-                </div>
-              )}
-
-              <div className="my-4 border-t border-white/[0.08] sm:my-5" />
-
-              {error && (
-                <div className="mb-4 rounded-xl border border-amber-300/20 bg-amber-300/[0.07] p-3 text-sm leading-6 text-amber-200">
-                  <p>{error}</p>
-                  {!loadingLocation && (
-                    <button
-                      type="button"
-                      onClick={getLocation}
-                      className="mt-2 inline-flex items-center gap-2 font-semibold text-amber-300 hover:text-amber-200"
-                    >
-                      <IoRefreshOutline className="text-base" />
-                      আবার চেষ্টা করুন
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {loadingLocation && !prayerTimes && (
-                <div className="flex flex-col items-center justify-center py-10 text-center">
-                  <span className="loading loading-spinner loading-md text-emerald-300" role="status" aria-label="লোড হচ্ছে" />
-                  <p className="mt-3 text-sm text-slate-400">নামাজের সময় সংগ্রহ করা হচ্ছে...</p>
-                </div>
-              )}
-
-              {!loadingLocation && !prayerTimes && !error && (
-                <div className="py-8 text-center">
-                  <FaSun className="mx-auto text-3xl text-[#d6aa62]" />
-                  <p className="mt-3 text-sm leading-6 text-slate-300">নামাজের সময় দেখতে আপনার অবস্থান চালু করুন।</p>
+              <div className="mt-5 flex items-center justify-center gap-1.5">
+                {SLIDES.map((_, i) => (
                   <button
+                    key={i}
                     type="button"
-                    onClick={getLocation}
-                    className="mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-[#071b20] transition hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300"
-                  >
-                    <IoLocationOutline className="text-lg" />
-                    অবস্থান শনাক্ত করুন
-                  </button>
-                </div>
-              )}
-
-              {prayerTimes && (
-                <>
-                  <div className="mb-3 flex items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-slate-200">আজকের পাঁচ ওয়াক্ত নামাজ</p>
-                    <button
-                      type="button"
-                      onClick={getLocation}
-                      disabled={loadingLocation}
-                      title="সময় আপডেট করুন"
-                      aria-label="নামাজের সময় আপডেট করুন"
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 text-slate-400 transition hover:border-emerald-300/30 hover:text-emerald-300 disabled:opacity-50"
-                    >
-                      <IoRefreshOutline className={`text-xl ${loadingLocation ? "animate-spin" : ""}`} />
-                    </button>
-                  </div>
-
-                  <div className="space-y-2">
-                    {PRAYERS.map((prayer, index) => (
-                      <div
-                        key={prayer.key}
-                        className={`rounded-xl border p-3 sm:p-3.5 ${
-                          index === 0
-                            ? "border-emerald-300/25 bg-emerald-400/[0.08]"
-                            : "border-white/[0.07] bg-[#142b34] hover:border-white/15"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between gap-3">
-                          <div className="flex min-w-0 items-center gap-3">
-                            <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${index === 0 ? "bg-emerald-300/10 text-emerald-300" : "bg-white/[0.04] text-slate-300"}`}>
-                              {index + 1}
-                            </span>
-                            <span className="font-semibold text-slate-100">{prayer.name}</span>
-                          </div>
-                          <span className={`shrink-0 text-sm font-bold tabular-nums sm:text-base ${index === 0 ? "text-emerald-300" : "text-[#e0b875]"}`}>
-                            {formatTime(prayerTimes[prayer.key])}
-                          </span>
-                        </div>
-
-                        <div className="mt-3 flex items-center justify-between gap-2 border-t border-white/[0.07] pt-3 text-xs sm:text-sm">
-                          <span className="text-slate-400">শেষ সময়</span>
-                          <span className="font-semibold tabular-nums text-slate-300">{getPrayerEndTime(prayer)}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
+                    onClick={() => setIndex(i)}
+                    aria-label={`স্লাইড ${i + 1}`}
+                    aria-current={i === index ? "true" : undefined}
+                    className={`h-1.5 rounded-full transition-all ${
+                      i === index
+                        ? "w-6 bg-[#c99a54]"
+                        : "w-1.5 bg-white/20 hover:bg-white/40"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>

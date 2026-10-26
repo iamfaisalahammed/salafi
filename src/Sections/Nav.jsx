@@ -8,6 +8,7 @@ const Nav = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navItems = [
+     { name: "Tools", to: "tools" },
     { name: "Apps", to: "apps" },
     { name: "Resources", to: "resources" },
     { name: "Topics", to: "topics" },

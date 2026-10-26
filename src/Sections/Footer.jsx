@@ -131,8 +131,7 @@ export default function Footer() {
 
             <div className="mt-5 rounded-r-xl border-l-4 border-[#d6aa62] bg-[#081b22] px-4 py-4 sm:px-5">
               <p className="text-sm leading-7 text-slate-300">
-                “যে ব্যক্তি কোনো ভালো কাজের পথ দেখায়,
-                সে ওই কাজ সম্পাদনকারীর সমপরিমাণ সওয়াব পায়।”
+                “যে ব্যক্তি কোন ভাল আমলের পথ প্রদর্শন করে, তার জন্যে ’আমলকারীর সমান সাওয়াব রয়েছে।”
               </p>
 
               <p className="mt-3 text-xs font-semibold text-[#d6aa62]">

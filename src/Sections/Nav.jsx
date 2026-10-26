@@ -77,7 +77,7 @@ const Nav = () => {
             className="flex min-w-0 items-center gap-2.5"
             aria-label="Hikmah home"
           >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-300/20 bg-emerald-400/10 text-lg text-emerald-300 sm:h-10 sm:w-10">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl  text-lg text-white sm:h-10 sm:w-10">
               <FaMoon />
             </span>
 

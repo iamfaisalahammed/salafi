@@ -1,12 +1,6 @@
+import { FaMoon, FaStarAndCrescent, FaHand } from "react-icons/fa6";
 
-import {
-  FaMoon,
-  FaStarAndCrescent,
-  FaHand,
-} from "react-icons/fa6";
-
-const toBn = (n) =>
-  String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[d]);
+const toBn = (n) => String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[d]);
 
 // [number, x, y] — viewBox 490 x 640
 const counts = [
@@ -84,7 +78,9 @@ const Tasbih = () => {
       }}
     >
       <style>
-        {"@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap');"}
+        {
+          "@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap');"
+        }
       </style>
 
       {/* Background Decoration */}
@@ -101,17 +97,15 @@ const Tasbih = () => {
       <div className="relative mx-auto max-w-3xl">
         {/* Heading */}
         <header className="mb-8 text-center sm:mb-10">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.08] text-emerald-300 shadow-lg shadow-emerald-500/10">
-            <FaMoon className="text-2xl" />
-          </div>
+         
 
           <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
             আঙুলে তাসবীহ গণনা
           </h1>
 
           <p className="mx-auto mt-3 max-w-lg text-sm leading-7 text-slate-400 sm:text-base">
-            সহজভাবে আঙুলে তাসবীহ গণনা করার পদ্ধতি ও
-            গুরুত্বপূর্ণ নির্দেশনা জেনে নিন।
+            সহজভাবে আঙুলে তাসবীহ গণনা করার পদ্ধতি ও গুরুত্বপূর্ণ নির্দেশনা জেনে
+            নিন।
           </p>
         </header>
 
@@ -162,24 +156,12 @@ const Tasbih = () => {
                 aria-label="আঙুলে ১ থেকে ৩৩ পর্যন্ত তাসবীহ গণনার চিত্র"
               >
                 <defs>
-                  <linearGradient
-                    id="tasbih-skin"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
+                  <linearGradient id="tasbih-skin" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#f8dfc9" />
                     <stop offset="100%" stopColor="#eab99a" />
                   </linearGradient>
 
-                  <linearGradient
-                    id="tasbih-palm"
-                    x1="0"
-                    y1="0"
-                    x2="1"
-                    y2="1"
-                  >
+                  <linearGradient id="tasbih-palm" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="#fbe6d5" />
                     <stop offset="100%" stopColor="#e9b696" />
                   </linearGradient>
@@ -255,11 +237,7 @@ const Tasbih = () => {
                     y={y}
                     fontSize="15"
                     fontWeight="700"
-                    fill={
-                      n === 33 || n === 29 || n === 30
-                        ? "#b83232"
-                        : "#25343a"
-                    }
+                    fill="#ff0000"
                     textAnchor="middle"
                   >
                     {toBn(n)}
@@ -319,29 +297,16 @@ const Tasbih = () => {
               </div>
 
               <p className="text-sm leading-7 text-slate-300 sm:text-base sm:leading-8">
-                রাসূলুল্লাহ ﷺ আঙুলে তাসবীহ গণনা করার নির্দেশ
-                দিয়েছেন। কারণ আঙুলগুলো কিয়ামতের দিন
-                জিজ্ঞাসিত হবে এবং কথা বলবে।
+                রাসূলুল্লাহ ﷺ আঙুলে তাসবীহ গণনা করার নির্দেশ দিয়েছেন। কারণ
+                আঙুলগুলো কিয়ামতের দিন জিজ্ঞাসিত হবে এবং কথা বলবে।
               </p>
 
               <div className="mt-4 border-t border-white/10 pt-4">
                 <p className="text-xs leading-6 text-slate-400 sm:text-sm">
-                  সূত্র: সুনান আবু দাউদ, হাদিস ১৫০১;
-                  জামে আত-তিরমিযী, হাদিস ৩৪৮৬।
-                  হাদিস নম্বর সংস্করণভেদে ভিন্ন হতে পারে।
+                  সুনান আবু দাউদ, হাদিস ১৫০১;
+                  <p> হাদিসের মানঃ হাসান</p>
                 </p>
               </div>
-            </div>
-
-            {/* Footer Note */}
-            <div className="mt-5 flex items-start gap-3 rounded-xl border border-[#c99a54]/15 bg-[#c99a54]/[0.05] p-4">
-              <FaStarAndCrescent className="mt-1 shrink-0 text-[#d6aa62]" />
-
-              <p className="text-xs leading-6 text-slate-400 sm:text-sm">
-                তাসবীহ গণনার সময় মনোযোগ ও আন্তরিকতার সঙ্গে
-                আল্লাহর জিকির করুন। এই চিত্রটি গণনা বুঝতে
-                সহায়ক একটি নির্দেশিকা।
-              </p>
             </div>
           </div>
         </section>

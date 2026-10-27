@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
+
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   FaHeartBroken, FaBaby, FaRoute, FaHeart, FaDoorClosed,
   FaBookOpen, FaFemale, FaKaaba, FaExclamationTriangle, FaFlag, FaScroll,
   FaHandshake, FaStar, FaMosque, FaMoon, FaHandHoldingUsd, FaSkullCrossbones,
   FaBan, FaShieldAlt, FaMapMarkedAlt, FaMountain, FaProcedures, FaShip,
+  FaHistory,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 
-// ---------- থিম (Hikmah) ----------
+// ---------- থিম (Hikmah) — অপরিবর্তিত ----------
 const THEME = {
   bg: "#0B1724",
   primary: "#34D399",
@@ -14,6 +17,17 @@ const THEME = {
   text: "#FFFFFF",
   secondary: "#94A3B8",
 };
+
+// জ্বলন্ত লাইনের রঙ = THEME.accent (#dfbd7b)
+const GOLD_RGB = "223,189,123";
+
+// ---------- আলোর আচরণ (দরকার হলে এখানে বদলান) ----------
+const FRONT = 0.72;     // স্ক্রিনের কত শতাংশ নিচে আলোর "সীমা" থাকবে (0.72 = ৭২%)
+const BF = 0.35;        // প্রতিটি সারির মোট অগ্রগতির কত অংশ বাঁকের জন্য (বাকিটা লাইনের)
+const EASE = 7;         // যত বেশি, আলো তত দ্রুত স্ক্রলের পিছু নেয়
+const MIN_SPEED = 0.9;  // আলোর সর্বনিম্ন গতি (সারি/সেকেন্ড), যাতে শেষ অংশটাও সুন্দরভাবে শেষ হয়
+const SNAP = 2.5;       // এতগুলো সারির বেশি দূরে থাকলে দূরেরগুলো সরাসরি জ্বালিয়ে/নিভিয়ে দেওয়া হয়
+const LINE_OFFSET = 20; // সারির নিচ থেকে লাইনের কেন্দ্রের দূরত্ব (px)
 
 // ---------- ডেটা ----------
 // প্রতিটি আইটেম: [বয়স, আইকন-টাইপ, বর্ণনা, হিজরি সাল (ঋণাত্মক = হিজরতের আগে), খ্রিষ্টাব্দ]
@@ -130,6 +144,37 @@ const ICONS = {
   ill: [FaProcedures, "text-slate-300 bg-slate-400/10 ring-slate-400/30"],
 };
 
+// ---------- স্ট্যাটিক CSS ----------
+// জ্বলা/নেভা, লাইনের ভরাট হওয়া ইত্যাদি সবকিছু স্ক্রল-অবস্থান থেকে JS হিসাব করে inline style-এ বসায়।
+// এখানে শুধু শুরুর (অন্ধকার) অবস্থা আর বয়ে চলা আলোর অ্যানিমেশন।
+const CSS = `
+.sl-ev{opacity:.22;transform:translateY(8px)}
+.sl-pt{opacity:.25}
+
+.sl-fill{
+  background-image:linear-gradient(90deg,rgba(${GOLD_RGB},.55) 0%,#dfbd7b 35%,#f7e6b9 50%,#dfbd7b 65%,rgba(${GOLD_RGB},.55) 100%);
+  background-size:220px 100%;background-repeat:repeat-x;
+  clip-path:inset(0 100% 0 0);
+}
+.sl-fill.sl-rtl{clip-path:inset(0 0 0 100%)}
+.sl-core{position:absolute;left:0;right:0;top:5px;height:2px;background:rgba(255,246,222,.85);box-shadow:0 0 6px rgba(${GOLD_RGB},.9)}
+.sl-live .sl-fill{animation:slFlowL 2.4s linear infinite}
+.sl-live .sl-fill.sl-rtl{animation:slFlowR 2.4s linear infinite}
+
+.sl-bend{clip-path:inset(0 0 100% 0)}
+
+.sl-spark{position:absolute;top:50%;left:0;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:9999px;opacity:0;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,247,226,.95) 0%,rgba(${GOLD_RGB},.65) 30%,rgba(${GOLD_RGB},0) 70%)}
+
+@keyframes slFlowL{from{background-position:0 0}to{background-position:220px 0}}
+@keyframes slFlowR{from{background-position:0 0}to{background-position:-220px 0}}
+
+@media (prefers-reduced-motion: reduce){
+  .sl-live .sl-fill,.sl-live .sl-fill.sl-rtl{animation:none}
+  .sl-spark{display:none}
+}
+`;
+
 // ---------- হেল্পার ----------
 const toBn = (n) => String(n).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[d]);
 
@@ -138,6 +183,8 @@ const formatDate = (h, ce) => {
   const hijri = h < 0 ? `হিজরতের ${toBn(-h)} বছর আগে` : `${toBn(h)} হিজরি`;
   return ce ? `${hijri} • ${toBn(ce)} খ্রি.` : hijri;
 };
+
+const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
 
 // কালানুক্রমে সাজানো সব ইভেন্ট (বিজোড় সারি উল্টে নিই)
 const CHRONO = ROWS.flatMap((row, i) => (i % 2 ? [...row].reverse() : row));
@@ -158,6 +205,61 @@ function useCols() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
   return cols;
+}
+
+// SSR-নিরাপদ useLayoutEffect (প্রথম পেইন্টের আগেই সঠিক অবস্থা বসাতে)
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+// একটি সারির লাইনের তথ্য: দিক, দৈর্ঘ্য (সারির প্রস্থের ভগ্নাংশ), আলো যেখান থেকে শুরু করে
+const getLineInfo = (ri, n, cols) => {
+  const isOdd = ri % 2 === 1;
+  const frac =
+    n === cols ? (ri === 0 ? (cols - 0.5) / cols : (cols - 1) / cols) : (n - 1) / cols;
+  const startX = isOdd ? 1 - 0.5 / cols : ri === 0 ? 0 : 0.5 / cols;
+  return { isOdd, frac, startX };
+};
+
+// ---------- আলো জ্বালানো/নেভানো (সরাসরি DOM style, React re-render ছাড়া) ----------
+// f = লাইন কতটা ভরাট (০..১)। ঘরের অবস্থান (at) পার হলেই ঘর জ্বলে ওঠে।
+function setLight(item, f, base, dy) {
+  const on = clamp01((f - item.at * 0.88) / 0.12);
+  if (on === item.on) return;
+  item.on = on;
+  item.el.style.opacity = String(base + (1 - base) * on);
+  if (dy) item.el.style.transform = on >= 1 ? "none" : `translateY(${(1 - on) * dy}px)`;
+  const hl = on > 0 && on < 1 ? Math.sin(Math.PI * on) : 0; // জ্বলার মুহূর্তে সোনালি ঝলক
+  item.glow.style.filter =
+    hl > 0.02
+      ? `drop-shadow(0 0 ${(12 * hl).toFixed(1)}px rgba(${GOLD_RGB},${(0.95 * hl).toFixed(2)}))`
+      : "";
+}
+
+// q = এই সারির অগ্রগতি (০..১): প্রথম BF অংশ বাঁক, বাকিটা লাইন
+function applyRow(r, q) {
+  if (r.q === q) return;
+  r.q = q;
+
+  const b = r.bend ? clamp01(q / BF) : 1;
+  const f = r.bend ? clamp01((q - BF) / (1 - BF)) : q;
+
+  if (r.bend) r.bend.style.clipPath = `inset(0 0 ${(1 - b) * 100}% 0)`;
+
+  r.fill.style.clipPath = r.odd
+    ? `inset(0 0 0 ${(1 - f) * 100}%)`
+    : `inset(0 ${(1 - f) * 100}% 0 0)`;
+
+  const live = f > 0;
+  if (live !== r.live) {
+    r.live = live;
+    r.el.classList.toggle("sl-live", live);
+  }
+
+  const edge = Math.min(f / 0.05, (1 - f) / 0.05, 1);
+  r.spark.style.opacity = f > 0 && f < 1 ? String(Math.max(0, edge)) : "0";
+  r.spark.style.left = `${(r.odd ? 1 - f : f) * 100}%`;
+
+  r.evs.forEach((e) => setLight(e, f, 0.22, 8));
+  r.pts.forEach((p) => setLight(p, f, 0.25, 0));
 }
 
 // ---------- ছোট কম্পোনেন্ট ----------
@@ -187,9 +289,9 @@ function AgeBadge({ age }) {
   );
 }
 
-// ---------- মূল পেজ ----------
-export default function SeerahTimeline() {
-  const cols = useCols();
+// ---------- টাইমলাইন (সারিগুলো) ----------
+function Timeline({ cols }) {
+  const rootRef = useRef(null);
 
   // কালানুক্রমিক তালিকাকে cols সংখ্যক করে সারিতে ভাগ করা
   const rows = [];
@@ -197,6 +299,294 @@ export default function SeerahTimeline() {
 
   const half = `calc(100% / ${cols * 2})`; // একটি কলামের অর্ধেক (বৃত্তের কেন্দ্র)
   const gridStyle = { gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` };
+  const glow = `drop-shadow(0 0 5px rgba(${GOLD_RGB},.6))`;
+
+  // স্ক্রল-চালিত আলো: স্ক্রলের অবস্থান থেকে "কতটুকু জ্বলবে" হিসাব হয়,
+  // তাই নিচে নামলে আলো সাথে যায়, উপরে উঠলে ফিরে আসে (নিভে যায়)।
+  useIsoLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root) return undefined;
+
+    const items = (el, sel) =>
+      Array.from(el.querySelectorAll(sel)).map((node) => ({
+        el: node,
+        glow: node.querySelector("[data-glow]") || node,
+        at: Number(node.dataset.at) || 0,
+        on: -1,
+      }));
+
+    const rowData = Array.from(root.querySelectorAll("[data-row]")).map((el) => ({
+      el,
+      odd: el.dataset.odd === "1",
+      bend: el.querySelector("[data-bend]"),
+      fill: el.querySelector("[data-fill]"),
+      spark: el.querySelector("[data-spark]"),
+      evs: items(el, "[data-ev]"),
+      pts: items(el, "[data-pt]"),
+      q: -1,
+      live: false,
+    }));
+    const n = rowData.length;
+    if (n === 0) return undefined;
+
+    const render = (p) => {
+      for (let i = 0; i < n; i++) applyRow(rowData[i], clamp01(p - i));
+    };
+
+    // মোশন কমানোর সেটিং থাকলে সবকিছু একবারে জ্বালিয়ে রাখি
+    const reduced =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      render(n);
+      return undefined;
+    }
+
+    let lines = []; // প্রতিটি সারির লাইনের y-অবস্থান (ডকুমেন্টে)
+    let target = 0;
+    let P = 0;
+    let raf = 0;
+    let last = 0;
+
+    const measure = () => {
+      const sy = window.scrollY;
+      lines = rowData.map(
+        (r) => r.el.getBoundingClientRect().top + sy + r.el.offsetHeight - LINE_OFFSET
+      );
+    };
+
+    // স্ক্রল অবস্থান → আলো কতটুকু এগোবে (সারির এককে)
+    const computeTarget = () => {
+      const vh = window.innerHeight;
+      const sy = window.scrollY;
+      const maxScroll = Math.max(0, document.documentElement.scrollHeight - vh);
+      // একদম নিচে পৌঁছালে সীমা পুরো স্ক্রিনের নিচে চলে যায়, যাতে শেষ সারিও জ্বলে
+      const t = clamp01(1 - (maxScroll - sy) / vh);
+      const front = sy + vh * (FRONT + (1 - FRONT) * t);
+
+      let p = 0;
+      for (let i = 0; i < n; i++) {
+        const end = lines[i];
+        if (front >= end) {
+          p = i + 1;
+          continue;
+        }
+        if (i > 0 && front > lines[i - 1]) {
+          p = i + (BF * (front - lines[i - 1])) / (end - lines[i - 1]);
+        }
+        break;
+      }
+      return p;
+    };
+
+    const tick = (now) => {
+      raf = 0;
+      const dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000));
+      last = now;
+
+      let diff = target - P;
+      if (Math.abs(diff) > SNAP) {
+        P = target - Math.sign(diff) * SNAP; // দূরের সারিগুলো সরাসরি ঠিক অবস্থায়
+        diff = target - P;
+      }
+      const eased = diff * (1 - Math.exp(-dt * EASE));
+      const minStep = MIN_SPEED * dt;
+      P +=
+        Math.abs(eased) < minStep
+          ? Math.sign(diff) * Math.min(Math.abs(diff), minStep)
+          : eased;
+
+      if (Math.abs(target - P) > 0.0005) {
+        render(P);
+        raf = requestAnimationFrame(tick);
+      } else {
+        P = target;
+        render(P);
+      }
+    };
+
+    const kick = () => {
+      if (raf) return;
+      last = performance.now();
+      raf = requestAnimationFrame(tick);
+    };
+
+    const refresh = () => {
+      measure();
+      target = computeTarget();
+      kick();
+    };
+
+    // শুরু: যেখানেই পেজ খুলুক, আগের সারিগুলো জ্বলন্ত অবস্থায় থাকবে
+    measure();
+    target = computeTarget();
+    P = Math.max(0, target - SNAP);
+    render(P);
+    kick();
+
+    const onScroll = () => {
+      target = computeTarget();
+      kick();
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", refresh);
+    let ro = null;
+    if (typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(refresh); // ফন্ট লোড হয়ে সারির উচ্চতা বদলালেও ঠিক থাকবে
+      ro.observe(root);
+    }
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", refresh);
+      if (ro) ro.disconnect();
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return (
+    <div ref={rootRef}>
+      {rows.map((chunk, ri) => {
+        const n = chunk.length;
+        const { isOdd, frac, startX } = getLineInfo(ri, n, cols);
+
+        // বিজোড় সারিতে ডান থেকে শুরু: বাম দিকে ফাঁকা ঘর + উল্টানো ইভেন্ট
+        const cells = isOdd
+          ? [...Array(cols - n).fill(null), ...[...chunk].reverse()]
+          : [...chunk, ...Array(cols - n).fill(null)];
+
+        // অসম্পূর্ণ শেষ সারির লাইন যেখানে থামবে
+        const emptyOffset = `calc(100% * ${(cols - n) / cols} + 100% / ${cols * 2})`;
+        const lineLeft = isOdd ? (n < cols ? emptyOffset : half) : ri === 0 ? 0 : half;
+        const lineRight = isOdd ? half : n < cols ? emptyOffset : half;
+
+        // লাইনের কত অংশে পৌঁছালে এই ঘর জ্বলবে (০..১)
+        const atFor = (i) =>
+          frac <= 0 ? 0 : clamp01(Math.abs((i + 0.5) / cols - startX) / frac).toFixed(4);
+
+        return (
+          <div key={ri} data-row="" data-odd={isOdd ? "1" : "0"} className="relative">
+            {/* ইভেন্টগুলো */}
+            <div className="grid" style={gridStyle}>
+              {cells.map((item, i) =>
+                item ? (
+                  <div
+                    key={i}
+                    data-ev=""
+                    data-at={atFor(i)}
+                    className="sl-ev relative z-10 flex flex-col items-center text-center px-1 pb-5 pt-2"
+                  >
+                    <div data-glow="">
+                      <EventIcon type={item[1]} />
+                    </div>
+                    <p className="mt-2 text-[12px] sm:text-[13px] leading-snug text-white">
+                      {item[2]}
+                    </p>
+                    <p
+                      className="mt-1 text-[10px] sm:text-[11px] leading-tight"
+                      style={{ color: THEME.secondary }}
+                    >
+                      {formatDate(item[3], item[4])}
+                    </p>
+                  </div>
+                ) : (
+                  <div key={i} />
+                )
+              )}
+            </div>
+
+            {/* এমারেল্ড লাইন (বেস) */}
+            <div
+              className="absolute h-3"
+              style={{
+                bottom: 14,
+                left: lineLeft,
+                right: lineRight,
+                backgroundColor: "rgba(52,211,153,0.25)",
+              }}
+            />
+
+            {/* বাঁক (বেস): গ্রিডের বাইরে দিয়ে যাবে, তাই লেখার উপর পড়বে না */}
+            {ri > 0 && (
+              <div
+                className={`absolute border-t-[12px] border-b-[12px] ${
+                  isOdd ? "border-r-[12px] rounded-r-full" : "border-l-[12px] rounded-l-full"
+                }`}
+                style={{
+                  top: -26,
+                  bottom: 14,
+                  width: `calc(${half} + 24px)`,
+                  borderColor: "rgba(52,211,153,0.25)",
+                  ...(isOdd
+                    ? { left: `calc(100% - ${half})` }
+                    : { right: `calc(100% - ${half})` }),
+                }}
+              />
+            )}
+
+            {/* ✨ সোনালি বাঁক */}
+            {ri > 0 && (
+              <div
+                className="absolute pointer-events-none"
+                style={{
+                  top: -26,
+                  bottom: 14,
+                  width: `calc(${half} + 24px)`,
+                  filter: glow,
+                  ...(isOdd
+                    ? { left: `calc(100% - ${half})` }
+                    : { right: `calc(100% - ${half})` }),
+                }}
+              >
+                <div
+                  data-bend=""
+                  className={`sl-bend h-full w-full border-t-[12px] border-b-[12px] ${
+                    isOdd ? "border-r-[12px] rounded-r-full" : "border-l-[12px] rounded-l-full"
+                  }`}
+                  style={{ borderColor: `rgba(${GOLD_RGB},.9)` }}
+                />
+              </div>
+            )}
+
+            {/* ✨ সোনালি লাইন: আলো বয়ে যায় + মাথায় স্ফুলিঙ্গ */}
+            <div
+              className="absolute pointer-events-none"
+              style={{ bottom: 14, left: lineLeft, right: lineRight, height: 12 }}
+            >
+              <div className="absolute inset-0" style={{ filter: glow }}>
+                <div
+                  data-fill=""
+                  className={`sl-fill absolute inset-0 ${isOdd ? "sl-rtl" : ""}`}
+                >
+                  <span className="sl-core" />
+                </div>
+              </div>
+              <span data-spark="" className="sl-spark" />
+            </div>
+
+            {/* বয়সের বৃত্ত */}
+            <div className="grid h-10 items-center" style={gridStyle}>
+              {cells.map((item, i) => (
+                <div key={i} className="flex justify-center">
+                  {item && (
+                    <div data-pt="" data-at={atFor(i)} className="sl-pt relative z-10">
+                      <AgeBadge age={item[0]} />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ---------- মূল পেজ ----------
+export default function SeerahTimeline() {
+  const cols = useCols();
 
   return (
     <section
@@ -207,6 +597,8 @@ export default function SeerahTimeline() {
         fontFamily: "'Hind Siliguri', sans-serif",
       }}
     >
+      <style>{CSS}</style>
+
       {/* হেডার */}
       <div
         className="text-center px-4 py-8 md:py-10 border-b"
@@ -224,91 +616,25 @@ export default function SeerahTimeline() {
       </div>
 
       <div className="max-w-7xl mx-auto py-8 px-8 sm:px-12 overflow-hidden">
-        {rows.map((chunk, ri) => {
-          const n = chunk.length;
-          const isOdd = ri % 2 === 1;
-          // বিজোড় সারিতে ডান থেকে শুরু: বাম দিকে ফাঁকা ঘর + উল্টানো ইভেন্ট
-          const cells = isOdd
-            ? [...Array(cols - n).fill(null), ...[...chunk].reverse()]
-            : [...chunk, ...Array(cols - n).fill(null)];
-
-          // অসম্পূর্ণ শেষ সারির লাইন যেখানে থামবে
-          const emptyOffset = `calc(100% * ${(cols - n) / cols} + 100% / ${cols * 2})`;
-          const lineLeft = isOdd ? (n < cols ? emptyOffset : half) : ri === 0 ? 0 : half;
-          const lineRight = isOdd ? half : n < cols ? emptyOffset : half;
-
-          return (
-            <div key={ri} className="relative">
-              {/* ইভেন্টগুলো */}
-              <div className="grid" style={gridStyle}>
-                {cells.map((item, i) =>
-                  item ? (
-                    <div
-                      key={i}
-                      className="relative z-10 flex flex-col items-center text-center px-1 pb-5 pt-2"
-                    >
-                      <EventIcon type={item[1]} />
-                      <p className="mt-2 text-[12px] sm:text-[13px] leading-snug text-white">
-                        {item[2]}
-                      </p>
-                      <p
-                        className="mt-1 text-[10px] sm:text-[11px] leading-tight"
-                        style={{ color: THEME.secondary }}
-                      >
-                        {formatDate(item[3], item[4])}
-                      </p>
-                    </div>
-                  ) : (
-                    <div key={i} />
-                  )
-                )}
-              </div>
-
-              {/* এমারেল্ড লাইন */}
-              <div
-                className="absolute h-3"
-                style={{
-                  bottom: 14,
-                  left: lineLeft,
-                  right: lineRight,
-                  backgroundColor: "rgba(52,211,153,0.25)",
-                }}
-              />
-
-              {/* বাঁক: গ্রিডের বাইরে দিয়ে যাবে, তাই লেখার উপর পড়বে না */}
-              {ri > 0 && (
-                <div
-                  className={`absolute border-t-[12px] border-b-[12px] ${
-                    isOdd ? "border-r-[12px] rounded-r-full" : "border-l-[12px] rounded-l-full"
-                  }`}
-                  style={{
-                    top: -26,
-                    bottom: 14,
-                    width: `calc(${half} + 24px)`,
-                    borderColor: "rgba(52,211,153,0.25)",
-                    ...(isOdd
-                      ? { left: `calc(100% - ${half})` }
-                      : { right: `calc(100% - ${half})` }),
-                  }}
-                />
-              )}
-
-              {/* বয়সের বৃত্ত */}
-              <div className="grid h-10 items-center" style={gridStyle}>
-                {cells.map((item, i) => (
-                  <div key={i} className="flex justify-center">
-                    {item && <AgeBadge age={item[0]} />}
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+        {/* key={cols}: স্ক্রিন সাইজের ব্রেকপয়েন্ট বদলালে টাইমলাইন নতুন করে সাজানো হয় */}
+        <Timeline key={cols} cols={cols} />
 
         {/* ব্যাখ্যা */}
         <p className="mt-10 text-xs text-center" style={{ color: THEME.secondary }}>
           বৃত্তের সংখ্যা = নবীজির বয়স • খ্রি. = খ্রিষ্টাব্দ
         </p>
+        <div className="mb-5 flex justify-center">
+          <a
+            href="https://play.google.com/store/apps/details?id=org.gtaf.seerah"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-colors hover:text-emerald-400"
+          >
+            <FaHistory className="shrink-0 text-base text-emerald-500" />
+            <span>সিরাত জানতে Seerah of Muhammad ﷺ অ্যাপ ডাউনলোড করুন</span>
+            <FaExternalLinkAlt className="shrink-0 text-[10px]" />
+          </a>
+        </div>
       </div>
     </section>
   );

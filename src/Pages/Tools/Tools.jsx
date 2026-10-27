@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import {
   FaMosque,
@@ -10,6 +9,7 @@ import {
   FaArrowUpRightFromSquare,
   FaMap,
   FaTimeline,
+  FaLandmark,
 } from "react-icons/fa6";
 
 const tools = [
@@ -20,9 +20,9 @@ const tools = [
     external: true,
   },
   {
-    title: "Qibla Finder",
+    title: "Makkah Locator",
     icon: FaCompass,
-    path: "/tools/qibla-finder",
+    path: "/tools/makkah-locator",
   },
   {
     title: "Prayer Times",
@@ -59,11 +59,11 @@ const tools = [
     icon: FaTimeline,
     path: "/tools/prophets",
   },
-];
-
-const rotatingBorderPaths = [
-  "/tools/sacred-mosques",
-  "/tools/muslim-map",
+  {
+    title: "Khilafah Atlas",
+    icon: FaLandmark,
+    path: "/tools/khilafah-atlas",
+  },
 ];
 
 export default function Tools() {
@@ -98,13 +98,7 @@ export default function Tools() {
           {tools.map(({ title, icon: Icon, path, external }) => {
             const content = (
               <>
-                <span
-                  className={`relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full border bg-[#102d35] transition-colors duration-200 sm:h-16 sm:w-16 ${
-                    rotatingBorderPaths.includes(path)
-                      ? "rotating-tool-border border-transparent"
-                      : "border-emerald-300/15 group-hover:border-emerald-300/35 group-hover:bg-[#15313a]"
-                  }`}
-                >
+                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-emerald-300/15 bg-[#102d35] transition-colors duration-200 group-hover:border-emerald-300/35 group-hover:bg-[#15313a] sm:h-16 sm:w-16">
                   <Icon
                     className="text-xl text-white sm:text-2xl"
                     aria-hidden="true"

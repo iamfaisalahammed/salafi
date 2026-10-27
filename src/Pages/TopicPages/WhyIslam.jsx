@@ -1,5 +1,4 @@
-
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   FaPlay,
   FaBookOpen,
@@ -11,12 +10,15 @@ import {
   FaQuestionCircle,
   FaCheckCircle,
   FaCompass,
+  FaTimes,
 } from "react-icons/fa";
 
 const FONT = { fontFamily: "'Hind Siliguri', sans-serif" };
+const GOLD = "#dfbd7b";
+const YOUTUBE_RED = "#FF0000";
 
 const compactButton =
-  "inline-flex min-h-9 shrink-0 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400";
+  "inline-flex min-h-9 shrink-0 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300";
 
 const categories = [
   { id: "all", label: "সব রিসোর্স", icon: FaCompass },
@@ -110,17 +112,129 @@ const categoryLabels = {
   questions: "প্রশ্ন ও উত্তর",
 };
 
+function VideoModal({ video, onClose }) {
+  useEffect(() => {
+    if (!video) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [video, onClose]);
+
+  if (!video) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-3 backdrop-blur-sm sm:p-6"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="video-modal-title"
+        className="w-full max-w-2xl overflow-hidden rounded-2xl border border-white/10 bg-[#10252d] shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3 p-4 sm:p-5">
+          <div className="min-w-0">
+            <span
+              className="mb-2 inline-flex items-center gap-2 rounded-lg border px-2.5 py-1 text-[11px] font-semibold"
+              style={{
+                borderColor: `${YOUTUBE_RED}40`,
+                backgroundColor: `${YOUTUBE_RED}18`,
+                color: YOUTUBE_RED,
+              }}
+            >
+              <FaYoutube />
+              {video.type === "playlist" ? "ভিডিও প্লেলিস্ট" : "ভিডিও"}
+            </span>
+
+            <h2
+              id="video-modal-title"
+              className="text-base font-bold leading-7 text-slate-100 sm:text-lg"
+            >
+              {video.title}
+            </h2>
+
+            {video.speaker && (
+              <p className="mt-1 text-xs text-slate-400">{video.speaker}</p>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="বন্ধ করুন"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 hover:text-white"
+          >
+            <FaTimes />
+          </button>
+        </div>
+
+        <div className="relative aspect-video bg-[#081b22]">
+          <img
+            src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
+            alt={video.title}
+            className="h-full w-full object-contain"
+          />
+
+          <a
+            href={video.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${video.title} YouTube-এ খুলুন`}
+            className="absolute inset-0 flex items-center justify-center bg-black/20 transition hover:bg-black/40"
+          >
+            <span
+              className="flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl transition hover:scale-110 sm:h-16 sm:w-16"
+              style={{ backgroundColor: YOUTUBE_RED }}
+            >
+              <FaPlay className="ml-1 text-xl" />
+            </span>
+          </a>
+        </div>
+
+        <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <p className="text-xs leading-5 text-slate-400">
+            YouTube-এ ভিডিওটি দেখতে নিচের বাটনে চাপ দিন।
+          </p>
+
+          <a
+            href={video.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${compactButton} border-transparent text-white hover:opacity-90`}
+            style={{ backgroundColor: YOUTUBE_RED }}
+          >
+            <FaYoutube />
+            YouTube-এ দেখুন
+            <FaExternalLinkAlt className="text-[10px]" />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function WhyIslam() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [search, setSearch] = useState("");
+  const [activeVideo, setActiveVideo] = useState(null);
 
   const filteredVideos = useMemo(() => {
     const query = search.trim().toLowerCase();
 
     return videos.filter((video) => {
       const matchesCategory =
-        activeCategory === "all" ||
-        video.category === activeCategory;
+        activeCategory === "all" || video.category === activeCategory;
 
       const matchesSearch =
         `${video.title} ${video.speaker || ""} ${
@@ -138,19 +252,18 @@ export default function WhyIslam() {
     setSearch("");
   };
 
+  const closeVideoModal = () => setActiveVideo(null);
+
   return (
     <section
       className="min-h-screen overflow-x-clip bg-[#081b22] px-3 py-8 text-slate-200 sm:px-6 sm:py-12 lg:px-8"
       style={FONT}
     >
       <div className="mx-auto max-w-7xl">
-        {/* Heading */}
         <header className="mb-8 text-center sm:mb-10">
           <h1 className="text-2xl font-extrabold tracking-tight text-slate-100 sm:text-3xl md:text-4xl">
-              কেন ইসলাম?
+            কেন ইসলাম?
           </h1>
-
-        
 
           <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-slate-400 sm:text-base">
             ইসলাম, কুরআনের সত্যতা ও বিভিন্ন প্রশ্নের উত্তর জানুন
@@ -158,10 +271,12 @@ export default function WhyIslam() {
           </p>
         </header>
 
-        {/* Video section heading */}
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="mb-1 text-xs font-bold tracking-wide text-emerald-400">
+            <p
+              className="mb-1 text-xs font-bold tracking-wide"
+              style={{ color: GOLD }}
+            >
               ভিডিও ও প্লেলিস্ট
             </p>
             <h2 className="text-xl font-bold text-slate-100 sm:text-2xl">
@@ -177,7 +292,6 @@ export default function WhyIslam() {
           </p>
         </div>
 
-        {/* Compact category filters */}
         <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
           {categories.map((category) => {
             const Icon = category.icon;
@@ -191,21 +305,31 @@ export default function WhyIslam() {
                 aria-pressed={isActive}
                 className={`${compactButton} ${
                   isActive
-                    ? "border-emerald-400/40 bg-emerald-400/15 text-emerald-300"
-                    : "border-emerald-400/15 bg-[#10252d] text-slate-300 hover:border-emerald-400/35 hover:text-emerald-300"
+                    ? "text-[#dfbd7b]"
+                    : "border-white/10 bg-[#10252d] text-slate-300 hover:text-[#dfbd7b]"
                 }`}
+                style={
+                  isActive
+                    ? {
+                        borderColor: `${GOLD}70`,
+                        backgroundColor: `${GOLD}18`,
+                      }
+                    : undefined
+                }
               >
                 <Icon className="text-xs" />
                 {category.label}
                 {isActive && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ backgroundColor: GOLD }}
+                  />
                 )}
               </button>
             );
           })}
         </div>
 
-        {/* Search */}
         <div className="relative mb-6 max-w-md">
           <FaSearch
             aria-hidden="true"
@@ -217,24 +341,22 @@ export default function WhyIslam() {
             onChange={(event) => setSearch(event.target.value)}
             placeholder="ভিডিও বা বিষয় খুঁজুন..."
             aria-label="ভিডিও খুঁজুন"
-            className="min-h-10 w-full rounded-xl border border-emerald-400/15 bg-[#10252d] py-2.5 pl-10 pr-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-emerald-400/50 focus:ring-2 focus:ring-emerald-400/10"
+            className="min-h-10 w-full rounded-xl border border-white/10 bg-[#10252d] py-2.5 pl-10 pr-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-[#dfbd7b]/60 focus:ring-2 focus:ring-[#dfbd7b]/10"
           />
         </div>
 
-        {/* Videos */}
         {filteredVideos.length > 0 ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {filteredVideos.map((video) => (
               <article
                 key={video.id}
-                className="group flex min-w-0 flex-col overflow-hidden rounded-xl border border-emerald-400/15 bg-[#10252d] transition-colors hover:border-emerald-400/35"
+                className="group flex min-w-0 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#10252d] transition-colors hover:border-[#dfbd7b]/40"
               >
-                <a
-                  href={video.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${video.title} YouTube-এ দেখুন`}
-                  className="relative block aspect-video overflow-hidden bg-[#0b2027]"
+                <button
+                  type="button"
+                  onClick={() => setActiveVideo(video)}
+                  aria-label={`${video.title} দেখুন`}
+                  className="relative block aspect-video w-full overflow-hidden bg-[#0b2027] text-left"
                 >
                   {video.videoId ? (
                     <img
@@ -245,12 +367,18 @@ export default function WhyIslam() {
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center">
-                      <FaYoutube className="text-5xl text-emerald-400" />
+                      <FaYoutube
+                        className="text-5xl"
+                        style={{ color: YOUTUBE_RED }}
+                      />
                     </div>
                   )}
 
                   <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition-transform group-hover:scale-110 sm:h-11 sm:w-11">
+                    <span
+                      className="flex h-10 w-10 items-center justify-center rounded-full text-white shadow-lg transition-transform group-hover:scale-110 sm:h-11 sm:w-11"
+                      style={{ backgroundColor: YOUTUBE_RED }}
+                    >
                       <FaPlay className="ml-0.5 text-sm" />
                     </span>
                   </div>
@@ -258,10 +386,17 @@ export default function WhyIslam() {
                   <span className="absolute bottom-2 left-2 rounded-md border border-white/10 bg-black/70 px-2 py-1 text-[10px] font-semibold text-white">
                     {video.type === "playlist" ? "প্লেলিস্ট" : "ভিডিও"}
                   </span>
-                </a>
+                </button>
 
                 <div className="flex flex-1 flex-col p-3.5 sm:p-4">
-                  <span className="mb-2 w-fit rounded-md border border-emerald-400/15 bg-emerald-400/10 px-2 py-1 text-[10px] font-medium text-emerald-300">
+                  <span
+                    className="mb-2 w-fit rounded-md border px-2 py-1 text-[10px] font-medium"
+                    style={{
+                      borderColor: `${GOLD}30`,
+                      backgroundColor: `${GOLD}12`,
+                      color: GOLD,
+                    }}
+                  >
                     {categoryLabels[video.category]}
                   </span>
 
@@ -275,23 +410,24 @@ export default function WhyIslam() {
                     </p>
                   )}
 
-                  <a
-                    href={video.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 inline-flex min-h-8 w-fit items-center gap-2 rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-2 text-xs font-semibold text-emerald-300 transition hover:bg-emerald-400/20"
+                  <button
+                    type="button"
+                    onClick={() => setActiveVideo(video)}
+                    className={`${compactButton} mt-4 w-fit border-transparent text-white hover:opacity-90`}
+                    style={{ backgroundColor: YOUTUBE_RED }}
                   >
+                    <FaYoutube />
                     {video.type === "playlist"
                       ? "প্লেলিস্ট দেখুন"
                       : "ভিডিও দেখুন"}
                     <FaArrowRight className="text-[10px]" />
-                  </a>
+                  </button>
                 </div>
               </article>
             ))}
           </div>
         ) : (
-          <div className="rounded-xl border border-dashed border-emerald-400/20 bg-[#10252d] px-4 py-10 text-center">
+          <div className="rounded-xl border border-dashed border-white/15 bg-[#10252d] px-4 py-10 text-center">
             <FaSearch className="mx-auto text-2xl text-slate-500" />
             <p className="mt-3 text-sm font-semibold text-slate-200">
               কোনো রিসোর্স পাওয়া যায়নি
@@ -302,22 +438,29 @@ export default function WhyIslam() {
             <button
               type="button"
               onClick={resetFilters}
-              className={`${compactButton} mt-3 border-emerald-400/20 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20`}
+              className={`${compactButton} mt-3 border-transparent text-[#081b22] hover:opacity-90`}
+              style={{ backgroundColor: GOLD }}
             >
               সব রিসোর্স দেখুন
             </button>
           </div>
         )}
 
-        {/* Books section */}
-        <section className="mt-12 border-t border-emerald-400/15 pt-8 sm:mt-16 sm:pt-10">
+        <section className="mt-12 border-t border-white/10 pt-8 sm:mt-16 sm:pt-10">
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-400/15 bg-emerald-400/10 text-lg text-emerald-300">
+            <div
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border text-lg"
+              style={{
+                borderColor: `${GOLD}30`,
+                backgroundColor: `${GOLD}12`,
+                color: GOLD,
+              }}
+            >
               <FaBookOpen />
             </div>
 
             <div>
-              <p className="text-xs font-semibold text-emerald-400">
+              <p className="text-xs font-semibold" style={{ color: GOLD }}>
                 পড়ুন ও জানুন
               </p>
               <h2 className="mt-1 text-xl font-bold text-slate-100 sm:text-2xl">
@@ -333,16 +476,23 @@ export default function WhyIslam() {
             {books.map((book, index) => (
               <article
                 key={book.id}
-                className="flex min-w-0 flex-col rounded-xl border border-emerald-400/15 bg-[#10252d] p-4 transition-colors hover:border-emerald-400/35 sm:p-5"
+                className="flex min-w-0 flex-col rounded-xl border border-white/10 bg-[#10252d] p-4 transition-colors hover:border-[#dfbd7b]/40 sm:p-5"
               >
                 <div className="mb-3 flex items-center justify-between">
-                  <FaBookOpen className="text-xl text-emerald-400" />
+                  <FaBookOpen className="text-xl" style={{ color: GOLD }} />
                   <span className="text-xs text-slate-500">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                 </div>
 
-                <span className="mb-2 w-fit rounded-md border border-emerald-400/15 bg-emerald-400/10 px-2 py-1 text-[10px] text-emerald-300">
+                <span
+                  className="mb-2 w-fit rounded-md border px-2 py-1 text-[10px]"
+                  style={{
+                    borderColor: `${GOLD}30`,
+                    backgroundColor: `${GOLD}12`,
+                    color: GOLD,
+                  }}
+                >
                   {book.category}
                 </span>
 
@@ -350,16 +500,16 @@ export default function WhyIslam() {
                   {book.title}
                 </h3>
 
-                <p className="mt-2 text-xs text-slate-400">
-                  {book.author}
-                </p>
+                <p className="mt-2 text-xs text-slate-400">{book.author}</p>
 
                 <a
                   href={book.fileId}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`${compactButton} mt-4 w-fit border-emerald-400/20 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/20`}
+                  className={`${compactButton} mt-4 w-fit border-transparent text-[#081b22] hover:opacity-90`}
+                  style={{ backgroundColor: GOLD }}
                 >
+                  <FaBookOpen />
                   বই পড়ুন
                   <FaExternalLinkAlt className="text-[10px]" />
                 </a>
@@ -368,6 +518,8 @@ export default function WhyIslam() {
           </div>
         </section>
       </div>
+
+      <VideoModal video={activeVideo} onClose={closeVideoModal} />
     </section>
   );
 }

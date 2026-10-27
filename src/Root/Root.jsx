@@ -15,14 +15,15 @@ import ExploreLibrary from "../Pages/ExploreLibrary/ExploreLibrary";
 import NotFound from "../Pages/NotFound";
 
 // Tools Pages
-import QiblaFinder from "../Pages/Tools/QiblaFinder";
+
 import PrayerTimes from "../Pages/Tools/PrayerTimes";
-import Tasbih from "../Pages/Tools/Tasbih";
 import SacredMosques from "../Pages/Tools/SacredMosques";
 import IslamicCalendar from "../Pages/Tools/IslamicCalendar";
 import MuslimMap from "../Pages/Tools/MuslimMap";
 import SeerahTimeline from "../Pages/Tools/SeerahTimeline";
 import Prophets from "../Pages/Tools/Prophets";
+import MakkahLocator from "../Pages/Tools/MakkahLocator";
+import KhilafahAtlas from "../Pages/Tools/KhilafahAtlas";
 
 export default function Root() {
   return (
@@ -73,9 +74,10 @@ export default function Root() {
       />
 
       {/* Islamic Tools */}
+      
       <Route
-        path="/tools/qibla-finder"
-        element={<QiblaFinder />}
+        path="/tools/makkah-locator"
+        element={<MakkahLocator />}
       />
 
       <Route
@@ -84,8 +86,8 @@ export default function Root() {
       />
 
       <Route
-        path="/tools/tasbih"
-        element={<Tasbih />}
+        path="/tools/khilafah-atlas"
+        element={<KhilafahAtlas />}
       />
 
       <Route

@@ -1,4 +1,4 @@
-import Apps from "../../Sections/Apps";
+
 import Banner from "../../Sections/Banner";
 import Channel from "../../Sections/Channel";
 import Footer from "../../Sections/Footer";
@@ -19,9 +19,7 @@ const Home = () => {
       <div id="tools">
       <Tools></Tools>
       </div>
-      <div id="apps">
-        <Apps></Apps>
-      </div>
+  
         <div id="resources">
         <Resources></Resources>
       </div>

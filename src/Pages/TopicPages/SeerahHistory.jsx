@@ -1,29 +1,18 @@
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { FaGraduationCap } from "react-icons/fa";
 import { FaPlay, FaBookQuran } from "react-icons/fa6";
+import { FaTimes, FaYoutube, FaExternalLinkAlt } from "react-icons/fa";
 
 const FONT = { fontFamily: "'Hind Siliguri', sans-serif" };
 
+
 const compactButton =
-  "inline-flex min-h-9 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400";
+  "inline-flex min-h-9 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b]";
 
 const categories = [
-  {
-    id: "prophets",
-    name: "২৫ নবী",
-    icon: <FaBookQuran />,
-  },
-  {
-    id: "seerah",
-    name: "নবী ﷺ-এর জীবনী",
-    icon: <FaBookQuran />,
-  },
-  {
-    id: "scholars",
-    name: "ইসলামের আলেমগণ",
-    icon: <FaGraduationCap />,
-  },
+  { id: "prophets", name: "২৫ নবী", icon: <FaBookQuran /> },
+  { id: "seerah", name: "নবী ﷺ-এর জীবনী", icon: <FaBookQuran /> },
+  { id: "scholars", name: "ইসলামের আলেমগণ", icon: <FaGraduationCap /> },
 ];
 
 const videos = [
@@ -91,8 +80,7 @@ const buildPath = (nodes, columns, width, rowHeight) => {
     const row = Math.floor(index / columns);
     const posInRow = index % columns;
     const countInRow = Math.min(columns, nodes.length - row * columns);
-    const col =
-      row % 2 === 0 ? posInRow : countInRow - 1 - posInRow;
+    const col = row % 2 === 0 ? posInRow : countInRow - 1 - posInRow;
 
     return [
       ((col + 0.5) / columns) * width,
@@ -113,9 +101,119 @@ const buildPath = (nodes, columns, width, rowHeight) => {
   return d;
 };
 
+function VideoModal({ video, onClose }) {
+  useEffect(() => {
+    if (!video) return;
+
+    const previousOverflow = document.body.style.overflow;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [video, onClose]);
+
+  if (!video) return null;
+
+  const hasValidVideoId =
+    video.videoId && !video.videoId.startsWith("example_");
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-3 backdrop-blur-sm sm:p-6"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="seerah-video-title"
+        className="w-full max-w-2xl overflow-hidden rounded-2xl border border-[#dfbd7b]/20 bg-[#10252d] shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3 p-4 sm:p-5">
+          <div className="min-w-0">
+            <span className="mb-2 inline-flex items-center gap-2 rounded-lg border border-[#dfbd7b]/20 bg-[#dfbd7b]/10 px-2.5 py-1 text-[11px] font-semibold text-[#dfbd7b]">
+              <FaYoutube />
+              ভিডিও রিসোর্স
+            </span>
+
+            <h2
+              id="seerah-video-title"
+              className="text-base font-bold leading-7 text-slate-100 sm:text-lg"
+            >
+              {video.title}
+            </h2>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="বন্ধ করুন"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:border-[#dfbd7b]/30 hover:bg-[#dfbd7b]/10 hover:text-[#dfbd7b]"
+          >
+            <FaTimes />
+          </button>
+        </div>
+
+        <div className="relative aspect-video bg-[#081b22]">
+          {hasValidVideoId ? (
+            <img
+              src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
+              alt={video.title}
+              className="h-full w-full object-contain"
+            />
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center gap-3 text-slate-400">
+              <FaBookQuran className="text-4xl text-[#dfbd7b]" />
+              <p className="text-sm">ভিডিওর প্রিভিউ উপলভ্য নয়</p>
+            </div>
+          )}
+
+          <a
+            href={video.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${video.title} YouTube-এ খুলুন`}
+            className="absolute inset-0 flex items-center justify-center bg-black/20 transition hover:bg-black/40"
+          >
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#dfbd7b] text-[#081b22] shadow-xl transition hover:scale-110 sm:h-16 sm:w-16">
+              <FaPlay className="ml-1 text-xl" />
+            </span>
+          </a>
+        </div>
+
+        <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <p className="text-xs leading-5 text-slate-400">
+            YouTube-এ সম্পূর্ণ ভিডিওটি দেখুন।
+          </p>
+
+          <a
+            href={video.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${compactButton} border-[#dfbd7b]/30 bg-[#dfbd7b] text-[#081b22] hover:bg-[#e8cb96]`}
+          >
+            <FaYoutube />
+            YouTube-এ দেখুন
+            <FaExternalLinkAlt className="text-[10px]" />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function SeerahHistory() {
   const [active, setActive] = useState("prophets");
   const [columns, setColumns] = useState(COLS);
+  const [activeVideo, setActiveVideo] = useState(null);
 
   useEffect(() => {
     const updateColumns = () => {
@@ -128,10 +226,7 @@ export default function SeerahHistory() {
     return () => window.removeEventListener("resize", updateColumns);
   }, []);
 
-  const filteredVideos = videos.filter(
-    (item) => item.category === active
-  );
-
+  const filteredVideos = videos.filter((item) => item.category === active);
   const rowHeight = columns === 4 ? ROW_HEIGHT : 170;
   const rows = Math.ceil(prophets.length / columns);
   const pathHeight = rows * rowHeight;
@@ -139,13 +234,8 @@ export default function SeerahHistory() {
   const prophetNodes = prophets.map((prophet, index) => {
     const row = Math.floor(index / columns);
     const posInRow = index % columns;
-    const countInRow = Math.min(
-      columns,
-      prophets.length - row * columns
-    );
-
-    const col =
-      row % 2 === 0 ? posInRow : countInRow - 1 - posInRow;
+    const countInRow = Math.min(columns, prophets.length - row * columns);
+    const col = row % 2 === 0 ? posInRow : countInRow - 1 - posInRow;
 
     return {
       ...prophet,
@@ -154,13 +244,16 @@ export default function SeerahHistory() {
     };
   });
 
+  const closeVideoModal = useCallback(() => {
+    setActiveVideo(null);
+  }, []);
+
   return (
     <section
       className="min-h-screen overflow-x-clip bg-[#081b22] px-3 py-8 text-slate-200 sm:px-6 sm:py-12 lg:px-8"
       style={FONT}
     >
       <div className="mx-auto max-w-6xl">
-        {/* Heading */}
         <header className="mb-7 text-center sm:mb-9">
           <h1 className="text-2xl font-bold tracking-tight text-slate-100 sm:text-3xl md:text-4xl">
             ইসলামের ইতিহাস ও ঐতিহ্য
@@ -171,7 +264,7 @@ export default function SeerahHistory() {
           </p>
         </header>
 
-        {/* Compact category buttons */}
+        {/* Category buttons */}
         <div className="mb-8 flex flex-wrap justify-center gap-2 sm:mb-10">
           {categories.map((item) => {
             const isActive = active === item.id;
@@ -184,14 +277,14 @@ export default function SeerahHistory() {
                 aria-pressed={isActive}
                 className={`${compactButton} ${
                   isActive
-                    ? "border-emerald-400/40 bg-emerald-400/15 text-emerald-300"
-                    : "border-emerald-400/15 bg-[#10252d] text-slate-300 hover:border-emerald-400/35 hover:text-emerald-300"
+                    ? "border-[#dfbd7b] bg-[#dfbd7b] text-[#081b22] shadow-sm"
+                    : "border-[#dfbd7b]/20 bg-[#10252d] text-slate-300 hover:border-[#dfbd7b]/50 hover:bg-[#dfbd7b]/10 hover:text-[#dfbd7b]"
                 }`}
               >
                 {item.icon}
                 {item.name}
                 {isActive && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#081b22]" />
                 )}
               </button>
             );
@@ -223,7 +316,8 @@ export default function SeerahHistory() {
                 <path
                   d={buildPath(prophets, columns, 1000, rowHeight)}
                   fill="none"
-                  stroke="#246453"
+                  stroke="#dfbd7b"
+                  strokeOpacity="0.55"
                   strokeWidth="2.5"
                   strokeDasharray="5 7"
                   strokeLinecap="round"
@@ -237,7 +331,7 @@ export default function SeerahHistory() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Watch the story of Prophet ${prophet.name}`}
-                  className="group absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5 rounded-lg px-0.5 py-1 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                  className="group absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5 rounded-lg px-0.5 py-1 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b]"
                   style={{
                     left: `${prophet.x}%`,
                     top: prophet.y,
@@ -266,7 +360,7 @@ export default function SeerahHistory() {
                     </p>
                   </div>
 
-                  <span className="absolute right-0 top-0 flex h-3.5 w-3.5 items-center justify-center rounded-full border border-emerald-400/20 bg-[#10252d] text-[8px] text-slate-400 sm:right-1 sm:h-4 sm:w-4 sm:text-[9px]">
+                  <span className="absolute right-0 top-0 flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#dfbd7b]/25 bg-[#10252d] text-[8px] text-[#dfbd7b] sm:right-1 sm:h-4 sm:w-4 sm:text-[9px]">
                     {index + 1}
                   </span>
                 </a>
@@ -282,47 +376,54 @@ export default function SeerahHistory() {
               filteredVideos.map((video) => (
                 <article
                   key={video.title}
-                  className="overflow-hidden rounded-xl border border-emerald-400/15 bg-[#10252d] transition-colors hover:border-emerald-400/35"
+                  className="group overflow-hidden rounded-xl border border-[#dfbd7b]/15 bg-[#10252d] transition-colors hover:border-[#dfbd7b]/40"
                 >
-                  <a
-                    href={video.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Watch ${video.title} on YouTube`}
-                    className="relative block aspect-video overflow-hidden bg-[#0b2027]"
+                  <button
+                    type="button"
+                    onClick={() => setActiveVideo(video)}
+                    aria-label={`${video.title} এর বিস্তারিত দেখুন`}
+                    className="relative block aspect-video w-full overflow-hidden bg-[#0b2027] text-left"
                   >
-                    <img
-                      src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
-                      alt={video.title}
-                      loading="lazy"
-                      className="h-full w-full object-cover"
-                    />
+                    {video.videoId &&
+                    !video.videoId.startsWith("example_") ? (
+                      <img
+                        src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
+                        alt={video.title}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center">
+                        <FaYoutube className="text-5xl text-[#dfbd7b]" />
+                      </div>
+                    )}
+
                     <span className="absolute inset-0 flex items-center justify-center bg-black/25">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 text-white">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#dfbd7b] text-[#081b22] transition-transform group-hover:scale-110">
                         <FaPlay className="text-sm" />
                       </span>
                     </span>
-                  </a>
+                  </button>
 
                   <div className="p-3.5 sm:p-4">
                     <h3 className="text-sm font-bold leading-6 text-slate-100 sm:text-base">
                       {video.title}
                     </h3>
-                    <a
-                      href={video.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`${compactButton} mt-3 border-emerald-400/20 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/15`}
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveVideo(video)}
+                      className={`${compactButton} mt-3 border-[#dfbd7b]/25 bg-[#dfbd7b]/10 text-[#dfbd7b] hover:bg-[#dfbd7b] hover:text-[#081b22]`}
                     >
                       <FaPlay className="text-[10px]" />
-                      YouTube-এ দেখুন
-                    </a>
+                      বিস্তারিত দেখুন
+                    </button>
                   </div>
                 </article>
               ))
             ) : (
-              <div className="col-span-full rounded-xl border border-emerald-400/15 bg-[#10252d] px-4 py-10 text-center">
-                <FaBookQuran className="mx-auto text-3xl text-emerald-400" />
+              <div className="col-span-full rounded-xl border border-[#dfbd7b]/15 bg-[#10252d] px-4 py-10 text-center">
+                <FaBookQuran className="mx-auto text-3xl text-[#dfbd7b]" />
                 <h3 className="mt-3 font-semibold text-slate-100">
                   এখনো কোনো রিসোর্স নেই
                 </h3>
@@ -334,6 +435,8 @@ export default function SeerahHistory() {
           </div>
         )}
       </div>
+
+      <VideoModal video={activeVideo} onClose={closeVideoModal} />
     </section>
   );
 }

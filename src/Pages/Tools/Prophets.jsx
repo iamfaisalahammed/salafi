@@ -1,7 +1,9 @@
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { useEffect, useRef, useState } from "react";
+// শাজারাহ-ই-আম্বিয়া: Hikmah Emerald + Gold Theme (+ স্ক্রল-চালিত সোনালি আলো)
 
-// শাজারাহ-ই-আম্বিয়া: Hikmah Emerald + Gold Theme
+const GOLD = "#dfbd7b";
+const DIM = "0.38"; // ম্লান অবস্থার উজ্জ্বলতা (০.৩ = বেশি অন্ধকার, ০.৫ = কম অন্ধকার)
 
 const sections = [
   {
@@ -139,52 +141,201 @@ const bookStyle = {
 const hideScrollbar = "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
 const bn = (n) => n.toLocaleString("bn-BD");
 
+// ---------------------------------------------------------------------------
+// আলোর ইফেক্টের সাধারণ অংশ (CSS + স্ক্রল হেল্পার)
+// ---------------------------------------------------------------------------
+
+const glowCss = `
+.gl-t { transition: opacity .5s ease .09s; }
+.gl-flow {
+  background: linear-gradient(180deg, rgba(223,189,123,.55) 0%, #dfbd7b 35%, rgba(223,189,123,.95) 50%, #dfbd7b 65%, rgba(223,189,123,.55) 100%);
+  background-size: 100% 160px;
+  animation: gl-flow 2.2s linear infinite;
+  box-shadow: 0 0 6px 1px rgba(223,189,123,.55), 0 0 14px 2px rgba(223,189,123,.25);
+}
+@keyframes gl-flow { from { background-position: 0 0; } to { background-position: 0 160px; } }
+@media (prefers-reduced-motion: reduce) {
+  .gl-t { transition: none; }
+  .gl-flow { animation: none; }
+}
+`;
+
+const smoothBehavior = () =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+
+// স্ক্রিনের যে উচ্চতা পর্যন্ত আলো পৌঁছাবে (ভিউপোর্টের ওপর থেকে px)।
+// একদম নিচে পৌঁছালে Infinity, ফলে শেষ সারিও পুরো জ্বলে।
+const getAnchor = () => {
+  const vh = window.innerHeight;
+  const remaining =
+    document.documentElement.scrollHeight - (window.scrollY + vh);
+  if (remaining <= 2) return Infinity;
+
+  const base = vh * 0.62;
+  const zone = vh * 0.4;
+  if (remaining >= zone) return base;
+  return base + (1 - remaining / zone) * (vh * 0.38 + 8);
+};
+
+// স্ক্রল/রিসাইজ/লেআউট বদলালে rAF-এ সরাসরি DOM আপডেট (React re-render ছাড়া)
+const useScrollGlow = (ref, update) => {
+  useLayoutEffect(() => {
+    const root = ref.current;
+    if (!root) return undefined;
+
+    let raf = 0;
+    const run = () => {
+      raf = 0;
+      update(root);
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(run);
+    };
+
+    update(root);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    const observer =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(schedule) : null;
+    if (observer) observer.observe(root);
+
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (observer) observer.disconnect();
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [ref, update]);
+};
+
+// ---------------------------------------------------------------------------
+// মোবাইল ভিউ
+// ---------------------------------------------------------------------------
+
+const updateMobile = (root) => {
+  if (!root.getClientRects().length) return;
+  const anchor = getAnchor();
+
+  const wraps = Array.from(root.querySelectorAll("[data-gwrap]"));
+  const dots = Array.from(root.querySelectorAll("[data-gdot]"));
+  const cards = Array.from(root.querySelectorAll("[data-gdim]"));
+  const wrapRects = wraps.map((el) => el.getBoundingClientRect());
+  const dotRects = dots.map((el) => el.getBoundingClientRect());
+  const cardRects = cards.map((el) => el.getBoundingClientRect());
+
+  wraps.forEach((wrap, i) => {
+    const r = wrapRects[i];
+    const p =
+      r.height > 0 ? Math.min(1, Math.max(0, (anchor - r.top) / r.height)) : 0;
+    const key = p.toFixed(4);
+    if (wrap.dataset.p === key) return;
+    wrap.dataset.p = key;
+
+    const line = wrap.querySelector("[data-gline]");
+    const head = wrap.querySelector("[data-ghead]");
+    if (line) {
+      line.style.clipPath =
+        p <= 0
+          ? "inset(0 0 100% 0)"
+          : `inset(-12px -12px ${((1 - p) * 100).toFixed(2)}% -12px)`;
+    }
+    if (head) {
+      head.style.opacity = p > 0 && p < 1 ? "1" : "0";
+      head.style.transform = `translateY(${(p * r.height - 4).toFixed(1)}px)`;
+    }
+  });
+
+  dots.forEach((el, i) => {
+    const r = dotRects[i];
+    const on = r.top + r.height / 2 <= anchor ? "1" : "0";
+    if (el.dataset.on !== on) {
+      el.dataset.on = on;
+      el.style.opacity = on;
+    }
+  });
+
+  cards.forEach((el, i) => {
+    const r = cardRects[i];
+    const on = r.top + Math.min(r.height / 2, 24) <= anchor ? "1" : DIM;
+    if (el.dataset.on !== on) {
+      el.dataset.on = on;
+      el.style.opacity = on;
+    }
+  });
+
+  const topBtn = root.querySelector("[data-gtop]");
+  if (topBtn) {
+    const show = window.scrollY > 500;
+    const state = show ? "1" : "0";
+    if (topBtn.dataset.on !== state) {
+      topBtn.dataset.on = state;
+      topBtn.style.opacity = state;
+      topBtn.style.pointerEvents = show ? "auto" : "none";
+      topBtn.tabIndex = show ? 0 : -1;
+      topBtn.setAttribute("aria-hidden", show ? "false" : "true");
+    }
+  }
+};
+
 const NodeRow = ({ node }) => (
   <li className={`relative ${node.sub ? "ml-5" : ""}`}>
     <span
       className={`absolute top-[18px] h-2.5 w-2.5 rounded-full ring-4 ring-[#0d2229] ${
         dotStyle[node.kind]
       } ${node.sub ? "-left-[46px]" : "-left-[26px]"}`}
-    />
-
-    <div
-      className={`my-1 rounded-xl px-3 py-3 transition-colors ${
-        node.highlight
-          ? "border border-amber-400/40 bg-gradient-to-r from-emerald-900/70 to-[#102b2d] shadow-lg shadow-emerald-950/20"
-          : "border border-white/[0.06] bg-white/[0.025] hover:border-emerald-400/20 hover:bg-emerald-400/[0.04]"
-      }`}
     >
-      {node.relation && (
-        <span className="mb-1 block text-xs text-slate-400">{node.relation}</span>
-      )}
+      <span
+        aria-hidden="true"
+        data-gdot
+        className="gl-t absolute inset-0 rounded-full"
+        style={{
+          opacity: 0,
+          backgroundColor: GOLD,
+          boxShadow: "0 0 8px 2px rgba(223,189,123,.7)",
+        }}
+      />
+    </span>
 
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="text-[17px] font-semibold leading-snug text-slate-100">
-            {node.name}
-            {node.kind === "prophet" && !node.name.includes("ﷺ") && (
-              <span className="text-sm font-normal text-slate-400"> (আ.)</span>
-            )}
-          </h3>
-          <p className="text-xs text-slate-400">{node.en}</p>
+    <div data-gdim className="gl-t" style={{ opacity: DIM }}>
+      <div
+        className={`my-1 rounded-xl px-3 py-3 transition-colors ${
+          node.highlight
+            ? "border border-amber-400/40 bg-gradient-to-r from-emerald-900/70 to-[#102b2d] shadow-lg shadow-emerald-950/20"
+            : "border border-white/[0.06] bg-white/[0.025] hover:border-emerald-400/20 hover:bg-emerald-400/[0.04]"
+        }`}
+      >
+        {node.relation && (
+          <span className="mb-1 block text-xs text-slate-400">{node.relation}</span>
+        )}
+
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="text-[17px] font-semibold leading-snug text-slate-100">
+              {node.name}
+              {node.kind === "prophet" && !node.name.includes("ﷺ") && (
+                <span className="text-sm font-normal text-slate-400"> (আ.)</span>
+              )}
+            </h3>
+            <p className="text-xs text-slate-400">{node.en}</p>
+          </div>
+
+          {node.book && (
+            <span
+              className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                node.highlight
+                  ? "border border-amber-300/30 bg-amber-400/15 text-amber-200"
+                  : bookStyle[node.book.type]
+              }`}
+            >
+              {node.book.text}
+            </span>
+          )}
         </div>
 
-        {node.book && (
-          <span
-            className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
-              node.highlight
-                ? "border border-amber-300/30 bg-amber-400/15 text-amber-200"
-                : bookStyle[node.book.type]
-            }`}
-          >
-            {node.book.text}
-          </span>
+        {node.note && (
+          <p className="mt-1 text-sm leading-relaxed text-slate-400">{node.note}</p>
         )}
       </div>
-
-      {node.note && (
-        <p className="mt-1 text-sm leading-relaxed text-slate-400">{node.note}</p>
-      )}
     </div>
   </li>
 );
@@ -200,7 +351,18 @@ const MobileSection = ({ section, index, nodes, open, onToggle }) => (
       aria-expanded={open}
       className="flex min-h-[60px] w-full items-center gap-3 rounded-xl px-2 text-left transition-colors hover:bg-emerald-400/[0.04] active:bg-emerald-400/[0.08]"
     >
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-emerald-300/20 bg-emerald-400/10 text-sm font-bold text-emerald-300">
+      <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-emerald-300/20 bg-emerald-400/10 text-sm font-bold text-emerald-300">
+        <span
+          aria-hidden="true"
+          data-gdot
+          className="gl-t pointer-events-none absolute -inset-px rounded-full border"
+          style={{
+            opacity: 0,
+            borderColor: "rgba(223,189,123,.85)",
+            boxShadow:
+              "0 0 10px rgba(223,189,123,.4), inset 0 0 6px rgba(223,189,123,.15)",
+          }}
+        />
         {bn(index + 1)}
       </span>
 
@@ -225,11 +387,33 @@ const MobileSection = ({ section, index, nodes, open, onToggle }) => (
     </button>
 
     {open && (
-      <ol className="mb-4 ml-4 border-l-2 border-emerald-400/25 pl-5">
-        {nodes.map((node) => (
-          <NodeRow key={node.en} node={node} />
-        ))}
-      </ol>
+      <div
+        data-gwrap
+        className="relative mb-4 ml-4 border-l-2 border-emerald-400/25 pl-5"
+      >
+        <span
+          aria-hidden="true"
+          data-gline
+          className="gl-flow pointer-events-none absolute -left-[2px] top-0 h-full w-[2px]"
+          style={{ clipPath: "inset(0 0 100% 0)" }}
+        />
+        <span
+          aria-hidden="true"
+          data-ghead
+          className="pointer-events-none absolute top-0 h-2 w-2 rounded-full"
+          style={{
+            left: -5,
+            opacity: 0,
+            backgroundColor: GOLD,
+            boxShadow: "0 0 8px 3px rgba(223,189,123,.8)",
+          }}
+        />
+        <ol className="list-none">
+          {nodes.map((node) => (
+            <NodeRow key={node.en} node={node} />
+          ))}
+        </ol>
+      </div>
     )}
   </section>
 );
@@ -242,16 +426,16 @@ const BlockTitle = ({ children }) => (
 );
 
 const MobileView = () => {
+  const rootRef = useRef(null);
   const [filter, setFilter] = useState("all");
   const [closed, setClosed] = useState({});
-  const [showTop, setShowTop] = useState(false);
 
-  useEffect(() => {
-    const onScroll = () => setShowTop(window.scrollY > 500);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  useScrollGlow(rootRef, updateMobile);
+
+  // ফিল্টার/সেকশন খোলা-বন্ধ হলে নতুন তৈরি হওয়া অংশের আলো সঙ্গে সঙ্গে ঠিক করা
+  useLayoutEffect(() => {
+    if (rootRef.current) updateMobile(rootRef.current);
+  }, [filter, closed]);
 
   const visible = sections
     .map((section, index) => ({
@@ -272,15 +456,18 @@ const MobileView = () => {
     requestAnimationFrame(() => {
       document
         .getElementById(`sec-${id}`)
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        ?.scrollIntoView({ behavior: smoothBehavior(), block: "start" });
     });
   };
 
   return (
-    <div className="min-h-screen bg-[#081b22] pb-12 font-['Hind_Siliguri'] text-slate-300">
+    <div
+      ref={rootRef}
+      className="min-h-screen bg-[#081b22] pb-12 font-['Hind_Siliguri'] text-slate-300"
+    >
       <div className="mx-auto max-w-2xl px-4">
         <header className="relative overflow-hidden pb-7 pt-9 text-center">
-          <div className="pointer-events-none absolute left-1/2 top-0 -z-0 h-40 w-64 -translate-x-1/2 rounded-full bg-emerald-500/[0.08] blur-3xl" />
+          <div className="pointer-events-none absolute left-1/2 top-0 z-0 h-40 w-64 -translate-x-1/2 rounded-full bg-emerald-500/[0.08] blur-3xl" />
 
           <div className="relative">
             <span className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/[0.07] px-3.5 py-2 text-xs font-medium text-emerald-300">
@@ -417,22 +604,26 @@ const MobileView = () => {
         </p>
       </div>
 
-      {showTop && (
-        <button
-          type="button"
-          aria-label="উপরে যান"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-5 right-4 z-30 flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-500 text-[#071b20] shadow-xl shadow-black/30 transition hover:bg-emerald-400"
-        >
-          <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path
-              fillRule="evenodd"
-              d="M14.77 12.79a.75.75 0 01-1.06-.02L10 8.83l-3.71 3.94a.75.75 0 11-1.08-1.04l4.25-4.5a.75.75 0 011.08 0l4.25 4.5a.75.75 0 01-.02 1.06z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
-      )}
+      <button
+        type="button"
+        data-gtop
+        aria-label="উপরে যান"
+        aria-hidden="true"
+        tabIndex={-1}
+        onClick={() =>
+          window.scrollTo({ top: 0, behavior: smoothBehavior() })
+        }
+        style={{ opacity: 0, pointerEvents: "none" }}
+        className="fixed bottom-5 right-4 z-30 flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-500 text-[#071b20] shadow-xl shadow-black/30 transition hover:bg-emerald-400"
+      >
+        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path
+            fillRule="evenodd"
+            d="M14.77 12.79a.75.75 0 01-1.06-.02L10 8.83l-3.71 3.94a.75.75 0 11-1.08-1.04l4.25-4.5a.75.75 0 011.08 0l4.25 4.5a.75.75 0 01-.02 1.06z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
     </div>
   );
 };
@@ -521,6 +712,116 @@ const dashedPath =
   "M575 632H643V640 M306 722V744 M435 742V970 " +
   "M485 952H545V896H586 M643 830V882";
 
+// আলোর পথ: প্রতিটি সাব-পাথকে সেগমেন্টে ভেঙে ক্রমান্বয়ে জ্বালানোর জন্য
+const H_SPAN = 18; // আনুভূমিক রেখা জ্বলতে স্ক্রল-দূরত্ব (বাঁক ধাপে ধাপে জ্বলে)
+
+const buildGlow = (d) =>
+  d
+    .split("M")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((s) => {
+      const start = s.match(/^(-?[\d.]+)\s+(-?[\d.]+)/);
+      let x = Number(start[1]);
+      let y = Number(start[2]);
+      const origin = y;
+      const segs = [];
+      let total = 0;
+
+      for (const [, cmd, val] of s.slice(start[0].length).matchAll(/([HV])\s*(-?[\d.]+)/g)) {
+        const nx = cmd === "H" ? Number(val) : x;
+        const ny = cmd === "V" ? Number(val) : y;
+        const len = Math.abs(nx - x) + Math.abs(ny - y);
+        segs.push({
+          x1: x,
+          y1: y,
+          x2: nx,
+          y2: ny,
+          len,
+          span: cmd === "H" ? H_SPAN : Math.max(len, 1),
+        });
+        total += len;
+        x = nx;
+        y = ny;
+      }
+
+      return { d: `M${s}`, origin, segs, total };
+    });
+
+const solidGlow = buildGlow(solidPath);
+const dashedGlow = buildGlow(dashedPath);
+const allGlow = [...solidGlow, ...dashedGlow];
+
+const updateChart = (root) => {
+  if (!root.getClientRects().length) return;
+  const box = root.querySelector("[data-gchart]");
+  if (!box) return;
+  const rect = box.getBoundingClientRect();
+  if (rect.height <= 0) return;
+
+  // ভিউপোর্টের anchor → চার্টের নিজস্ব কোঅর্ডিনেট
+  const ay = (getAnchor() - rect.top) / (rect.height / H);
+  const paths = root.querySelectorAll("[data-gp]");
+  const heads = root.querySelectorAll("[data-gh]");
+
+  allGlow.forEach((g, i) => {
+    const pathEl = paths[i];
+    const headEl = heads[i];
+    if (!pathEl || !headEl) return;
+
+    let u = ay - g.origin;
+    let lit = 0;
+    for (const s of g.segs) {
+      const take = Math.min(1, Math.max(0, u / s.span));
+      lit += s.len * take;
+      if (take < 1) break;
+      u -= s.span;
+    }
+    lit = Math.round(lit * 2) / 2;
+
+    const key = String(lit);
+    if (pathEl.dataset.l === key) return;
+    pathEl.dataset.l = key;
+    pathEl.style.strokeDasharray = `${lit} ${g.total + 10}`;
+
+    if (lit > 0 && lit < g.total) {
+      let rem = lit;
+      let hx = g.segs[0].x1;
+      let hy = g.segs[0].y1;
+      for (const s of g.segs) {
+        if (rem <= s.len) {
+          const t = s.len > 0 ? rem / s.len : 0;
+          hx = s.x1 + (s.x2 - s.x1) * t;
+          hy = s.y1 + (s.y2 - s.y1) * t;
+          break;
+        }
+        rem -= s.len;
+      }
+      headEl.setAttribute("cx", hx.toFixed(1));
+      headEl.setAttribute("cy", hy.toFixed(1));
+      headEl.style.opacity = "1";
+    } else {
+      headEl.style.opacity = "0";
+    }
+  });
+
+  root.querySelectorAll("[data-gn]").forEach((el) => {
+    const on = ay >= Number(el.dataset.gn) ? "1" : "0";
+    if (el.dataset.on !== on) {
+      el.dataset.on = on;
+      el.style.opacity = on;
+    }
+  });
+
+  root.querySelectorAll("[data-gd]").forEach((el) => {
+    const on = ay >= Number(el.dataset.gd) ? "1" : DIM;
+    if (el.dataset.on !== on) {
+      el.dataset.on = on;
+      el.style.opacity = on;
+    }
+  });
+};
+
 const TreeNode = ({ item }) => {
   const node = byEn[item.en];
   if (!node) return null;
@@ -531,11 +832,24 @@ const TreeNode = ({ item }) => {
 
   return (
     <div
-      className={`absolute flex flex-col items-center justify-center gap-1 rounded-lg border px-1 py-1 text-center shadow-md shadow-black/10 ${
+      data-gd={item.y + 8}
+      className={`gl-t absolute flex flex-col items-center justify-center gap-1 rounded-lg border px-1 py-1 text-center shadow-md shadow-black/10 ${
         toneStyle[item.tone]
       } ${isLast ? "ring-2 ring-amber-300/60" : ""}`}
-      style={{ left: item.x, top: item.y, width: item.w, height: item.h }}
+      style={{ left: item.x, top: item.y, width: item.w, height: item.h, opacity: DIM }}
     >
+      <span
+        aria-hidden="true"
+        data-gn={item.y + 8}
+        className="gl-t pointer-events-none absolute -inset-px rounded-lg border"
+        style={{
+          opacity: 0,
+          borderColor: "rgba(223,189,123,.85)",
+          boxShadow:
+            "0 0 10px rgba(223,189,123,.4), inset 0 0 8px rgba(223,189,123,.15)",
+        }}
+      />
+
       <div>
         <h3 className="text-[13px] font-bold leading-4 text-slate-100">
           {node.name}
@@ -578,9 +892,11 @@ const PedigreeChart = () => {
   const wrapRef = useRef(null);
   const [scale, setScale] = useState(1);
 
+  useScrollGlow(wrapRef, updateChart);
+
   useEffect(() => {
     const element = wrapRef.current;
-    if (!element) return;
+    if (!element) return undefined;
 
     const update = () => {
       if (element.clientWidth > 0) {
@@ -589,6 +905,11 @@ const PedigreeChart = () => {
     };
 
     update();
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", update);
+      return () => window.removeEventListener("resize", update);
+    }
+
     const observer = new ResizeObserver(update);
     observer.observe(element);
 
@@ -597,7 +918,11 @@ const PedigreeChart = () => {
 
   return (
     <div ref={wrapRef} className="mx-auto w-full max-w-[1040px]">
-      <div className="mx-auto" style={{ width: W * scale, height: H * scale }}>
+      <div
+        data-gchart
+        className="mx-auto"
+        style={{ width: W * scale, height: H * scale }}
+      >
         <div
           className="relative"
           style={{
@@ -610,6 +935,75 @@ const PedigreeChart = () => {
           <svg className="absolute left-0 top-0" width={W} height={H} fill="none">
             <path d={solidPath} stroke="#34d399" strokeWidth="1.8" />
             <path d={dashedPath} stroke="#d2aa69" strokeWidth="1.2" strokeDasharray="4 3" />
+          </svg>
+
+          {/* সোনালি আলোর স্তর */}
+          <svg
+            className="pointer-events-none absolute left-0 top-0"
+            width={W}
+            height={H}
+            fill="none"
+            aria-hidden="true"
+            style={{ filter: "drop-shadow(0 0 2.5px rgba(223,189,123,.85))" }}
+          >
+            <defs>
+              <mask
+                id="gl-dash-mask"
+                maskUnits="userSpaceOnUse"
+                x="0"
+                y="0"
+                width={W}
+                height={H}
+              >
+                <path
+                  d={dashedPath}
+                  fill="none"
+                  stroke="#fff"
+                  strokeWidth="1.2"
+                  strokeDasharray="4 3"
+                />
+              </mask>
+            </defs>
+
+            <g>
+              {solidGlow.map((g, i) => (
+                <path
+                  key={`s-${i}`}
+                  data-gp
+                  d={g.d}
+                  stroke={GOLD}
+                  strokeWidth="1.8"
+                  style={{ strokeDasharray: `0 ${g.total + 10}` }}
+                />
+              ))}
+            </g>
+
+            <g mask="url(#gl-dash-mask)">
+              {dashedGlow.map((g, i) => (
+                <path
+                  key={`d-${i}`}
+                  data-gp
+                  d={g.d}
+                  stroke={GOLD}
+                  strokeWidth="1.2"
+                  style={{ strokeDasharray: `0 ${g.total + 10}` }}
+                />
+              ))}
+            </g>
+
+            <g>
+              {allGlow.map((g, i) => (
+                <circle
+                  key={`h-${i}`}
+                  data-gh
+                  cx="0"
+                  cy="0"
+                  r="2.4"
+                  fill={GOLD}
+                  style={{ opacity: 0 }}
+                />
+              ))}
+            </g>
           </svg>
 
           <Box
@@ -780,6 +1174,8 @@ const PedigreeChart = () => {
 
 const Prophets = () => (
   <main className="min-h-screen bg-[#081b22]">
+    <style>{glowCss}</style>
+
     <div className="md:hidden">
       <MobileView />
     </div>

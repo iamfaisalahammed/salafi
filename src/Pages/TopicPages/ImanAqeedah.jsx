@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import {
   FaPlayCircle,
   FaBook,
@@ -7,9 +8,11 @@ import {
   FaUserTie,
   FaExternalLinkAlt,
   FaArrowRight,
+  FaTimes,
 } from "react-icons/fa";
 
 const FONT = { fontFamily: "'Hind Siliguri', sans-serif" };
+
 
 const tabs = [
   { id: "videos", name: "Videos", subtitle: "ভিডিও", icon: FaPlayCircle },
@@ -153,8 +156,128 @@ const names = [
   { ar: "ٱلصَّبُورُ", bn: "আস-সবুর", transliteration: "As-Sabur", meaning: "অত্যধিক ধৈর্যধারণকারী" },
 ];
 
+function VideoModal({ video, onClose }) {
+  useEffect(() => {
+    if (!video) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [video, onClose]);
+
+  if (!video) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/75 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="video-modal-title"
+        className="relative w-full max-w-lg overflow-hidden rounded-t-3xl border border-[#dfbd7b]/20 bg-[#081b22] shadow-2xl sm:rounded-2xl"
+      >
+        <div className="flex items-start gap-3 border-b border-white/10 px-4 py-4 sm:px-5">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-red-400/20 bg-red-400/10 text-red-400">
+            <FaPlayCircle className="text-lg" />
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-[#dfbd7b]">
+              Video Preview
+            </p>
+            <h2
+              id="video-modal-title"
+              className="break-words text-base font-bold leading-6 text-white sm:text-lg"
+            >
+              {video.title}
+            </h2>
+            <p className="mt-1 text-sm text-slate-400">{video.speaker}</p>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="বন্ধ করুন"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b]"
+          >
+            <FaTimes />
+          </button>
+        </div>
+
+        <div className="p-4 sm:p-5">
+          <div className="relative aspect-video overflow-hidden rounded-xl border border-white/10 bg-[#10252d]">
+            <img
+              src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
+              alt={`${video.title} এর YouTube Thumbnail`}
+              className="absolute inset-0 h-full w-full object-cover"
+              onError={(event) => {
+                event.currentTarget.style.display = "none";
+              }}
+            />
+            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-red-600 text-white shadow-xl sm:h-16 sm:w-16">
+                <FaPlayCircle className="text-3xl sm:text-4xl" />
+              </span>
+            </div>
+            <span className="absolute bottom-3 left-3 rounded-md border border-white/10 bg-black/60 px-2 py-1 text-xs text-white">
+              YouTube Preview
+            </span>
+          </div>
+
+          <div className="py-5">
+            <h3 className="text-base font-semibold text-white">
+              এই ভিডিওটি দেখতে চান?
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-slate-400">
+              ভিডিওটি সম্পূর্ণ দেখতে YouTube-এ খুলুন।
+            </p>
+          </div>
+
+          <a
+            href={video.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={onClose}
+            className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#081b22] active:scale-[0.98]"
+          >
+            <FaYoutube className="text-xl" />
+            YouTube-এ ভিডিও দেখুন
+            <FaArrowRight className="ml-1 text-xs" />
+          </a>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="mt-2 min-h-11 w-full rounded-xl px-4 py-2 text-sm font-medium text-slate-400 transition hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b]"
+          >
+            বন্ধ করুন
+          </button>
+        </div>
+
+        <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#dfbd7b]/50 to-transparent" />
+      </section>
+    </div>
+  );
+}
+
 const ImanAqeedah = () => {
   const [active, setActive] = useState("videos");
+  const [activeVideo, setActiveVideo] = useState(null);
 
   return (
     <section
@@ -162,20 +285,17 @@ const ImanAqeedah = () => {
       className="min-h-screen bg-[#081b22] px-3 py-8 text-slate-200 sm:px-6 sm:py-12 lg:px-8"
     >
       <div className="mx-auto max-w-6xl">
-        {/* Heading */}
         <div className="mb-8 text-center sm:mb-10">
           <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl">
             আকিদা ও ঈমান
           </h1>
-
           <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-slate-400 sm:text-base">
             ইসলামী বিশ্বাসের মৌলিক বিষয়গুলো জানুন, বিশুদ্ধ আকিদা অর্জন করুন এবং
             কুরআন ও সুন্নাহর আলোকে নিজের ঈমানকে আরও দৃঢ় করুন।
           </p>
         </div>
 
-        {/* Mobile-friendly Tabs */}
-        <div className="mx-auto mb-8 grid w-full max-w-2xl grid-cols-3 gap-2 rounded-2xl border border-emerald-400/15 bg-[#10252d] p-2 sm:mb-10 sm:flex sm:w-fit sm:justify-center">
+        <div className="mx-auto mb-8 grid w-full max-w-2xl grid-cols-3 gap-2 rounded-2xl border border-[#dfbd7b]/15 bg-[#10252d] p-2 sm:mb-10 sm:flex sm:w-fit sm:justify-center">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = active === tab.id;
@@ -186,10 +306,10 @@ const ImanAqeedah = () => {
                 type="button"
                 onClick={() => setActive(tab.id)}
                 aria-pressed={isActive}
-                className={`flex min-h-[76px] min-w-0 flex-col items-center justify-center gap-1.5 rounded-xl px-1.5 py-3 text-center transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 sm:min-h-11 sm:flex-row sm:gap-2 sm:px-5 sm:py-2 ${
+                className={`flex min-h-[76px] min-w-0 flex-col items-center justify-center gap-1.5 rounded-xl px-1.5 py-3 text-center transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b] sm:min-h-11 sm:flex-row sm:gap-2 sm:px-5 sm:py-2 ${
                   isActive
-                    ? "bg-emerald-400 text-[#081b22] shadow-md shadow-emerald-950/30"
-                    : "text-slate-400 hover:bg-white/5 hover:text-emerald-300"
+                    ? "bg-[#dfbd7b] text-[#081b22] shadow-md shadow-black/20"
+                    : "text-slate-400 hover:bg-[#dfbd7b]/10 hover:text-[#dfbd7b]"
                 }`}
               >
                 <Icon className="shrink-0 text-lg sm:text-base" />
@@ -204,89 +324,80 @@ const ImanAqeedah = () => {
           })}
         </div>
 
-        {/* Videos */}
         {active === "videos" && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
             {videos.map((video) => (
-              <a
+              <button
                 key={video.id}
-                href={video.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-emerald-400/15 bg-[#10252d] transition-colors duration-200 hover:border-emerald-400/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                type="button"
+                onClick={() => setActiveVideo(video)}
+                aria-label={`${video.title} ভিডিও প্রিভিউ খুলুন`}
+                className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-[#dfbd7b]/15 bg-[#10252d] text-left transition-colors duration-200 hover:border-[#dfbd7b]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b]"
               >
-                <div className="relative aspect-video w-full overflow-hidden bg-[#081b22]">
-                  <img
-                    src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
-                    alt={video.title}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-                  />
+           
+<div className="group relative aspect-video w-full overflow-hidden rounded-t-xl bg-gradient-to-br from-[#10252d] to-[#081b22]">
+  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+    <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[#FF0000]/30 bg-[#FF0000]/10 text-3xl text-[#FF0000] transition-transform duration-300 group-hover:scale-110">
+      <FaYoutube />
+    </div>
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+    <div className="text-center">
+      <p className="font-semibold text-[#dfbd7b]">ভিডিও লেকচার</p>
+      <p className="mt-1 text-xs text-slate-400">
+        YouTube-এ দেখতে ক্লিক করুন
+      </p>
+    </div>
+  </div>
 
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-red-600 text-xl text-white shadow-lg sm:h-14 sm:w-14">
-                      <FaYoutube />
-                    </span>
-                  </div>
-
-                  {video.tag && (
-                    <span className="absolute bottom-3 left-3 rounded-lg border border-white/10 bg-black/70 px-2.5 py-1 text-xs font-semibold text-white">
-                      {video.tag}
-                    </span>
-                  )}
-                </div>
+  {video.tag && (
+    <span className="absolute bottom-3 left-3 rounded-md border border-white/10 bg-black/30 px-2.5 py-1 text-xs font-medium text-[#dfbd7b]">
+      {video.tag}
+    </span>
+  )}
+</div>
 
                 <div className="flex flex-1 flex-col p-4 sm:p-5">
                   <h2 className="text-base font-bold leading-snug text-white sm:text-lg">
                     {video.title}
                   </h2>
-
                   <p className="mt-3 flex items-start gap-2 text-sm leading-6 text-slate-400">
-                    <FaUserTie className="mt-1 shrink-0 text-emerald-400" />
+                    <FaUserTie className="mt-1 shrink-0 text-[#dfbd7b]" />
                     <span>{video.speaker}</span>
                   </p>
-
-                  <span className="mt-5 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-sm font-semibold text-emerald-300 transition-colors group-hover:bg-emerald-400 group-hover:text-[#081b22] sm:mt-6">
-                    YouTube-এ দেখুন
+                  <span className="mt-5 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#dfbd7b]/25 bg-[#dfbd7b]/10 px-3 py-2 text-sm font-semibold text-[#dfbd7b] transition-colors group-hover:bg-[#dfbd7b] group-hover:text-[#081b22] sm:mt-6">
+                    প্রিভিউ দেখুন
                     <FaArrowRight className="text-xs" />
                   </span>
                 </div>
-              </a>
+              </button>
             ))}
           </div>
         )}
 
-        {/* Books */}
         {active === "books" && (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
             {books.map((book, i) => (
               <article
                 key={book.id}
-                className="group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-emerald-400/15 bg-[#10252d] p-4 transition-colors duration-200 hover:border-emerald-400/40 sm:p-5"
+                className="group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-[#dfbd7b]/15 bg-[#10252d] p-4 transition-colors duration-200 hover:border-[#dfbd7b]/40 sm:p-5"
               >
-                <span className="absolute right-4 top-3 text-sm font-bold text-[#d6aa62]/50">
+                <span className="absolute right-4 top-3 text-sm font-bold text-[#dfbd7b]/50">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-400/15 bg-emerald-400/10 text-lg text-emerald-300 sm:h-12 sm:w-12">
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-[#dfbd7b]/20 bg-[#dfbd7b]/10 text-lg text-[#dfbd7b] sm:h-12 sm:w-12">
                   <FaBook />
                 </div>
-
                 <h2 className="pr-7 text-base font-bold leading-7 text-white sm:text-lg">
                   {book.title}
                 </h2>
-
                 <p className="mt-1.5 flex-1 text-sm leading-6 text-slate-400">
                   {book.author}
                 </p>
-
                 <a
                   href={book.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-3 py-2.5 text-sm font-semibold text-emerald-300 transition-colors hover:bg-emerald-400 hover:text-[#081b22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 sm:mt-6"
+                  className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#dfbd7b]/25 bg-[#dfbd7b]/10 px-3 py-2.5 text-sm font-semibold text-[#dfbd7b] transition-colors hover:bg-[#dfbd7b] hover:text-[#081b22] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b] sm:mt-6"
                 >
                   পড়ুন / ডাউনলোড
                   <FaExternalLinkAlt className="shrink-0 text-xs" />
@@ -296,7 +407,6 @@ const ImanAqeedah = () => {
           </div>
         )}
 
-        {/* Names of Allah */}
         {active === "names" && (
           <>
             <div className="mb-5 flex items-center justify-between gap-3">
@@ -308,8 +418,7 @@ const ImanAqeedah = () => {
                   প্রতিটি নামের আরবি, বাংলা নাম ও অর্থ পড়ুন।
                 </p>
               </div>
-
-              <span className="shrink-0 rounded-full border border-[#d6aa62]/25 bg-[#d6aa62]/10 px-3 py-1.5 text-xs font-semibold text-[#d6aa62]">
+              <span className="shrink-0 rounded-full border border-[#dfbd7b]/25 bg-[#dfbd7b]/10 px-3 py-1.5 text-xs font-semibold text-[#dfbd7b]">
                 {names.length} নাম
               </span>
             </div>
@@ -318,24 +427,21 @@ const ImanAqeedah = () => {
               {names.map((name, i) => (
                 <article
                   key={name.bn}
-                  className="group relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-emerald-400/15 bg-[#10252d] px-3 pb-4 pt-5 text-center transition-colors duration-200 hover:border-emerald-400/40 hover:bg-[#14313a] sm:px-3.5 sm:pb-5 sm:pt-6"
+                  className="group relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-[#dfbd7b]/15 bg-[#10252d] px-3 pb-4 pt-5 text-center transition-colors duration-200 hover:border-[#dfbd7b]/40 hover:bg-[#14313a] sm:px-3.5 sm:pb-5 sm:pt-6"
                 >
-                  <span className="absolute left-2 top-2 text-[10px] font-semibold text-[#d6aa62]/70">
+                  <span className="absolute left-2 top-2 text-[10px] font-semibold text-[#dfbd7b]/70">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-
                   <p
-                    className="break-words text-2xl font-bold leading-relaxed text-emerald-300 sm:text-3xl"
+                    className="break-words text-2xl font-bold leading-relaxed text-[#dfbd7b] sm:text-3xl"
                     dir="rtl"
                     lang="ar"
                   >
                     {name.ar}
                   </p>
-
                   <p className="mt-2 break-words text-sm font-bold leading-6 text-white">
                     {name.bn}
                   </p>
-
                   <p className="mt-1 break-words text-xs leading-5 text-slate-400">
                     {name.meaning}
                   </p>
@@ -345,6 +451,11 @@ const ImanAqeedah = () => {
           </>
         )}
       </div>
+
+      <VideoModal
+        video={activeVideo}
+        onClose={() => setActiveVideo(null)}
+      />
     </section>
   );
 };

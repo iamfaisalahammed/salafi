@@ -4,4 +4,33 @@
 
 
 
+.rotating-tool-border {
+  position: relative;
+  isolation: isolate;
+  border-color: transparent;
+}
+
+.rotating-tool-border::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 240deg,
+    #10b981 290deg,
+    #d6aa62 330deg,
+    transparent 360deg
+  );
+  animation: rotating-tool-ring 3s linear infinite;
+  z-index: -1;
+}
+
+@keyframes rotating-tool-ring {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 

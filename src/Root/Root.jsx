@@ -20,6 +20,9 @@ import PrayerTimes from "../Pages/Tools/PrayerTimes";
 import Tasbih from "../Pages/Tools/Tasbih";
 import SacredMosques from "../Pages/Tools/SacredMosques";
 import IslamicCalendar from "../Pages/Tools/IslamicCalendar";
+import MuslimMap from "../Pages/Tools/MuslimMap";
+import SeerahTimeline from "../Pages/Tools/SeerahTimeline";
+import Prophets from "../Pages/Tools/Prophets";
 
 export default function Root() {
   return (
@@ -93,6 +96,18 @@ export default function Root() {
       <Route
         path="/tools/islamic-calendar"
         element={<IslamicCalendar />}
+      />
+      <Route
+        path="/tools/muslim-map"
+        element={<MuslimMap />}
+      />
+      <Route
+        path="/tools/seerah-timeline"
+        element={<SeerahTimeline />}
+      />
+      <Route
+        path="/tools/prophets"
+        element={<Prophets />}
       />
 
       {/* 404 Page */}

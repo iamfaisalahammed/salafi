@@ -563,8 +563,6 @@ const QiblaFinder = () => {
                   </span>
                 </li>
               </ul>
-
-         
             </section>
           </div>
         </div>

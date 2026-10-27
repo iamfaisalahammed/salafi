@@ -66,7 +66,7 @@ const topics = [
 export default function Topics() {
   return (
     <section
-      className="relative overflow-hidden bg-[#0b1724] px-4 py-12 text-white sm:px-6 sm:py-16 lg:py-20"
+      className="relative overflow-hidden bg-[#081b22] px-4 py-12 text-white sm:px-6 sm:py-16 lg:py-20"
       id="topics"
     >
       <div className="pointer-events-none absolute -right-32 -top-32 h-80 w-80 rounded-full bg-emerald-500/[0.07] blur-3xl" />

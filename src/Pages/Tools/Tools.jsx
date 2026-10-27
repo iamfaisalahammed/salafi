@@ -8,6 +8,8 @@ import {
   FaKaaba,
   FaCalendarDays,
   FaArrowUpRightFromSquare,
+  FaMap,
+  FaTimeline,
 } from "react-icons/fa6";
 
 const tools = [
@@ -42,6 +44,26 @@ const tools = [
     icon: FaCalendarDays,
     path: "/tools/islamic-calendar",
   },
+  {
+    title: "Muslim Map",
+    icon: FaMap,
+    path: "/tools/muslim-map",
+  },
+  {
+    title: "Seerah Timeline",
+    icon: FaTimeline,
+    path: "/tools/seerah-timeline",
+  },
+  {
+    title: "Prophets",
+    icon: FaTimeline,
+    path: "/tools/prophets",
+  },
+];
+
+const rotatingBorderPaths = [
+  "/tools/sacred-mosques",
+  "/tools/muslim-map",
 ];
 
 export default function Tools() {
@@ -72,11 +94,17 @@ export default function Tools() {
         </div>
 
         {/* Tools Grid */}
-        <div className="grid grid-cols-3 gap-x-2 gap-y-5 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
+        <div className="grid grid-cols-3 gap-x-2 gap-y-5 sm:grid-cols-4 sm:gap-4 lg:grid-cols-5 lg:gap-6">
           {tools.map(({ title, icon: Icon, path, external }) => {
             const content = (
               <>
-                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-emerald-300/15 bg-[#102d35] transition-colors duration-200 group-hover:border-emerald-300/35 group-hover:bg-[#15313a] sm:h-16 sm:w-16">
+                <span
+                  className={`relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full border bg-[#102d35] transition-colors duration-200 sm:h-16 sm:w-16 ${
+                    rotatingBorderPaths.includes(path)
+                      ? "rotating-tool-border border-transparent"
+                      : "border-emerald-300/15 group-hover:border-emerald-300/35 group-hover:bg-[#15313a]"
+                  }`}
+                >
                   <Icon
                     className="text-xl text-white sm:text-2xl"
                     aria-hidden="true"

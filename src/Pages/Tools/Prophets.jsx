@@ -11,7 +11,7 @@ const sections = [
     title: "আদম (আ.) ও তাঁর সন্তান",
     nodes: [
       { name: "আদম", en: "Adam", kind: "prophet" },
-      { name: "শীষ", en: "Seth (Sheesh)", kind: "prophet", sub: true, relation: "পুত্র", book: { type: "suhuf", text: "৫০ সুহুফ" } },
+      { name: "শীষ", en: "Seth (Sheesh)", kind: "prophet", sub: true, relation: "পুত্র"},
       { name: "কাবিল", en: "Qabil (Cain)", kind: "notProphet", sub: true, relation: "পুত্র", note: "নবী নন" },
       { name: "হাবিল", en: "Abel (Habil)", kind: "family", sub: true, relation: "পুত্র" },
     ],
@@ -20,7 +20,7 @@ const sections = [
     id: "idrees-nuh",
     title: "ইদরিস ও নূহ (আ.)",
     nodes: [
-      { name: "ইদরিস", en: "Idrees", kind: "prophet", book: { type: "suhuf", text: "৩০ সুহুফ" } },
+      { name: "ইদরিস", en: "Idrees", kind: "prophet", book: { type: "suhuf",  } },
       { name: "নূহ", en: "Noah (Nuh)", kind: "prophet" },
       { name: "হাম", en: "Ham", kind: "family", sub: true, relation: "পুত্র" },
       { name: "সাম", en: "Sam", kind: "family", sub: true, relation: "পুত্র" },
@@ -42,7 +42,7 @@ const sections = [
     id: "ibrahim",
     title: "ইবরাহীম (আ.)",
     nodes: [
-      { name: "ইবরাহীম", en: "Abraham (Ibrahim)", kind: "prophet", book: { type: "suhuf", text: "১০ সুহুফ" } },
+      { name: "ইবরাহীম", en: "Abraham (Ibrahim)", kind: "prophet",},
       { name: "সারাহ", en: "Sarah", kind: "family", sub: true, relation: "প্রথম স্ত্রী" },
       { name: "হাজেরা", en: "Hajra", kind: "family", sub: true, relation: "দ্বিতীয় স্ত্রী" },
       { name: "কাতুরা", en: "Qaturah", kind: "family", sub: true, relation: "তৃতীয় স্ত্রী" },

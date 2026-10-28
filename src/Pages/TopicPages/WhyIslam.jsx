@@ -376,8 +376,8 @@ export default function WhyIslam() {
 
                   <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                     <span
-                      className="flex h-10 w-10 items-center justify-center rounded-full text-white shadow-lg transition-transform group-hover:scale-110 sm:h-11 sm:w-11"
-                      style={{ backgroundColor: YOUTUBE_RED }}
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-[#dfbd7b]/25 bg-[#dfbd7b]/10 text-[#dfbd7b] shadow-sm transition-transform group-hover:scale-110 sm:h-11 sm:w-11"
+                     
                     >
                       <FaPlay className="ml-0.5 text-sm" />
                     </span>
@@ -410,12 +410,11 @@ export default function WhyIslam() {
                     </p>
                   )}
 
-                  <button
-                    type="button"
-                    onClick={() => setActiveVideo(video)}
-                    className={`${compactButton} mt-4 w-fit border-transparent text-white hover:opacity-90`}
-                    style={{ backgroundColor: YOUTUBE_RED }}
-                  >
+             <button
+  type="button"
+  onClick={() => setActiveVideo(video)}
+  className="mt-5 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#dfbd7b]/25 bg-[#dfbd7b]/10 px-3 py-2 text-sm font-semibold text-[#dfbd7b] transition-colors hover:bg-[#dfbd7b] hover:text-[#081b22] sm:mt-6"
+>
                     <FaYoutube />
                     {video.type === "playlist"
                       ? "প্লেলিস্ট দেখুন"

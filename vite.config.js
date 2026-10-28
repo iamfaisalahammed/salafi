@@ -1,3 +1,4 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -9,10 +10,19 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
+      injectRegister: false,
+
+      workbox: {
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
+      },
+
       manifest: {
         name: "HIKMAH",
         short_name: "HIKMAH",
-        description: "Learn Islam From Authentic Sources —  All In One Place",
+        description:
+          "Learn Islam From Authentic Sources — All In One Place",
         theme_color: "#000000",
         background_color: "#000000",
         display: "standalone",

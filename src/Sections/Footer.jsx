@@ -1,7 +1,5 @@
-
 import { useState } from "react";
 import {
-  
   FaHeart,
   FaArrowUp,
   FaShareAlt,
@@ -63,6 +61,28 @@ export default function Footer() {
       style={FONT}
       className="border-t border-emerald-400/20 bg-[#081b22] px-4 pb-6 pt-10 text-slate-300 sm:px-6 sm:pt-14"
     >
+      <style>{`
+        @keyframes hkOrbit {
+          to { transform: rotate(360deg); }
+        }
+
+        /* বাটনের চারপাশে ঘোরা গোল্ড বর্ডার */
+        .hk-orbit {
+          background: conic-gradient(
+            from 0deg,
+            transparent 0deg,
+            transparent 230deg,
+            rgba(214, 170, 98, 0.15) 270deg,
+            #d6aa62 360deg
+          );
+          animation: hkOrbit 4s linear infinite;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .hk-orbit { animation: none !important; }
+        }
+      `}</style>
+
       <div className="mx-auto max-w-6xl">
         {/* Share Section and Islamic Reminder */}
         <div className="grid gap-8 lg:grid-cols-[1fr_0.85fr] lg:items-center">
@@ -91,13 +111,21 @@ export default function Footer() {
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              {/* শেয়ার বাটন: হালকা ব্যাকগ্রাউন্ড + চারপাশে ঘোরা গোল্ড বর্ডার */}
               <button
                 type="button"
                 onClick={shareApp}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#d6aa62] px-5 py-3 font-semibold text-[#081b22] transition-colors hover:bg-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-[#081b22]"
+                className="group relative inline-flex overflow-hidden rounded-xl bg-[#d6aa62]/25 p-[1.5px] focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-[#081b22]"
               >
-                <FaShareAlt />
-                Hikmah শেয়ার করুন
+                <span
+                  aria-hidden="true"
+                  className="hk-orbit pointer-events-none absolute left-1/2 top-1/2 -ml-[200px] -mt-[200px] h-[400px] w-[400px]"
+                />
+
+                <span className="relative inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[10px] bg-[#0c242b] px-5 py-3 font-semibold text-[#e4c28b] transition-colors group-hover:bg-[#12313a]">
+                  <FaShareAlt />
+                  Hikmah শেয়ার করুন
+                </span>
               </button>
 
               <button
@@ -149,15 +177,13 @@ export default function Footer() {
           <p className="text-xs text-slate-500 sm:text-sm">
             © {currentYear}{" "}
             <span className="font-semibold text-emerald-300">
-            Hikmah
+              Hikmah
             </span>
             . All rights reserved.
           </p>
 
           <p className="flex flex-wrap items-center justify-center gap-1.5 text-xs text-slate-400 sm:text-sm">
-            <span>Made with  <span className="animate-pulse">❤️</span> for the Ummah.</span>
-           
-           
+            <span>Made with <span className="animate-pulse">❤️</span> for the Ummah.</span>
           </p>
 
           <button

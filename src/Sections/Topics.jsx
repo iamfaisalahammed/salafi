@@ -10,6 +10,7 @@ import {
   FaScroll,
   FaHands,
 } from "react-icons/fa";
+import { BiQuestionMark } from "react-icons/bi";
 
 const topics = [
   {
@@ -55,11 +56,18 @@ const topics = [
     number: "06",
   },
   {
+  title: "খিলাফত",
+  subtitle: "খিলাফতের ইতিহাস জানুন সময়রেখা, মানচিত্র ও ভিডিওতে",
+  path: "/topics/islamic-caliphate",
+  icon: FaLandmark,
+  number: "07",
+},
+  {
     title: "ইসলাম কেন?",
     subtitle: "ইসলামের বার্তা ও সৌন্দর্য সম্পর্কে জানুন",
     path: "/topics/why-islam",
-    icon: FaLandmark,
-    number: "07",
+    icon: BiQuestionMark,
+    number: "08",
   },
 ];
 

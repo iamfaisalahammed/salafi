@@ -14,10 +14,9 @@ import {
 
 const tools = [
   {
-    title: "Find Mosque",
-    icon: FaMosque,
-    path: "https://www.google.com/maps/search/?api=1&query=mosque%20near%20me",
-    external: true,
+    title: "Khilafah Atlas",
+    icon: FaLandmark,
+    path: "/tools/khilafah-atlas",
   },
   {
     title: "Makkah Locator",
@@ -29,16 +28,15 @@ const tools = [
     icon: FaClock,
     path: "/tools/prayer-times",
   },
-
-  {
-    title: "Sacred Mosques",
-    icon: FaKaaba,
-    path: "/tools/sacred-mosques",
-  },
   {
     title: "Islamic Calendar",
     icon: FaCalendarDays,
     path: "/tools/islamic-calendar",
+  },
+  {
+    title: "Sacred Mosques",
+    icon: FaKaaba,
+    path: "/tools/sacred-mosques",
   },
   {
     title: "Muslim Map",
@@ -56,9 +54,10 @@ const tools = [
     path: "/tools/prophets",
   },
   {
-    title: "Khilafah Atlas",
-    icon: FaLandmark,
-    path: "/tools/khilafah-atlas",
+    title: "Find Mosque",
+    icon: FaMosque,
+    path: "https://www.google.com/maps/search/?api=1&query=mosque%20near%20me",
+    external: true,
   },
 ];
 
@@ -94,9 +93,14 @@ export default function Tools() {
           {tools.map(({ title, icon: Icon, path, external }) => {
             const content = (
               <>
-                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-emerald-300/15 bg-[#102d35] transition-colors duration-200 group-hover:border-emerald-300/35 group-hover:bg-[#15313a] sm:h-16 sm:w-16">
+                <span className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#102d35] transition-colors duration-200 group-hover:bg-[#15313a] sm:h-16 sm:w-16">
+                  {/* ধীরে ঘোরা হালকা বর্ডার */}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 rounded-full border-[1.5px] border-[#d6aa62]/20 border-t-[#d6aa62] border-r-[#d6aa62]/50 transition-colors duration-200 group-hover:border-[#d6aa62]/35 group-hover:border-t-[#d6aa62] group-hover:border-r-[#d6aa62]/70 animate-[spin_4s_linear_infinite] motion-reduce:animate-none"
+                  />
                   <Icon
-                    className="text-xl text-[#d6aa62] sm:text-2xl"
+                    className="relative text-xl text-[#d6aa62] sm:text-2xl"
                     aria-hidden="true"
                   />
                 </span>

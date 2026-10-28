@@ -19,13 +19,14 @@ const Home = () => {
       <div id="tools">
       <Tools></Tools>
       </div>
+      <div id="topics">
+        <Topics></Topics>
+      </div>
   
         <div id="resources">
         <Resources></Resources>
       </div>
-      <div id="topics">
-        <Topics></Topics>
-      </div>
+      
       
       <div id="scholars">
         <Scholars></Scholars>

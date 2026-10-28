@@ -1,7 +1,24 @@
+
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import atlasData from '../../../public/data/khilafahAtlasData.json';
 
 /* ==========================================
-   ১. আইকন
+   ১. ডাটা (সব তথ্য khilafahAtlasData.json ফাইলে আছে)
+   তথ্য আপডেট করতে শুধু ঐ JSON ফাইল এডিট করুন।
+========================================== */
+const HISTORICAL_PERIODS_BN = atlasData.periods;
+const SILK_ROAD_ROUTES = atlasData.routes;
+const LANDMASSES = atlasData.landmasses;
+const SEA_LABELS = atlasData.seaLabels;
+const CATEGORIES = atlasData.categories;
+const HOW_TO_STEPS = atlasData.howToSteps;
+const HISTORICAL_CITIES_BN = atlasData.cities.map((c) => ({
+  ...c,
+  short: c.short || c.name.split(' ')[0]
+}));
+
+/* ==========================================
+   ২. আইকন
 ========================================== */
 const Icon = ({ d, d2, className = 'w-4 h-4' }) => (
   <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -25,279 +42,25 @@ const IconCrown = (p) => <Icon {...p} d="M5 16l-1-8 4 3 4-5 4 5 4-3-1 8H5z" />;
 const IconRoute = (p) => <Icon {...p} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />;
 const IconHelp = (p) => <Icon {...p} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />;
 const IconChevron = (p) => <Icon {...p} d="M5 15l7-7 7 7" />;
+const IconChevronDown = (p) => <Icon {...p} d="M19 9l-7 7-7-7" />;
+const IconArrowLeft = (p) => <Icon {...p} d="M15 19l-7-7 7-7" />;
+const IconArrowRight = (p) => <Icon {...p} d="M9 5l7 7-7 7" />;
 const IconSwap = (p) => <Icon {...p} d="M8 7h12m0 0l-4-4m4 4l-4 4M16 17H4m0 0l4-4m-4 4l4 4" />;
 
 /* ==========================================
-   ২. বাংলা ঐতিহাসিক তথ্যভাণ্ডার ও মানচিত্র ডাটা
-========================================== */
-const HISTORICAL_CITIES_BN = [
-  { id: 'makkah', name: 'মক্কা আল-মুকাররমা', coords: { x: 550, y: 480 }, region: 'হিজাজ', significance: 'ইসলামের পবিত্রতম স্থান, কাবা শরীফ ও মহানবী (সাঃ)-এর জন্মস্থান।' },
-  { id: 'madinah', name: 'মদীনা আল-মুনাওয়ারা', coords: { x: 540, y: 450 }, region: 'হিজাজ', significance: 'প্রথম ইসলামী রাষ্ট্রের রাজধানী ও মহানবী (সাঃ)-এর রওজা মোবারক।' },
-  { id: 'jerusalem', name: 'জেরুজালেম (বায়তুল মুকাদ্দাস)', coords: { x: 485, y: 375 }, region: 'শাম/ফিলিস্তিন', significance: 'ইসলামের ৩য় পবিত্রতম স্থান, মসজিদুল আকসা।' },
-  { id: 'damascus', name: 'দামেস্ক (Damascus)', coords: { x: 495, y: 360 }, region: 'শাম', significance: 'উমাইয়া খিলাফাতের রাজধানী ও ঐতিহাসিক বাণিজ্য কেন্দ্র।' },
-  { id: 'kufa', name: 'কুফা (Kufa)', coords: { x: 545, y: 370 }, region: 'ইরাক', significance: 'হযরত আলী (রাঃ)-এর সময়কালের রাজধানী ও জ্ঞানচর্চার কেন্দ্র।' },
-  { id: 'baghdad', name: 'বাগদাদ (Baghdad)', coords: { x: 560, y: 355 }, region: 'ইরাক', significance: 'আব্বাসীয় খিলাফাতের রাজধানী ও বায়তুল হিকমাহ (জ্ঞান গৃহ)।' },
-  { id: 'cairo', name: 'কায়রো (Cairo/Fustat)', coords: { x: 450, y: 400 }, region: 'মিশর', significance: 'ফাতেমীয়, আইয়ুবীয় ও মামলুকদের রাজধানী; আল-আজহার বিশ্ববিদ্যালয়।' },
-  { id: 'cordoba', name: 'কর্ডোবা (Qurtubah)', coords: { x: 190, y: 290 }, region: 'আল-আন্দালুস (স্পেন)', significance: 'কর্ডোবা খিলাফাতের রাজধানী ও ইউরোপের তৎকালীন বৃহত্তম শিক্ষাকেন্দ্র।' },
-  { id: 'istanbul', name: 'ইস্তাম্বুল (Constantinople)', coords: { x: 440, y: 270 }, region: 'অনাতোলিয়া', significance: 'উসমানীয় (অটোমান) সাম্রাজ্যের রাজধানী ও ১৪৫৩ সালে বিজয়।' },
-  { id: 'marrakesh', name: 'মারাকেশ (Marrakesh)', coords: { x: 170, y: 370 }, region: 'মাগরেব (মরোক্কো)', significance: 'আলমোরাভিদ ও আলমোহাদ খিলাফাতের রাজধানী।' },
-  { id: 'isfahan', name: 'ইসফাহান (Isfahan)', coords: { x: 640, y: 360 }, region: 'পারস্য (ইরান)', significance: 'সফবীয় সাম্রাজ্যের রাজধানী ও বিশ্বখ্যাত স্থাপত্যের শহর।' },
-  { id: 'delhi', name: 'দিল্লি (Delhi)', coords: { x: 820, y: 410 }, region: 'হিন্দুস্থান (ভারত)', significance: 'দিল্লি সালতানাত ও মুঘল সাম্রাজ্যের ঐতিহাসিক রাজধানী।' }
-].map((c) => ({ ...c, short: c.name.split(' ')[0] }));
-
-const SILK_ROAD_ROUTES = [
-  'M 190,290 L 450,400 L 495,360 L 560,355 L 640,360 L 820,410',
-  'M 450,400 L 540,450 L 550,480 L 620,530 L 820,410'
-];
-
-const HISTORICAL_PERIODS_BN = [
-  {
-    id: 1, name: 'নবী করীম ﷺ এর যুগ', subtitle: 'ইসলামের শুভ সূচনা ও নবুয়তী রাষ্ট্রীয় ভিত্তি',
-    dates: '৬১০ – ৬৩২ খ্রি.', type: 'নবুয়তী রাষ্ট্র', typeCategory: 'খিলাফাত', color: '#34D399', fillOpacity: 0.7,
-    capital: 'মদীনা আল-মুনাওয়ারা', peakArea: '১০,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['সৌদি আরব', 'ইয়েমেন', 'ওমান', 'সংযুক্ত আরব আমিরাত', 'জর্ডান (আংশিক)'],
-    leadership: 'রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম',
-    overview: 'নবুয়তের মাধ্যমে মক্কায় ইসলামের সূচনা এবং ৬২২ খ্রিষ্টাব্দে মদীনায় হিজরতের মাধ্যমে প্রথম ইসলামী রাষ্ট্রের ভিত্তি স্থাপিত হয়। মদীনাহ সনদের মাধ্যমে অসাম্প্রদায়িক বিচার ব্যবস্থা ও সামাজিক শান্তি কায়েম করা হয়।',
-    keyEvents: [
-      { year: '৬১০ খ্রি.', title: 'প্রথম ওহী লাভ', desc: 'গারে হিরায় পবিত্র কুরআন অবতীর্ণ হওয়া শুরু।' },
-      { year: '৬২২ খ্রি.', title: 'ঐতিহাসিক হিজরত', desc: 'মক্কা থেকে মদীনায় আগমন এবং ইসলামী বর্ষপঞ্জি (হিজরী) সূচনা।' },
-      { year: '৬৩০ খ্রি.', title: 'মক্কা বিজয়', desc: 'রক্তপাতহীনভাবে মক্কা বিজয় ও কাবা শরীফকে মূর্তিমুক্তকরণ।' }
-    ],
-    sources: [{ title: 'সিরাতে ইবনে হিশাম', author: 'ইবনে হিশাম', notes: 'মহানবী (সাঃ)-এর প্রাচীনতম ও নির্ভরযোগ্য জীবনীগ্রন্থ।' }],
-    mapPaths: [{ name: 'আরব উপদ্বীপ (মদীনা কেন্দ্রিক)', path: 'M 520,440 L 565,435 L 590,460 L 620,490 L 610,540 L 580,570 L 530,560 L 520,500 Z' }]
-  },
-  {
-    id: 2, name: 'হযরত আবু বকর (রাঃ)', subtitle: 'প্রথম রাশেদুন খলিফা — রিদ্দা যুদ্ধ ও রাষ্ট্রীয় স্থায়িত্ব',
-    dates: '৬৩২ – ৬৩৪ খ্রি.', type: 'রাশেদুন খিলাফাত', typeCategory: 'খিলাফাত', color: '#10B981', fillOpacity: 0.7,
-    capital: 'মদীনা আল-মুনাওয়ারা', peakArea: '১৪,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['সৌদি আরব', 'ইয়েমেন', 'ওমান', 'ইউএই', 'কুয়েত', 'ইরাক (আংশিক)'],
-    leadership: 'খলিফা আবু বকর আস-সিদ্দিক (রাঃ)',
-    overview: 'মহানবী (সাঃ)-এর ওফাতের পর ভণ্ড নবীদের উপদ্রব ও রিদ্দা (স্বধর্ম ত্যাগ) আন্দোলন কঠোরভাবে দমন করে রাষ্ট্রকে একত্রিত করেন। তাঁর আমলেই প্রথম পবিত্র কুরআন গ্রন্থাকারে সংকলন করা হয়।',
-    keyEvents: [
-      { year: '৬৩২ খ্রি.', title: 'সকিফায় খিলাফাত নির্বাচন', desc: 'সহাবীদের সর্বসম্মতিক্রমে প্রথম খলিফা নির্বাচন।' },
-      { year: '৬৩৩ খ্রি.', title: 'পবিত্র কুরআন সংকলন', desc: 'হযরত জায়েদ ইবনে সাবেত (রাঃ)-এর নেতৃত্বে পাণ্ডুলিপি তৈরি।' }
-    ],
-    sources: [{ title: 'তারিখ আল-উমাম ওয়াল মুলুক', author: 'ইমাম আত-তাবারী', notes: 'খিলাফাতের প্রারম্ভিক ইতিহাস।' }],
-    mapPaths: [{ name: 'একত্রিত আরব ও সীমান্ত অঞ্চল', path: 'M 505,420 L 550,395 L 585,410 L 630,470 L 625,545 L 575,575 L 520,555 L 510,480 Z' }]
-  },
-  {
-    id: 3, name: 'হযরত ওমর (রাঃ)', subtitle: 'দ্বিতীয় রাশেদুন খলিফা — প্রশাসনিক ও ভূখণ্ডগত বিস্তার',
-    dates: '৬৩৪ – ৬৪৪ খ্রি.', type: 'রাশেদুন খিলাফাত', typeCategory: 'খিলাফাত', color: '#059669', fillOpacity: 0.7,
-    capital: 'মদীনা আল-মুনাওয়ারা', peakArea: '৩৮,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['সৌদি আরব', 'জর্ডান', 'ফিলিস্তিন', 'সিরিয়া', 'ইরাক', 'ইরান (পশ্চিম)', 'মিশর', 'লিবিয়া'],
-    leadership: 'খলিফা ওমর ইবনুল খাত্তাব (রাঃ)',
-    overview: 'তাঁর শাসনকালে পারস্য সাম্রাজ্য ও বাইজেন্টাইন সাম্রাজ্যের বিশাল অংশ ইসলামী রাষ্ট্রের অধীনে আসে। তিনি বাইতুল মাল (রাজকোষ), বিচার বিভাগ, ডাক বিভাগ ও হিজরী সন চালু করেন।',
-    keyEvents: [
-      { year: '৬৩৬ খ্রি.', title: 'ইয়ারমুকের যুদ্ধ', desc: 'রোমান বাইজেন্টাইন বাহিনীর বিরুদ্ধে ঐতিহাসিক বিজয়।' },
-      { year: '৬৩৭ খ্রি.', title: 'জেরুজালেম বিজয়', desc: 'শান্তিপূর্ণভাবে জেরুজালেমের চাবি গ্রহণ ও নিরাপত্তা চুক্তি।' }
-    ],
-    sources: [{ title: 'ফুতুহুল বুলদান', author: 'আল-বালাযুরী', notes: 'ইসলামী বিজয়াভিযান ও প্রশাসনিক নথি।' }],
-    mapPaths: [{ name: 'বিস্তৃত রাশেদুন সাম্রাজ্য (ওমর রাঃ)', path: 'M 430,410 L 465,370 L 500,340 L 570,330 L 630,340 L 640,390 L 615,480 L 625,550 L 520,560 L 435,435 Z' }]
-  },
-  {
-    id: 4, name: 'হযরত উসমান (রাঃ)', subtitle: 'তৃতীয় রাশেদুন খলিফা — নৌবাহিনী গঠন ও মহাসমুদ্র বিস্তার',
-    dates: '৬৪৪ – ৬৫৬ খ্রি.', type: 'রাশেদুন খিলাফাত', typeCategory: 'খিলাফাত', color: '#34D399', fillOpacity: 0.7,
-    capital: 'মদীনা আল-মুনাওয়ারা', peakArea: '৪৯,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['সৌদি আরব', 'মিশর', 'লিবিয়া', 'তিউনিসিয়া', 'সিরিয়া', 'ইরাক', 'ইরান', 'আফগানিস্তান', 'সাইপ্রাস'],
-    leadership: 'খলিফা উসমান ইবনে আফফান (রাঃ)',
-    overview: 'প্রথম মুসলিম নৌবাহিনী গঠন করা হয়। কুরআনুল কারীমের প্রামাণিক কপি (মুসহাফে উসমানী) প্রস্তুত করে সাম্রাজ্যের বিভিন্ন দেশে প্রেরণ করা হয়। উত্তর আফ্রিকা ও মধ্য এশিয়ায় সীমান্ত সম্প্রসারিত হয়।',
-    keyEvents: [
-      { year: '৬৫০ খ্রি.', title: 'মুসহাফে উসমানী লিখন', desc: 'কুরআনের মানক কপি তৈরি ও বিশ্বব্যাপী বিতরণ।' },
-      { year: '৬৫৪ খ্রি.', title: 'যাতুস সাওয়ারী (নৌযুদ্ধ)', desc: 'ভূমধ্যসাগরে প্রথম পরাক্রমশালী নৌ-বিজয়।' }
-    ],
-    sources: [{ title: 'আল-বিদায়া ওয়ান নিহায়া', author: 'ইবনে কাছীর', notes: 'ইতিহাস ও খিলাফাত সংকলন।' }],
-    mapPaths: [{ name: 'সর্বোচ্চ রাশেদুন মানচিত্র (উসমান রাঃ)', path: 'M 380,390 L 450,330 L 520,290 L 610,290 L 680,320 L 710,380 L 650,450 L 620,550 L 510,560 L 375,415 Z' }]
-  },
-  {
-    id: 5, name: 'হযরত আলী (রাঃ)', subtitle: 'চতুর্থ রাশেদুন খলিফা — বিচার বিভাগীয় ন্যায়বিচার ও সংস্কার',
-    dates: '৬৫৬ – ৬৬১ খ্রি.', type: 'রাশেদুন খিলাফাত', typeCategory: 'খিলাফাত', color: '#0D9488', fillOpacity: 0.7,
-    capital: 'কুফা (ইরাক)', peakArea: '৪৬,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['সৌদি আরব', 'ইরাক', 'ইরান', 'মিশর', 'ইয়েমেন'],
-    leadership: 'খলিফা আলী ইবনে আবী তালিব (রাঃ)',
-    overview: 'রাজধানী মদীনা থেকে কুফায় স্থানান্তরিত করা হয়। অভ্যন্তরীণ সংস্কার, বায়তুল মালের সুষম বন্টন, প্রশাসনিক স্বচ্ছতা ও আদালতের অবকাঠামো পুনর্গঠনে বিশেষ জোর দেন।',
-    keyEvents: [
-      { year: '৬৫৬ খ্রি.', title: 'রাজধানী স্থানান্তর', desc: 'প্রশাসনিক সুবিধার জন্য কুফা শহরে রাজধানী স্থাপন।' },
-      { year: '৬৬১ খ্রি.', title: 'শাহাদাত বরণ', desc: 'ইরাকের কুফায় আব্দুর রহমান ইবনে মুলজিম কর্তৃক শাহাদাত।' }
-    ],
-    sources: [{ title: 'নাহজুল বালাগা', author: 'হযরত আলী (রাঃ) সম্পর্কিত সঙ্কলন', notes: 'চিঠিপত্র, ভাষণ ও প্রশাসনিক নির্দেশাবলী।' }],
-    mapPaths: [{ name: 'রাশেদুন সীমান্ত (আলী রাঃ)', path: 'M 420,390 L 480,350 L 550,310 L 650,310 L 690,360 L 630,470 L 600,550 L 500,550 L 415,420 Z' }]
-  },
-  {
-    id: 6, name: 'উমাইয়া খিলাফাত', subtitle: 'প্রথম রাজবংশীয় মহাসাম্রাজ্য — আটলান্টিক থেকে সিন্ধু',
-    dates: '৬৬১ – ৭৫০ খ্রি.', type: 'উমাইয়া খিলাফাত', typeCategory: 'খিলাফাত', color: '#3B82F6', fillOpacity: 0.65,
-    capital: 'দামেস্ক (সিরিয়া)', peakArea: '১,১১,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['স্পেন', 'পর্তুগাল', 'মরোক্কো', 'আলজেরিয়া', 'তিউনিসিয়া', 'মিশর', 'সিরিয়া', 'ইরাক', 'ইরান', 'পাকিস্তান'],
-    leadership: 'মুয়াবিয়া (রাঃ), আবদুল মালিক, ওমর ইবনে আবদুল আজিজ',
-    overview: 'দামেস্ককে রাজধানী করে উমাইয়ারা তিনটি মহাদেশজুড়ে বিস্তৃত বৃহত্তম সাম্রাজ্য গঠন করে। ফার্সি ও গ্রিকের বদলে আরবিকে রাষ্ট্রভাষা করা হয় এবং সোনার দিনার মুদ্রা চালু হয়।',
-    keyEvents: [
-      { year: '৬৯১ খ্রি.', title: 'ডোম অফ দ্য রক নির্মাণ', desc: 'জেরুজালেমে কুব্বাতুস সাখরা নির্মাণ কাজ সমাপ্ত।' },
-      { year: '৭১১ খ্রি.', title: 'আন্দালুস ও সিন্ধু বিজয়', desc: 'তারিক বিন যিয়াদ কর্তৃক স্পেন এবং মুহাম্মদ বিন কাসিম কর্তৃক সিন্ধু বিজয়।' }
-    ],
-    sources: [{ title: 'দ্য উমাইয়া ক্যালিফেট', author: 'জি. আর. হটিং', notes: 'উমাইয়া রাষ্ট্রব্যবস্থা সংক্রান্ত ঐতিহাসিক গ্রন্থ।' }],
-    mapPaths: [{ name: 'উমাইয়া বিশ্ব সাম্রাজ্য', path: 'M 160,380 L 170,270 L 260,290 L 350,330 L 450,280 L 540,260 L 680,260 L 780,310 L 830,410 L 750,470 L 620,530 L 450,420 L 300,410 L 160,400 Z' }]
-  },
-  {
-    id: 7, name: 'আব্বাসীয় খিলাফাত', subtitle: 'ইসলামী স্বর্ণযুগ ও বিশ্ব জ্ঞান-বিজ্ঞানের কেন্দ্রবিন্দু',
-    dates: '৭৫০ – ১২৫৮ খ্রি.', type: 'আব্বাসীয় খিলাফাত', typeCategory: 'খিলাফাত', color: '#8B5CF6', fillOpacity: 0.65,
-    capital: 'বাগদাদ (ইরাক)', peakArea: '১,০৫,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['ইরাক', 'ইরান', 'সিরিয়া', 'মিশর', 'সৌদি আরব', 'আফগানিস্তান', 'উজবেকিস্তান'],
-    leadership: 'আবু জাফর আল-মানসুর, হারুন অর-রশিদ, আল-মামুন',
-    overview: "বাগদাদে বিশ্বখ্যাত 'বায়তুল হিকমাহ' (House of Wisdom) প্রতিষ্ঠা করে বীজগণিত, জ্যোতির্বিজ্ঞান, চিকিৎসা ও দর্শনে বিপ্লব ঘটানো হয়। এটিই ইসলামী সভ্যতার স্বর্ণযুগ।",
-    keyEvents: [
-      { year: '৭৬২ খ্রি.', title: 'বাগদাদ নগরী প্রতিষ্ঠা', desc: "খলিফা মানসুর কর্তৃক গোলাকৃতির 'শান্তির নগরী' বাগদাদ পত্তন।" },
-      { year: '৮৩০ খ্রি.', title: 'বায়তুল হিকমাহ গঠন', desc: 'বিজ্ঞান ও অনুবাদ গবেষণার জন্য সর্ববৃহৎ লাইব্রেরি।' }
-    ],
-    sources: [{ title: 'বাগদাদ ডিউরিং দ্য আব্বাসিদ ক্যালিফেট', author: 'গাই ল্যা স্ট্রেঞ্জ', notes: 'আব্বাসীয় নগর নকশা ও বিবরণ।' }],
-    mapPaths: [{ name: 'আব্বাসীয় সাম্রাজ্যের ভূখণ্ড', path: 'M 300,380 L 380,330 L 470,280 L 560,250 L 700,250 L 780,320 L 810,420 L 710,470 L 600,530 L 450,420 L 310,400 Z' }]
-  },
-  {
-    id: 8, name: 'ফাতেমীয় খিলাফাত', subtitle: 'উত্তর আফ্রিকা ও মিশরের ইসমাইলি রাজবংশ',
-    dates: '৯০৯ – ১১৭১ খ্রি.', type: 'ফাতেমীয় খিলাফাত', typeCategory: 'খিলাফাত', color: '#EC4899', fillOpacity: 0.65,
-    capital: 'মেহদিয়া -> কায়রো', peakArea: '৪১,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['মিশর', 'তিউনিসিয়া', 'লিবিয়া', 'আলজেরিয়া', 'ফিলিস্তিন', 'সিরিয়া'],
-    leadership: 'আল-মুইজ, আল-মুস্তানসির',
-    overview: 'উত্তর আফ্রিকায় সূচনা হয়ে ৯৬৯ খ্রিষ্টাব্দে মিশর জয় করে। তারা কায়রো নগরী ও আল-আজহার মসজিদ ও বিশ্ববিদ্যালয় প্রতিষ্ঠা করে।',
-    keyEvents: [
-      { year: '৯৬৯ খ্রি.', title: 'কায়রো শহর প্রতিষ্ঠা', desc: 'সেনাপতি জওহর আল-সিকিল্লি কর্তৃক কায়রোর ভিত্তিপ্রস্তর স্থাপন।' },
-      { year: '৯৭০ খ্রি.', title: 'আল-আজহারের প্রতিষ্ঠা', desc: 'আল-আজহার মসজিদ ও ইসলামী বিদ্যাপীঠ নির্মাণ।' }
-    ],
-    sources: [{ title: 'হিস্ট্রি অফ দ্য ফাতেমিড ক্যালিফেট', author: 'ফারহাদ দফতারি', notes: 'ফাতেমীয় শাসন সংক্রান্ত গ্রন্থ।' }],
-    mapPaths: [{ name: 'ফাতেমীয় ভূখণ্ড', path: 'M 220,360 L 300,340 L 430,370 L 490,340 L 540,400 L 540,510 L 460,430 L 300,410 L 220,380 Z' }]
-  },
-  {
-    id: 9, name: 'কর্ডোবা খিলাফাত', subtitle: 'মুসলিম ইউরোপের স্বর্ণালী সভ্যতা ও সংস্কৃতি',
-    dates: '৯২৯ – ১০৩১ খ্রি.', type: 'আন্দালুসীয় উমাইয়া', typeCategory: 'খিলাফাত', color: '#F59E0B', fillOpacity: 0.7,
-    capital: 'কর্ডোবা (স্পেন)', peakArea: '৬,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['স্পেন', 'পর্তুগাল', 'মরোক্কো (উপকূল)'],
-    leadership: 'তৃতীয় আবদুর রহমান, আল-হাকাম দ্বিতীয়',
-    overview: 'স্পেনে উমাইয়া বংশের পুনরুত্থান। কর্ডোবা পরিণত হয় তৎকালীন ইউরোপের শিক্ষা, সংস্কৃতি, আলোকসজ্জা ও চিকিৎসার প্রধান রাজধানীতে।',
-    keyEvents: [
-      { year: '৯২৯ খ্রি.', title: 'স্বাধীন খিলাফাত ঘোষণা', desc: 'তৃতীয় আবদুর রহমান নিজেকে খলিফা ঘোষণা করেন।' },
-      { year: '৯৩৬ খ্রি.', title: 'মদীনা আজ-জাহরা রাজপ্রাসাদ', desc: 'কর্ডোবার কাছে বিস্ময়কর প্রাসাদ নগরী নির্মাণ।' }
-    ],
-    sources: [{ title: 'দ্য অর্নামেন্ট অফ দ্য ওয়ার্ল্ড', author: 'এম. আর. মেনোকাল', notes: 'আন্দালুসের ইউরোপীয় সাংস্কৃতিক প্রভাব।' }],
-    mapPaths: [{ name: 'কর্ডোবা খিলাফাত সীমা', path: 'M 160,280 L 220,260 L 245,290 L 230,320 L 175,325 L 155,300 Z' }]
-  },
-  {
-    id: 10, name: 'আলমোহাদ খিলাফাত', subtitle: 'মাগরেব ও আন্দালুসের বার্বার ইসলামী সাম্রাজ্য',
-    dates: '১১২১ – ১২৬৯ খ্রি.', type: 'বার্বার খিলাফাত', typeCategory: 'খিলাফাত', color: '#D97706', fillOpacity: 0.65,
-    capital: 'মারাকেশ ও সেভিল', peakArea: '২৩,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['মরোক্কো', 'আলজেরিয়া', 'তিউনিসিয়া', 'স্পেন (দক্ষিণাংশ)'],
-    leadership: 'ইবনে তুমার্ত, আবদুল মুমিন',
-    overview: 'উত্তর আফ্রিকার এটলাস পর্বতমালা থেকে আত্মপ্রকাশ করে সমগ্র মাগরেব এবং দক্ষিণ স্পেনকে একটি সুসংহত শাসনের অধীনে নিয়ে আসে।',
-    keyEvents: [{ year: '১১৪৭ খ্রি.', title: 'মারাকেশ দখল', desc: 'আলমোহাদদের নতুন রাজধানীর সাম্রাজ্য বিস্তার।' }],
-    sources: [{ title: 'হিস্ট্রি অফ দি আলমোহাদস', author: 'ইবনুল কাত্তান', notes: 'বার্বার শাসকদের ইতিহাস।' }],
-    mapPaths: [{ name: 'আলমোহাদ ভূখণ্ড', path: 'M 140,370 L 170,270 L 230,295 L 320,330 L 340,370 L 280,410 L 180,410 Z' }]
-  },
-  {
-    id: 11, name: 'আইয়ুবীয় সালতানাত', subtitle: 'সুলতান সালাহউদ্দিন এবং জেরুজালেম পুনরুদ্ধার',
-    dates: '১১৭১ – ১২৬০ খ্রি.', type: 'সালতানাত', typeCategory: 'সালতানাত', color: '#EF4444', fillOpacity: 0.65,
-    capital: 'কায়রো / দামেস্ক', peakArea: '২৭,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['মিশর', 'সিরিয়া', 'জর্ডান', 'ফিলিস্তিন', 'ইয়েমেন'],
-    leadership: 'সুলতান সালাহউদ্দিন আইয়ুবী',
-    overview: 'বীর যোদ্ধা সুলতান সালাহউদ্দিন আইয়ুবী কর্তৃক প্রতিষ্ঠিত। তিনি ক্রুসেডারদের পরাজিত করে ১১৮৭ সালে ঐতিহাসিক জেরুজালেম মুক্ত করেন।',
-    keyEvents: [
-      { year: '১১৮৭ খ্রি.', title: 'হিত্তিনের যুদ্ধ', desc: 'ক্রুসেডারদের বিরুদ্ধে সালাহউদ্দিনের ঐতিহাসিক বিজয়।' },
-      { year: '১১৮৭ খ্রি.', title: 'জেরুজালেম পুনরুদ্ধার', desc: '৮৮ বছর পর মুসলিমদের নিকট জেরুজালেমের প্রত্যাবর্তন।' }
-    ],
-    sources: [{ title: 'আন-নাওয়াদিরুস সুলতানিয়্যাহ', author: 'বাহাউদ্দিন ইবনে শাদ্দাদ', notes: 'সালাহউদ্দিনের প্রত্যক্ষ জীবনচরিত।' }],
-    mapPaths: [{ name: 'আইয়ুবীয় রাজ্য', path: 'M 400,390 L 470,360 L 510,345 L 545,400 L 550,530 L 510,540 L 440,430 Z' }]
-  },
-  {
-    id: 12, name: 'মামলুক সালতানাত', subtitle: 'মঙ্গোলদের প্রতিহতকারী ও পবিত্র দুই মসজিদের রক্ষক',
-    dates: '১২৫০ – ১৫১৭ খ্রি.', type: 'সালতানাত', typeCategory: 'সালতানাত', color: '#DC2626', fillOpacity: 0.65,
-    capital: 'কায়রো (মিশর)', peakArea: '২১,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['মিশর', 'সিরিয়া', 'জর্ডান', 'ফিলিস্তিন', 'সৌদি আরব (হিজাজ)'],
-    leadership: 'সুলতান কুতুজ, রুকনুদ্দিন বাইবার্স',
-    overview: 'ঐতিহাসিক আইন জালুতের যুদ্ধে দুর্ধর্ষ মঙ্গোল বাহিনীকে পরাজিত করে সমগ্র মুসলিম বিশ্বকে নিশ্চিত ধ্বংসের হাত থেকে রক্ষা করে।',
-    keyEvents: [{ year: '১২৬০ খ্রি.', title: 'আইন জালুতের যুদ্ধ', desc: 'মঙ্গোলদের বিশ্বজয় থামিয়ে দেওয়া অভাবনীয় বিজয়।' }],
-    sources: [{ title: 'আল-সুলুক লি-মারিফাত দুয়াল আল-মুলুক', author: 'আল-মাকরিজী', notes: 'মামলুক ইতিহাস।' }],
-    mapPaths: [{ name: 'মামলুক ভূখণ্ড', path: 'M 410,390 L 475,355 L 515,350 L 550,420 L 540,510 L 440,420 Z' }]
-  },
-  {
-    id: 13, name: 'উসমানীয় সাম্রাজ্য', subtitle: 'তিন মহাদেশব্যাপী বিস্তৃত সর্বশেষ খিলাফাত সাম্রাজ্য',
-    dates: '১২৯৯ – ১৯২২ খ্রি.', type: 'সাম্রাজ্য / খিলাফাত', typeCategory: 'সাম্রাজ্য', color: '#F43F5E', fillOpacity: 0.65,
-    capital: 'ইস্তাম্বুল (তুরস্ক)', peakArea: '৫২,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['তুরস্ক', 'গ্রিস', 'বুলগেরিয়া', 'মিশর', 'সিরিয়া', 'ইরাক', 'সৌদি আরব'],
-    leadership: 'সুলতান মুহাম্মদ আল-ফাতেহ, সুলাইমান আল-কানুনী',
-    overview: '১৪৫৩ সালে ইস্তাম্বুল জয় করে হাজার বছরের বাইজেন্টাইন সাম্রাজ্যের পতন ঘটায়। তারা দীর্ঘ ৬০০ বছর ধরে পূর্ব ইউরোপ, মধ্যপ্রাচ্য ও উত্তর আফ্রিকা শাসন করে।',
-    keyEvents: [
-      { year: '১৪৫৩ খ্রি.', title: 'কনস্টান্টিনোপল বিজয়', desc: 'সুলতান মুহাম্মদ আল-ফাতেহ কর্তৃক ইস্তাম্বুল বিজয়।' },
-      { year: '১৫১৭ খ্রি.', title: 'খিলাফাত গ্রহণ', desc: 'মামলুকদের পর আনুষ্ঠানিকভাবে খিলাফাতের দায়িত্ব গ্রহণ।' }
-    ],
-    sources: [{ title: 'হিস্ট্রি অফ দি অটোমান এম্পায়ার', author: 'খালিল ইনালসিক', notes: 'উসমানীয় প্রশাসনিক দলিল।' }],
-    mapPaths: [{ name: 'উসমানীয় বিশালাকার সাম্রাজ্য', path: 'M 360,240 L 430,220 L 520,250 L 570,300 L 560,370 L 540,480 L 440,400 L 300,380 L 260,340 L 330,260 Z' }]
-  },
-  {
-    id: 14, name: 'মুঘল সাম্রাজ্য', subtitle: 'দক্ষিণ এশিয়ার ইসলামিক স্থাপত্য ও সংস্কৃতির স্বর্ণযুগ',
-    dates: '১৫২৬ – ১৮৫৭ খ্রি.', type: 'সাম্রাজ্য', typeCategory: 'সাম্রাজ্য', color: '#14B8A6', fillOpacity: 0.65,
-    capital: 'দিল্লি / আগ্রা', peakArea: '৪০,০০,০০০ বর্গ কি.মি.',
-    modernCountries: ['ভারত', 'পাকিস্তান', 'বাংলাদেশ', 'আফগানিস্তান (আংশিক)'],
-    leadership: 'জহিরুদ্দিন বাবর, আকবর, শাহজাহান, আওরঙ্গজেব',
-    overview: 'জহিরুদ্দিন বাবর কর্তৃক প্রতিষ্ঠিত। মুঘল আমলে এই সমৃদ্ধ অঞ্চল ছিল বিশ্ব অর্থনীতির বড় অংশের কেন্দ্র। তাজমহল, লালকেল্লা ও শালিমার গার্ডেন তাদের অমর স্থাপত্য।',
-    keyEvents: [
-      { year: '১৫২৬ খ্রি.', title: 'পানিপথের প্রথম যুদ্ধ', desc: 'বাবর কর্তৃক ইব্রাহিম লোদীকে পরাজিত করে মুঘল শাসন স্থাপন।' },
-      { year: '১৬৩২ খ্রি.', title: 'তাজমহল নির্মাণ শুরু', desc: 'সম্রাট শাহজাহান কর্তৃক বিশ্বখ্যাত স্থাপত্যের নির্মাণ আরম্ভ।' }
-    ],
-    sources: [{ title: 'বাবরনামা', author: 'সম্রাট বাবর', notes: 'আত্মজীবনী ও ভৌগোলিক বিবরণ।' }],
-    mapPaths: [{ name: 'মুঘল ভারতীয় ভূখণ্ড', path: 'M 720,330 L 780,310 L 860,340 L 880,420 L 840,510 L 800,480 L 760,400 Z' }]
-  },
-  {
-    id: 15, name: 'সফবীয় সাম্রাজ্য', subtitle: 'পারস্যের রেনেসাঁ ও শিল্প-স্থাপত্যের চরম উৎকর্ষ',
-    dates: '১৫০১ – ১৭৩৬ খ্রি.', type: 'সাম্রাজ্য', typeCategory: 'সাম্রাজ্য', color: '#6366F1', fillOpacity: 0.65,
-    capital: 'ইসফাহান (ইরান)', peakArea: '২৮,৫০,০০০ বর্গ কি.মি.',
-    modernCountries: ['ইরান', 'আজারবাইজান', 'আরমেনিয়া', 'ইরাক (পূর্বাংশ)', 'তুর্কমেনিস্তান'],
-    leadership: 'শাহ ইসমাইল প্রথম, শাহ আব্বাস প্রথম',
-    overview: 'পারস্য অঞ্চলে একটি সুসংগঠিত স্বাধীন রাষ্ট্র প্রতিষ্ঠা করে। রাজধানী ইসফাহানকে নিখুঁত নগর পরিকল্পনা ও কারুকাজে বিশ্বের অন্যতম সুন্দর শহরে রূপান্তর করা হয়।',
-    keyEvents: [
-      { year: '১৫০১ খ্রি.', title: 'তাবরিজ জয়', desc: 'শাহ ইসমাইল প্রথম কর্তৃক সফবীয় সাম্রাজ্যের ভিত্তি স্থাপন।' },
-      { year: '১৫৯৮ খ্রি.', title: 'ইসফাহান নগর পরিকল্পনা', desc: 'নাকশে জাহান স্কয়ার ও স্থাপত্য নির্মাণ।' }
-    ],
-    sources: [{ title: 'দ্য সাফাবিদ এম্পায়ার', author: 'এ. জে. নিউম্যান', notes: 'পারস্যের ইতিহাস গ্রন্থ।' }],
-    mapPaths: [{ name: 'সফবীয় পারস্য সীমানা', path: 'M 590,300 L 670,270 L 730,300 L 730,370 L 670,410 L 600,380 Z' }]
-  }
-];
-
-const LANDMASSES = [
-  'M 140,260 L 230,250 L 245,290 L 210,330 L 155,330 Z',
-  'M 140,345 L 260,340 L 350,350 L 460,390 L 510,480 L 450,560 L 380,500 L 160,420 Z',
-  'M 260,250 L 350,220 L 440,200 L 500,240 L 450,290 L 360,300 L 310,260 Z',
-  'M 490,380 L 550,370 L 610,400 L 630,480 L 580,575 L 515,550 L 510,470 Z',
-  'M 570,250 L 720,240 L 760,290 L 720,390 L 620,380 Z',
-  'M 740,320 L 850,300 L 890,380 L 840,520 L 770,440 Z'
-];
-
-const SEA_LABELS = [
-  { text: 'আটলান্টিক মহাসাগর', x: 112, y: 330 },
-  { text: 'ভূমধ্যসাগর', x: 335, y: 324 },
-  { text: 'আরব সাগর', x: 690, y: 545 }
-];
-
-const CATEGORIES = [
-  { label: 'সবগুলো', val: 'ALL' },
-  { label: 'খিলাফাত', val: 'খিলাফাত' },
-  { label: 'সালতানাত', val: 'সালতানাত' },
-  { label: 'সাম্রাজ্য', val: 'সাম্রাজ্য' }
-];
-
-const HOW_TO_STEPS = [
-  { t: 'যুগ বেছে নিন', d: 'মানচিত্রের উপরের তালিকা থেকে যেকোনো যুগে ট্যাপ করুন। ঐ যুগের ভূখণ্ড রঙিন হয়ে ফুটে উঠবে।' },
-  { t: 'মানচিত্র সরান ও জুম করুন', d: 'আঙুল দিয়ে টেনে সরান, দুই আঙুলে চিমটি কেটে জুম করুন। কম্পিউটারে মাউস ড্র্যাগ ও স্ক্রল চাকা কাজ করে। + − বাটনও ব্যবহার করা যায়।' },
-  { t: 'শহরে ট্যাপ করুন', d: 'সোনালি রঙের শহর ঐ যুগের রাজধানী। যেকোনো শহর বা ভূখণ্ডে ট্যাপ করলে ছোট কার্ডে তথ্য দেখা যাবে।' },
-  { t: 'নিচের প্যানেলে বিস্তারিত পড়ুন', d: 'নিচের কার্ড উপরে টেনে বা ট্যাপ করে খুলুন। সেখানে বিবরণ, ঘটনাবলী ও তথ্যসূত্র ট্যাব আছে।' },
-  { t: 'দুই যুগ তুলনা করুন', d: '"যুগ তুলনা" চালু করে দ্বিতীয় যুগ বেছে নিন। দ্বিতীয় যুগের সীমানা কমলা ড্যাশ রেখায় দেখাবে।' }
-];
-
-/* ==========================================
-   ৩. সহায়ক ফাংশন
+   ৩. সহায়ক ফাংশন ও ধ্রুবক
 ========================================== */
 const MIN_K = 0.8;
 const MAX_K = 6;
 const VIEW = { x: 90, y: 190, w: 830, h: 410 };
-const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
-const isCapitalOf = (period, city) => period.capital.includes(city.short);
 const GRATICULE_X = [90, 170, 250, 330, 410, 490, 570, 650, 730, 810, 890];
 const GRATICULE_Y = [190, 270, 350, 430, 510, 590];
+
+const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+const isCapitalOf = (period, city) => period.capital.includes(city.short);
+const toBn = (n) => String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[Number(d)]);
+
+const FOCUS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b]';
 
 /* ==========================================
    ৪. তথ্য প্যানেল (ডেস্কটপ সাইডবার ও মোবাইল শিট উভয়ে ব্যবহৃত)
@@ -317,18 +80,18 @@ function InfoContent({ period, comparePeriod, isCompareMode, activeTab, setActiv
             <span className="font-bold text-[#dfbd7b]">তুলনামূলক তথ্য</span>
             <button
               onClick={onSwap}
-              className="flex items-center gap-1 text-[11px] px-2 py-1 rounded-md bg-[#1E3350] text-gray-200 border border-gray-700 hover:border-[#dfbd7b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b]"
+              className={`flex items-center gap-1 text-[11px] px-2.5 py-1.5 rounded-lg bg-[#1E3350] text-gray-200 border border-gray-700 hover:border-[#dfbd7b] ${FOCUS}`}
             >
               <IconSwap className="w-3.5 h-3.5" /> অদলবদল
             </button>
           </div>
           <div className="grid grid-cols-2 gap-2 text-[11px]">
-            <div className="p-2 bg-[#112236] rounded-lg border border-emerald-500/40">
+            <div className="p-2.5 bg-[#112236] rounded-xl border border-emerald-500/40">
               <span className="text-emerald-400 font-bold block">{period.name}</span>
               <span className="text-gray-300 block mt-1">আয়তন: {period.peakArea}</span>
               <span className="text-gray-300 block">রাজধানী: {period.capital}</span>
             </div>
-            <div className="p-2 bg-[#112236] rounded-lg border border-amber-400/40">
+            <div className="p-2.5 bg-[#112236] rounded-xl border border-amber-400/40">
               <span className="text-amber-300 font-bold block">{comparePeriod.name}</span>
               <span className="text-gray-300 block mt-1">আয়তন: {comparePeriod.peakArea}</span>
               <span className="text-gray-300 block">রাজধানী: {comparePeriod.capital}</span>
@@ -350,15 +113,15 @@ function InfoContent({ period, comparePeriod, isCompareMode, activeTab, setActiv
         </div>
       </div>
 
-      <div className="flex border-b border-gray-800 bg-[#0B1724]" role="tablist">
+      <div className="flex gap-1 p-1.5 border-b border-gray-800 bg-[#0B1724]" role="tablist">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             role="tab"
             aria-selected={activeTab === tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 py-3 text-xs font-bold border-b-2 transition focus-visible:outline-none focus-visible:bg-[#1E3350] ${
-              activeTab === tab.id ? 'border-[#dfbd7b] text-[#dfbd7b] bg-[#112236]' : 'border-transparent text-gray-400 hover:text-gray-200'
+            className={`flex-1 py-2.5 text-xs font-bold rounded-lg transition ${FOCUS} ${
+              activeTab === tab.id ? 'bg-[#dfbd7b] text-gray-950' : 'text-gray-400 hover:text-gray-200 hover:bg-[#1E3350]'
             }`}
           >
             {tab.label}
@@ -383,7 +146,7 @@ function InfoContent({ period, comparePeriod, isCompareMode, activeTab, setActiv
               <h3 className="text-xs font-bold text-gray-300 mb-2">বর্তমান যেসব দেশ অন্তর্ভুক্ত</h3>
               <div className="flex flex-wrap gap-1.5">
                 {period.modernCountries.map((country) => (
-                  <span key={country} className="px-2.5 py-1 rounded-md bg-[#1E3350] text-gray-200 border border-gray-700 text-[12px]">
+                  <span key={country} className="px-2.5 py-1 rounded-full bg-[#1E3350] text-gray-200 border border-gray-700 text-[12px]">
                     {country}
                   </span>
                 ))}
@@ -430,14 +193,14 @@ function InfoContent({ period, comparePeriod, isCompareMode, activeTab, setActiv
    ৫. মূল কম্পোনেন্ট
 ========================================== */
 export default function KhilafahAtlas() {
-  const [selectedPeriodId, setSelectedPeriodId] = useState(1);
+  const [selectedPeriodId, setSelectedPeriodId] = useState(HISTORICAL_PERIODS_BN[0].id);
   const [comparePeriodId, setComparePeriodId] = useState(null);
   const [isCompareMode, setIsCompareMode] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState('ALL');
   const [selectedCity, setSelectedCity] = useState(null);
   const [activeRegion, setActiveRegion] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [pickerTarget, setPickerTarget] = useState(null); // null | 'primary' | 'compare'
   const [activeTab, setActiveTab] = useState('overview');
   const [sheetOpen, setSheetOpen] = useState(false);
   const [showRoutes, setShowRoutes] = useState(true);
@@ -451,10 +214,15 @@ export default function KhilafahAtlas() {
   const startPosRef = useRef({ x: 0, y: 0 });
   const movedRef = useRef(false);
 
-  const currentPeriod = useMemo(
-    () => HISTORICAL_PERIODS_BN.find((p) => p.id === selectedPeriodId) || HISTORICAL_PERIODS_BN[0],
-    [selectedPeriodId]
-  );
+  const total = HISTORICAL_PERIODS_BN.length;
+
+  const selectedIndex = useMemo(() => {
+    const i = HISTORICAL_PERIODS_BN.findIndex((p) => p.id === selectedPeriodId);
+    return i < 0 ? 0 : i;
+  }, [selectedPeriodId]);
+
+  const currentPeriod = HISTORICAL_PERIODS_BN[selectedIndex];
+
   const comparePeriod = useMemo(
     () => HISTORICAL_PERIODS_BN.find((p) => p.id === comparePeriodId) || null,
     [comparePeriodId]
@@ -474,21 +242,17 @@ export default function KhilafahAtlas() {
     });
   }, [searchQuery, categoryFilter]);
 
-  /* নির্বাচিত যুগ স্ক্রোল করে দৃশ্যমান রাখা */
+  /* Esc দিয়ে তালিকা বা গাইড বন্ধ */
   useEffect(() => {
-    const el = document.getElementById(`era-btn-${selectedPeriodId}`);
-    if (el) el.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
-  }, [selectedPeriodId]);
-
-  /* Esc দিয়ে গাইড বন্ধ */
-  useEffect(() => {
-    if (!showHelp) return undefined;
+    if (!showHelp && !pickerTarget) return undefined;
     const onKey = (e) => {
-      if (e.key === 'Escape') setShowHelp(false);
+      if (e.key !== 'Escape') return;
+      if (pickerTarget) setPickerTarget(null);
+      else setShowHelp(false);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [showHelp]);
+  }, [showHelp, pickerTarget]);
 
   /* ---------- জুম ও প্যান ---------- */
   const toSvgPoint = useCallback((cx, cy) => {
@@ -575,14 +339,38 @@ export default function KhilafahAtlas() {
     if (pointersRef.current.size < 2) pinchDistRef.current = 0;
   };
 
-  /* ---------- অন্যান্য অ্যাকশন ---------- */
+  /* ---------- যুগ বাছাই ও তুলনা ---------- */
+  const selectPrimary = (id) => {
+    if (isCompareMode && id === comparePeriodId) setComparePeriodId(selectedPeriodId);
+    setSelectedPeriodId(id);
+  };
+
+  const pickEra = (id) => {
+    setSelectedCity(null);
+    setActiveRegion(null);
+    if (pickerTarget === 'compare') {
+      if (id !== selectedPeriodId) setComparePeriodId(id);
+    } else {
+      selectPrimary(id);
+    }
+    setPickerTarget(null);
+  };
+
+  const stepEra = (delta) => {
+    const next = HISTORICAL_PERIODS_BN[selectedIndex + delta];
+    if (!next) return;
+    setSelectedCity(null);
+    setActiveRegion(null);
+    selectPrimary(next.id);
+  };
+
   const toggleCompareMode = () => {
     if (isCompareMode) {
       setIsCompareMode(false);
       setComparePeriodId(null);
     } else {
       setIsCompareMode(true);
-      setComparePeriodId(selectedPeriodId === 15 ? 1 : selectedPeriodId + 1);
+      setComparePeriodId(HISTORICAL_PERIODS_BN[(selectedIndex + 1) % total].id);
     }
   };
 
@@ -592,13 +380,12 @@ export default function KhilafahAtlas() {
     setComparePeriodId(selectedPeriodId);
   };
 
-  const onPickEra = (id) => {
-    setSelectedCity(null);
-    setActiveRegion(null);
-    if (isCompareMode && id !== selectedPeriodId) setComparePeriodId(id);
-    else setSelectedPeriodId(id);
+  const clearFilters = () => {
+    setSearchQuery('');
+    setCategoryFilter('ALL');
   };
 
+  /* ---------- মানচিত্রে ট্যাপ ---------- */
   const onCityTap = (e, city) => {
     e.stopPropagation();
     if (movedRef.current) return;
@@ -616,8 +403,8 @@ export default function KhilafahAtlas() {
   const k = transform.k;
   const showFullLabels = k >= 1.6;
 
-  const iconBtn =
-    'w-10 h-10 flex items-center justify-center text-gray-300 hover:text-[#dfbd7b] hover:bg-[#1E3350] rounded-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b]';
+  const iconBtn = `w-11 h-11 flex items-center justify-center text-gray-300 hover:text-[#dfbd7b] hover:bg-[#1E3350] rounded-xl transition ${FOCUS}`;
+  const stepBtn = `shrink-0 w-14 md:w-16 flex flex-col items-center justify-center gap-0.5 rounded-2xl border border-[#dfbd7b]/40 bg-[#1E3350]/70 text-[#dfbd7b] text-[10px] font-bold transition enabled:hover:bg-[#dfbd7b]/20 enabled:active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed ${FOCUS}`;
 
   return (
     <div className="flex flex-col h-[100dvh] w-full bg-[#0B1724] text-gray-100 font-sans overflow-hidden select-none">
@@ -628,16 +415,16 @@ export default function KhilafahAtlas() {
       `}</style>
 
       {/* ---------- হেডার ---------- */}
-      <header className="flex-none bg-[#112236] border-b border-[#dfbd7b]/30 z-30 shadow-xl">
+      <header className="flex-none bg-gradient-to-b from-[#14293F] to-[#0F2033] border-b border-[#dfbd7b]/25 z-30 shadow-xl">
         <div className="flex items-center justify-between gap-2 px-3 md:px-5 pt-2.5 pb-2">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-9 h-9 md:w-10 md:h-10 shrink-0 rounded-xl bg-[#dfbd7b]/20 border border-[#dfbd7b] flex items-center justify-center text-[#dfbd7b]">
-              <IconGlobe className="w-5 h-5 md:w-6 md:h-6" />
+            <div className="w-10 h-10 shrink-0 rounded-2xl bg-gradient-to-br from-[#dfbd7b]/30 to-[#dfbd7b]/5 border border-[#dfbd7b]/70 flex items-center justify-center text-[#dfbd7b]">
+              <IconGlobe className="w-6 h-6" />
             </div>
             <div className="min-w-0">
               <h1 className="text-base md:text-lg font-bold text-white leading-tight truncate">খিলাফাত এটলাস</h1>
               <p className="text-[11px] md:text-xs text-gray-400 leading-snug truncate">
-                যুগ বেছে নিন, মানচিত্র টেনে দেখুন, শহরে ট্যাপ করে জানুন
+                {toBn(total)}টি যুগের ইসলামী ইতিহাস মানচিত্রে
               </p>
             </div>
           </div>
@@ -647,7 +434,7 @@ export default function KhilafahAtlas() {
               onClick={() => setShowRoutes((v) => !v)}
               aria-pressed={showRoutes}
               aria-label="বাণিজ্য পথ দেখান বা লুকান"
-              className={`flex items-center gap-1 h-9 px-2.5 rounded-lg border text-[11px] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b] ${
+              className={`flex items-center gap-1 h-10 px-2.5 rounded-xl border text-[11px] font-semibold transition ${FOCUS} ${
                 showRoutes ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-[#1E3350] text-gray-400 border-gray-700'
               }`}
             >
@@ -658,139 +445,78 @@ export default function KhilafahAtlas() {
               onClick={toggleCompareMode}
               aria-pressed={isCompareMode}
               aria-label="যুগ তুলনা চালু বা বন্ধ"
-              className={`flex items-center gap-1 h-9 px-2.5 rounded-lg border text-[11px] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b] ${
+              className={`flex items-center gap-1 h-10 px-2.5 rounded-xl border text-[11px] font-semibold transition ${FOCUS} ${
                 isCompareMode ? 'bg-[#dfbd7b] text-gray-950 border-[#dfbd7b]' : 'bg-[#1E3350] text-gray-300 border-gray-700'
               }`}
             >
               <IconCompare className="w-4 h-4" />
-              <span>{isCompareMode ? 'তুলনা বন্ধ' : 'যুগ তুলনা'}</span>
+              <span>{isCompareMode ? 'তুলনা বন্ধ' : 'তুলনা'}</span>
             </button>
             <button
               onClick={() => setShowHelp(true)}
               aria-label="কীভাবে ব্যবহার করবেন"
-              className="h-9 w-9 flex items-center justify-center rounded-lg bg-[#1E3350] border border-[#dfbd7b]/50 text-[#dfbd7b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b]"
+              className={`h-10 w-10 flex items-center justify-center rounded-xl bg-[#1E3350] border border-[#dfbd7b]/50 text-[#dfbd7b] ${FOCUS}`}
             >
               <IconHelp className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        {/* ফিল্টার ও সার্চ */}
-        <div className="flex items-center gap-2 px-3 md:px-5 pb-2">
-          <div className="flex items-center bg-[#0B1724] p-1 rounded-lg border border-gray-800 overflow-x-auto [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none' }}>
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.val}
-                onClick={() => setCategoryFilter(cat.val)}
-                aria-pressed={categoryFilter === cat.val}
-                className={`px-3 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b] ${
-                  categoryFilter === cat.val ? 'bg-[#dfbd7b] text-gray-950 font-bold' : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={() => setSearchOpen((v) => !v)}
-            aria-label="যুগ বা শহর খুঁজুন"
-            className="md:hidden h-9 w-9 shrink-0 flex items-center justify-center rounded-lg bg-[#1E3350] border border-gray-700 text-gray-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b]"
-          >
-            <IconSearch className="w-4 h-4" />
+        {/* যুগ বাছাই বার: আগের ‹ [ বর্তমান যুগ ▾ ] › পরের */}
+        <div className="flex items-stretch gap-2 px-3 md:px-5 pb-2.5">
+          <button onClick={() => stepEra(-1)} disabled={selectedIndex <= 0} aria-label="আগের যুগ" className={stepBtn}>
+            <IconArrowLeft className="w-5 h-5" />
+            <span>আগের</span>
           </button>
 
-          <div className="relative hidden md:block flex-1 max-w-xs">
-            <div className="absolute left-2.5 top-2.5 text-gray-400 pointer-events-none">
-              <IconSearch className="w-4 h-4" />
-            </div>
-            <input
-              type="text"
-              placeholder="যুগ বা শহর খুঁজুন..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#1E3350] text-sm text-gray-200 pl-8 pr-8 py-1.5 rounded-lg border border-gray-700 focus:outline-none focus:border-[#dfbd7b]"
-            />
-            {searchQuery && (
-              <button onClick={() => setSearchQuery('')} aria-label="সার্চ মুছুন" className="absolute right-2 top-2 text-gray-400 hover:text-white">
-                <IconClose className="w-4 h-4" />
-              </button>
-            )}
-          </div>
+          <button
+            onClick={() => setPickerTarget('primary')}
+            aria-haspopup="dialog"
+            aria-label="সব যুগের তালিকা খুলুন"
+            className={`flex-1 min-w-0 flex items-center gap-3 text-left px-3.5 py-2 rounded-2xl border border-[#dfbd7b] bg-gradient-to-r from-[#dfbd7b]/20 to-[#dfbd7b]/5 transition active:scale-[0.99] ${FOCUS}`}
+          >
+            <span className="w-3 h-10 rounded-full shrink-0" style={{ backgroundColor: currentPeriod.color }} />
+            <span className="min-w-0 flex-1">
+              <span className="block text-[10px] font-bold text-[#dfbd7b]/80">
+                যুগ {toBn(selectedIndex + 1)} / {toBn(total)}
+              </span>
+              <span className="block text-sm font-bold text-white truncate">{currentPeriod.name}</span>
+              <span className="block text-[11px] text-gray-300 truncate">{currentPeriod.dates}</span>
+            </span>
+            <span className="shrink-0 flex flex-col items-center text-[10px] font-bold text-[#dfbd7b] gap-0.5">
+              <IconChevronDown className="w-5 h-5" />
+              <span>সব যুগ</span>
+            </span>
+          </button>
+
+          <button onClick={() => stepEra(1)} disabled={selectedIndex >= total - 1} aria-label="পরের যুগ" className={stepBtn}>
+            <IconArrowRight className="w-5 h-5" />
+            <span>পরের</span>
+          </button>
         </div>
 
-        {(searchOpen || searchQuery) && (
-          <div className="md:hidden px-3 pb-2">
-            <div className="relative">
-              <div className="absolute left-3 top-3 text-gray-400 pointer-events-none">
-                <IconSearch className="w-4 h-4" />
-              </div>
-              <input
-                type="text"
-                placeholder="যুগ বা শহর খুঁজুন..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#1E3350] text-base text-gray-200 pl-9 pr-9 py-2 rounded-lg border border-gray-700 focus:outline-none focus:border-[#dfbd7b]"
-              />
-              {searchQuery && (
-                <button onClick={() => setSearchQuery('')} aria-label="সার্চ মুছুন" className="absolute right-2.5 top-2.5 text-gray-400 hover:text-white">
-                  <IconClose className="w-5 h-5" />
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* টাইমলাইন স্ক্রোলার */}
-        <div className="bg-[#060D14]/90 border-t border-gray-800">
-          {filteredEras.length === 0 ? (
-            <div className="flex items-center justify-between gap-3 px-4 py-3 text-xs text-gray-300">
-              <span>কোনো যুগ পাওয়া যায়নি।</span>
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setCategoryFilter('ALL');
-                }}
-                className="px-3 py-1.5 rounded-md bg-[#dfbd7b] text-gray-950 font-bold"
-              >
-                ফিল্টার মুছুন
-              </button>
-            </div>
-          ) : (
-            <div className="flex gap-2 px-3 py-2 overflow-x-auto snap-x [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none' }}>
-              {filteredEras.map((period) => {
-                const isSelected = period.id === selectedPeriodId;
-                const isComparing = period.id === comparePeriodId;
-                return (
-                  <button
-                    key={period.id}
-                    id={`era-btn-${period.id}`}
-                    onClick={() => onPickEra(period.id)}
-                    aria-pressed={isSelected}
-                    className={`snap-start shrink-0 w-[158px] md:w-[190px] flex flex-col text-left px-3 py-2 rounded-xl border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b] ${
-                      isSelected
-                        ? 'bg-[#dfbd7b]/20 border-[#dfbd7b] text-white'
-                        : isComparing
-                        ? 'bg-amber-500/20 border-amber-400 text-amber-200'
-                        : 'bg-[#112236] border-gray-800 text-gray-400 hover:border-gray-600 hover:text-gray-200'
-                    }`}
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: period.color }} />
-                      <span className={`text-xs font-bold truncate ${isSelected ? 'text-[#dfbd7b]' : ''}`}>{period.name}</span>
-                    </span>
-                    <span className="text-[11px] text-gray-400 mt-1">{period.dates}</span>
-                    {isComparing && <span className="text-[10px] font-bold text-amber-300 mt-0.5">তুলনার যুগ</span>}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {isCompareMode && (
-          <div className="px-4 py-1.5 text-[11px] text-amber-200 bg-amber-500/10 border-t border-amber-400/30">
-            তুলনা চালু: তালিকা থেকে দ্বিতীয় যুগ বেছে নিন। তার সীমানা কমলা ড্যাশ রেখায় দেখাবে।
+        {isCompareMode && comparePeriod && (
+          <div className="flex items-center gap-2 px-3 md:px-5 pb-2.5">
+            <button
+              onClick={() => setPickerTarget('compare')}
+              aria-haspopup="dialog"
+              aria-label="তুলনার যুগ বদলান"
+              className={`flex-1 min-w-0 flex items-center gap-2.5 text-left px-3 py-2 rounded-2xl border border-dashed border-amber-400 bg-amber-500/10 ${FOCUS}`}
+            >
+              <span className="w-2.5 h-8 rounded-full shrink-0" style={{ backgroundColor: comparePeriod.color }} />
+              <span className="min-w-0 flex-1">
+                <span className="block text-[10px] font-bold text-amber-300">তুলনার যুগ (কমলা রেখা)</span>
+                <span className="block text-[13px] font-bold text-amber-100 truncate">{comparePeriod.name}</span>
+              </span>
+              <IconChevronDown className="w-5 h-5 text-amber-300 shrink-0" />
+            </button>
+            <button
+              onClick={swapPeriods}
+              aria-label="দুই যুগ অদলবদল করুন"
+              className={`h-12 w-12 shrink-0 flex items-center justify-center rounded-2xl bg-[#1E3350] border border-gray-700 text-gray-200 hover:border-[#dfbd7b] ${FOCUS}`}
+            >
+              <IconSwap className="w-5 h-5" />
+            </button>
           </div>
         )}
       </header>
@@ -800,8 +526,8 @@ export default function KhilafahAtlas() {
         {/* মানচিত্র */}
         <div className="relative flex-1 min-h-0 min-w-0 bg-[#060D14] overflow-hidden">
           {/* লিজেন্ড */}
-          <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20 max-w-[62%] md:max-w-xs">
-            <div className="bg-[#112236]/90 backdrop-blur border border-[#dfbd7b]/40 rounded-xl px-3 py-2 shadow-xl text-xs">
+          <div className="absolute top-2 left-2 md:top-4 md:left-4 z-20 max-w-[60%] md:max-w-xs">
+            <div className="bg-[#112236]/85 backdrop-blur-md border border-[#dfbd7b]/30 rounded-2xl px-3 py-2 shadow-xl text-xs">
               <div className="hidden md:flex items-center gap-1.5 mb-1.5 font-bold text-[#dfbd7b]">
                 <IconLayers className="w-4 h-4" /> মানচিত্রের নির্দেশিকা
               </div>
@@ -829,20 +555,20 @@ export default function KhilafahAtlas() {
 
           {/* জুম কন্ট্রোল */}
           <div className="absolute top-2 right-2 md:top-4 md:right-4 z-20 flex flex-col gap-2">
-            <div className="bg-[#112236]/90 backdrop-blur border border-[#dfbd7b]/40 rounded-xl p-1 flex flex-col shadow-xl">
+            <div className="bg-[#112236]/85 backdrop-blur-md border border-[#dfbd7b]/30 rounded-2xl p-1 flex flex-col shadow-xl">
               <button onClick={() => zoomCenter(1.3)} aria-label="জুম ইন" className={iconBtn}>
                 <IconZoomIn className="w-5 h-5" />
               </button>
               <button onClick={() => zoomCenter(0.77)} aria-label="জুম আউট" className={iconBtn}>
                 <IconZoomOut className="w-5 h-5" />
               </button>
-              <div className="h-px bg-gray-800 my-0.5" />
+              <div className="h-px bg-gray-700 my-0.5" />
               <button onClick={handleReset} aria-label="মানচিত্র রিসেট করুন" className={iconBtn}>
                 <IconReset className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="hidden lg:grid bg-[#112236]/90 backdrop-blur border border-gray-800 rounded-xl p-1.5 grid-cols-3 gap-1 shadow-xl text-gray-400 w-28">
+            <div className="hidden lg:grid bg-[#112236]/85 backdrop-blur-md border border-gray-800 rounded-2xl p-1.5 grid-cols-3 gap-1 shadow-xl text-gray-400 w-28">
               <div />
               <button onClick={() => handlePan(0, 40)} aria-label="উপরে" className="p-1.5 hover:text-white hover:bg-[#1E3350] rounded">▲</button>
               <div />
@@ -905,7 +631,7 @@ export default function KhilafahAtlas() {
 
             <g transform={`translate(${transform.x} ${transform.y}) scale(${transform.k})`}>
               {/* অক্ষাংশ-দ্রাঘিমা রেখা */}
-              <g stroke="#1E3350" strokeOpacity="0.45" strokeWidth="1" vectorEffect="non-scaling-stroke">
+              <g stroke="#1E3350" strokeOpacity="0.45" strokeWidth="1">
                 {GRATICULE_X.map((x) => (
                   <line key={`gx${x}`} x1={x} y1="150" x2={x} y2="640" vectorEffect="non-scaling-stroke" />
                 ))}
@@ -1049,7 +775,7 @@ export default function KhilafahAtlas() {
           {/* ব্যবহার-ইঙ্গিত */}
           {hintVisible && !selectedCity && !activeRegion && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none w-max max-w-[92%]">
-              <div className="bg-[#112236]/90 border border-[#dfbd7b]/40 text-[#dfbd7b] text-[11px] md:text-xs font-medium rounded-full px-3.5 py-1.5 text-center">
+              <div className="bg-[#112236]/90 backdrop-blur border border-[#dfbd7b]/40 text-[#dfbd7b] text-[11px] md:text-xs font-medium rounded-full px-3.5 py-1.5 text-center">
                 টেনে সরান · দুই আঙুলে জুম · শহরে ট্যাপ করুন
               </div>
             </div>
@@ -1057,7 +783,7 @@ export default function KhilafahAtlas() {
 
           {/* শহর বা অঞ্চলের কার্ড */}
           {(selectedCity || activeRegion) && (
-            <div className="absolute bottom-3 left-3 right-3 md:right-auto md:bottom-6 md:left-6 z-20 bg-[#112236]/95 border border-[#dfbd7b]/50 backdrop-blur rounded-xl p-3.5 text-xs md:max-w-xs shadow-2xl">
+            <div className="absolute bottom-3 left-3 right-3 md:right-auto md:bottom-6 md:left-6 z-20 bg-[#112236]/95 border border-[#dfbd7b]/50 backdrop-blur rounded-2xl p-3.5 text-xs md:max-w-xs shadow-2xl">
               {selectedCity ? (
                 <div>
                   <div className="flex items-start justify-between gap-2 font-bold text-[#dfbd7b] text-sm mb-1">
@@ -1065,7 +791,7 @@ export default function KhilafahAtlas() {
                       <IconMapPin className="w-4 h-4 text-emerald-400 shrink-0" /> {selectedCity.name}
                     </span>
                     <button onClick={() => setSelectedCity(null)} aria-label="কার্ড বন্ধ করুন" className="text-gray-400 hover:text-white p-1 -m-1">
-                      <IconClose className="w-4 h-4" />
+                      <IconClose className="w-5 h-5" />
                     </button>
                   </div>
                   <p className="text-gray-200 mt-1 leading-relaxed text-[13px]">{selectedCity.significance}</p>
@@ -1080,7 +806,7 @@ export default function KhilafahAtlas() {
                       <IconLayers className="w-4 h-4 text-emerald-400 shrink-0" /> {activeRegion}
                     </span>
                     <button onClick={() => setActiveRegion(null)} aria-label="কার্ড বন্ধ করুন" className="text-gray-400 hover:text-white p-1 -m-1">
-                      <IconClose className="w-4 h-4" />
+                      <IconClose className="w-5 h-5" />
                     </button>
                   </div>
                   <p className="text-[12px] text-gray-300 mt-1">{currentPeriod.name}-এর অধীনে ঐতিহাসিক সীমানা।</p>
@@ -1115,24 +841,23 @@ export default function KhilafahAtlas() {
         </aside>
 
         {/* মোবাইল বটম শিট */}
-        <section className="lg:hidden flex-none bg-[#112236] border-t-2 border-[#dfbd7b]/60 rounded-t-2xl shadow-[0_-8px_24px_rgba(0,0,0,0.45)] pb-[env(safe-area-inset-bottom)]">
+        <section className="lg:hidden flex-none bg-[#112236] border-t-2 border-[#dfbd7b]/60 rounded-t-3xl shadow-[0_-8px_24px_rgba(0,0,0,0.45)] pb-[env(safe-area-inset-bottom)]">
           <button
             onClick={() => setSheetOpen((v) => !v)}
             aria-expanded={sheetOpen}
-            className="w-full px-4 pt-2 pb-3 text-left focus-visible:outline-none focus-visible:bg-[#1E3350]/50 rounded-t-2xl"
+            className="w-full px-4 pt-2 pb-3 text-left focus-visible:outline-none focus-visible:bg-[#1E3350]/50 rounded-t-3xl"
           >
             <span className="block mx-auto w-10 h-1 rounded-full bg-gray-600 mb-2" />
             <span className="flex items-center justify-between gap-3">
               <span className="min-w-0">
-                <span className="block text-sm font-bold text-white truncate">{currentPeriod.name}</span>
                 <span className="block text-[11px] text-[#dfbd7b] truncate">{currentPeriod.subtitle}</span>
                 <span className="block text-[11px] text-gray-400 mt-0.5 truncate">
-                  {currentPeriod.dates} · রাজধানী: {currentPeriod.capital}
+                  রাজধানী: {currentPeriod.capital}
                 </span>
               </span>
-              <span className="shrink-0 flex flex-col items-center text-[10px] text-gray-400 gap-0.5">
-                <IconChevron className={`w-5 h-5 text-[#dfbd7b] transition-transform ${sheetOpen ? 'rotate-180' : ''}`} />
-                {sheetOpen ? 'বন্ধ' : 'বিস্তারিত'}
+              <span className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#dfbd7b]/15 border border-[#dfbd7b]/40 text-[11px] font-bold text-[#dfbd7b]">
+                <IconChevron className={`w-4 h-4 transition-transform ${sheetOpen ? 'rotate-180' : ''}`} />
+                {sheetOpen ? 'বন্ধ করুন' : 'বিস্তারিত পড়ুন'}
               </span>
             </span>
           </button>
@@ -1151,6 +876,117 @@ export default function KhilafahAtlas() {
         </section>
       </div>
 
+      {/* ---------- যুগ নির্বাচনের তালিকা (লাইনে লাইনে সাজানো) ---------- */}
+      {pickerTarget && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/75 backdrop-blur-sm sm:p-4"
+          onClick={() => setPickerTarget(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="atlas-picker-title"
+            className="w-full sm:max-w-3xl max-h-[90dvh] flex flex-col bg-[#112236] border border-[#dfbd7b]/50 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex-none p-4 border-b border-gray-800 space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <h2 id="atlas-picker-title" className="text-base font-bold text-white">
+                    {pickerTarget === 'compare' ? 'তুলনার জন্য দ্বিতীয় যুগ বেছে নিন' : 'একটি যুগ বেছে নিন'}
+                  </h2>
+                  <p className="text-[11px] text-gray-400 mt-0.5">
+                    {toBn(filteredEras.length)}টি যুগ দেখানো হচ্ছে · যুগে ট্যাপ করলেই মানচিত্র বদলে যাবে
+                  </p>
+                </div>
+                <button
+                  onClick={() => setPickerTarget(null)}
+                  aria-label="তালিকা বন্ধ করুন"
+                  className={`h-10 w-10 shrink-0 flex items-center justify-center rounded-full bg-gray-800 text-gray-300 hover:text-white ${FOCUS}`}
+                >
+                  <IconClose className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="relative">
+                <div className="absolute left-3 top-3 text-gray-400 pointer-events-none">
+                  <IconSearch className="w-4 h-4" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="যুগ বা শহরের নাম খুঁজুন..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-[#1E3350] text-base text-gray-100 pl-9 pr-10 py-2.5 rounded-xl border border-gray-700 focus:outline-none focus:border-[#dfbd7b]"
+                />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery('')} aria-label="সার্চ মুছুন" className="absolute right-2.5 top-2.5 text-gray-400 hover:text-white">
+                    <IconClose className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.val}
+                    onClick={() => setCategoryFilter(cat.val)}
+                    aria-pressed={categoryFilter === cat.val}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition ${FOCUS} ${
+                      categoryFilter === cat.val
+                        ? 'bg-[#dfbd7b] text-gray-950 border-[#dfbd7b] font-bold'
+                        : 'bg-[#1E3350] text-gray-300 border-gray-700 hover:text-white'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex-1 min-h-0 overflow-y-auto p-3">
+              {filteredEras.length === 0 ? (
+                <div className="flex flex-col items-center gap-3 py-10 text-sm text-gray-300">
+                  <span>কোনো যুগ পাওয়া যায়নি।</span>
+                  <button onClick={clearFilters} className={`px-4 py-2 rounded-xl bg-[#dfbd7b] text-gray-950 font-bold text-xs ${FOCUS}`}>
+                    ফিল্টার মুছুন
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  {filteredEras.map((period) => {
+                    const isSelected = period.id === selectedPeriodId;
+                    const isComparing = period.id === comparePeriodId;
+                    const lockedForCompare = pickerTarget === 'compare' && isSelected;
+                    let tone = 'bg-[#1E3350]/60 border-gray-700 text-gray-200 hover:border-[#dfbd7b]/60';
+                    if (isSelected) tone = 'bg-[#dfbd7b]/20 border-[#dfbd7b] text-white';
+                    else if (isComparing) tone = 'bg-amber-500/15 border-amber-400 text-amber-100';
+                    return (
+                      <button
+                        key={period.id}
+                        onClick={() => pickEra(period.id)}
+                        disabled={lockedForCompare}
+                        aria-pressed={isSelected}
+                        className={`flex flex-col text-left p-3 rounded-2xl border transition active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed ${tone} ${FOCUS}`}
+                      >
+                        <span className="flex items-center justify-between gap-2">
+                          <span className="w-6 h-1.5 rounded-full" style={{ backgroundColor: period.color }} />
+                          <span className="text-[10px] text-gray-400 font-bold">{toBn(period.id)}</span>
+                        </span>
+                        <span className="text-[13px] font-bold mt-2 leading-snug">{period.name}</span>
+                        <span className="text-[11px] text-gray-400 mt-1">{period.dates}</span>
+                        {isSelected && <span className="text-[10px] font-bold text-[#dfbd7b] mt-1.5">{lockedForCompare ? 'প্রথম যুগ' : 'বর্তমান যুগ'}</span>}
+                        {isComparing && <span className="text-[10px] font-bold text-amber-300 mt-1.5">তুলনার যুগ</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ---------- ব্যবহার-নির্দেশিকা মডাল ---------- */}
       {showHelp && (
         <div
@@ -1161,14 +997,14 @@ export default function KhilafahAtlas() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="atlas-help-title"
-            className="w-full sm:max-w-lg max-h-[92dvh] overflow-y-auto bg-[#112236] border border-[#dfbd7b]/50 rounded-t-3xl sm:rounded-2xl shadow-2xl"
+            className="w-full sm:max-w-lg max-h-[92dvh] overflow-y-auto bg-[#112236] border border-[#dfbd7b]/50 rounded-t-3xl sm:rounded-3xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-3 p-5 border-b border-gray-800">
               <div>
                 <h2 id="atlas-help-title" className="text-lg font-bold text-white">খিলাফাত এটলাস</h2>
                 <p className="text-xs text-gray-300 mt-1 leading-relaxed">
-                  নবী করীম ﷺ-এর যুগ থেকে সফবীয় সাম্রাজ্য পর্যন্ত ১৫টি যুগের ভূখণ্ড, রাজধানী, ঘটনা ও তথ্যসূত্র মানচিত্রে দেখুন।
+                  নবী করীম ﷺ-এর যুগ থেকে সফবীয় সাম্রাজ্য পর্যন্ত {toBn(total)}টি যুগের ভূখণ্ড, রাজধানী, ঘটনা ও তথ্যসূত্র মানচিত্রে দেখুন।
                 </p>
               </div>
               <button onClick={() => setShowHelp(false)} aria-label="গাইড বন্ধ করুন" className="p-1.5 rounded-full bg-gray-800 text-gray-300 hover:text-white shrink-0">
@@ -1182,7 +1018,7 @@ export default function KhilafahAtlas() {
                 {HOW_TO_STEPS.map((s, i) => (
                   <li key={s.t} className="flex gap-3">
                     <span className="w-6 h-6 shrink-0 rounded-full bg-[#dfbd7b]/20 border border-[#dfbd7b]/60 text-[#dfbd7b] text-xs font-bold flex items-center justify-center">
-                      {i + 1}
+                      {toBn(i + 1)}
                     </span>
                     <span>
                       <span className="block text-[13px] font-bold text-white">{s.t}</span>
@@ -1196,7 +1032,7 @@ export default function KhilafahAtlas() {
               </p>
               <button
                 onClick={() => setShowHelp(false)}
-                className="w-full mt-4 py-3 rounded-xl bg-[#dfbd7b] text-gray-950 font-bold text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="w-full mt-4 py-3 rounded-2xl bg-[#dfbd7b] text-gray-950 font-bold text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
                 বুঝেছি, শুরু করি
               </button>

@@ -1,4 +1,3 @@
-
 import { Routes, Route } from "react-router-dom";
 
 import Home from "../Pages/Home/Home";
@@ -24,6 +23,7 @@ import SeerahTimeline from "../Pages/Tools/SeerahTimeline";
 import Prophets from "../Pages/Tools/Prophets";
 import MakkahLocator from "../Pages/Tools/MakkahLocator";
 import KhilafahAtlas from "../Pages/Tools/KhilafahAtlas";
+import IslamicCaliphate from "../Pages/TopicPages/IslamicCaliphate";
 
 export default function Root() {
   return (
@@ -32,85 +32,34 @@ export default function Root() {
       <Route path="/" element={<Home />} />
 
       {/* Topics Pages */}
-      <Route
-        path="/topics/iman-aqeedah"
-        element={<ImanAqeedah />}
-      />
+      <Route path="/topics/iman-aqeedah" element={<ImanAqeedah />} />
 
-      <Route
-        path="/topics/pillars-of-islam"
-        element={<PillarsOfIslam />}
-      />
+      <Route path="/topics/pillars-of-islam" element={<PillarsOfIslam />} />
 
-      <Route
-        path="/topics/quran-tafsir"
-        element={<QuranTafsir />}
-      />
+      <Route path="/topics/quran-tafsir" element={<QuranTafsir />} />
 
-      <Route
-        path="/topics/hadith-sunnah"
-        element={<HadithSunnah />}
-      />
+      <Route path="/topics/hadith-sunnah" element={<HadithSunnah />} />
 
-      <Route
-        path="/topics/seerah-history"
-        element={<SeerahHistory />}
-      />
+      <Route path="/topics/seerah-history" element={<SeerahHistory />} />
 
-      <Route
-        path="/topics/dua-dhikr"
-        element={<DuaDhikr />}
-      />
+      <Route path="/topics/dua-dhikr" element={<DuaDhikr />} />
 
-      <Route
-        path="/topics/why-islam"
-        element={<WhyIslam />}
-      />
+      <Route path="/topics/why-islam" element={<WhyIslam />} />
+      <Route path="/topics/islamic-caliphate" element={<IslamicCaliphate />} />
 
       {/* Explore Library */}
-      <Route
-        path="/ExploreLibrary"
-        element={<ExploreLibrary />}
-      />
+      <Route path="/ExploreLibrary" element={<ExploreLibrary />} />
 
       {/* Islamic Tools */}
-      
-      <Route
-        path="/tools/makkah-locator"
-        element={<MakkahLocator />}
-      />
 
-      <Route
-        path="/tools/prayer-times"
-        element={<PrayerTimes />}
-      />
-
-      <Route
-        path="/tools/khilafah-atlas"
-        element={<KhilafahAtlas />}
-      />
-
-      <Route
-        path="/tools/sacred-mosques"
-        element={<SacredMosques />}
-      />
-
-      <Route
-        path="/tools/islamic-calendar"
-        element={<IslamicCalendar />}
-      />
-      <Route
-        path="/tools/muslim-map"
-        element={<MuslimMap />}
-      />
-      <Route
-        path="/tools/seerah-timeline"
-        element={<SeerahTimeline />}
-      />
-      <Route
-        path="/tools/prophets"
-        element={<Prophets />}
-      />
+      <Route path="/tools/makkah-locator" element={<MakkahLocator />} />
+      <Route path="/tools/prayer-times" element={<PrayerTimes />} />
+      <Route path="/tools/khilafah-atlas" element={<KhilafahAtlas />} />
+      <Route path="/tools/sacred-mosques" element={<SacredMosques />} />
+      <Route path="/tools/islamic-calendar" element={<IslamicCalendar />} />
+      <Route path="/tools/muslim-map" element={<MuslimMap />} />
+      <Route path="/tools/seerah-timeline" element={<SeerahTimeline />} />
+      <Route path="/tools/prophets" element={<Prophets />} />
 
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />

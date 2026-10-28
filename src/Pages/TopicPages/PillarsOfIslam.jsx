@@ -13,7 +13,7 @@ import {
   FaTimes,
   FaYoutube,
   FaArrowRight,
-  FaCompass,
+
 } from "react-icons/fa";
 
 const FONT = { fontFamily: "'Hind Siliguri', sans-serif" };
@@ -614,7 +614,9 @@ export default function PillarsOfIslam() {
         )}
       </div>
 
-      <div className="mt-5 flex justify-center px-2 pb-5">
+      {/* Ei ta pikh section hoyle oy khane bosabo */}
+
+      {/* <div className="mt-5 flex justify-center px-2 pb-5">
         <a
           href="https://play.google.com/store/apps/details?id=zad.com.islamqa"
           target="_blank"
@@ -625,7 +627,7 @@ export default function PillarsOfIslam() {
           <span>ইসলাম সম্পর্কে জানতে IslamQA অ্যাপ ডাউনলোড করুন</span>
           <FaExternalLinkAlt className="shrink-0 text-[10px]" />
         </a>
-      </div>
+      </div> */}
 
       <VideoModal
         video={activeVideo}

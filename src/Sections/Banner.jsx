@@ -47,7 +47,7 @@ const SLIDES = [
     infoA: { label: "ভাষা", value: "আরবি" },
     infoB: { label: "বিষয়", value: "অডিও" },
     primary: {
-      text: "তিলাওয়াত শুনুন",
+      text: "তিলাওয়াত ",
       to: "https://quranicaudio.com/",
     },
     secondary: {
@@ -324,6 +324,10 @@ const Banner = () => {
           to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes qOrbit {
+          to { transform: rotate(360deg); }
+        }
+
         .q-float { animation: qFloat 5s ease-in-out infinite; }
         .q-glow { animation: qGlow 5s ease-in-out infinite; }
         .q-twinkle { animation: qTwinkle 3.5s ease-in-out infinite; }
@@ -331,9 +335,21 @@ const Banner = () => {
         .q-line { animation: qLine 4s ease-in-out infinite; }
         .q-fade { animation: qFade .35s ease both; }
 
+        /* বাটনের চারপাশে ঘোরা গোল্ড বর্ডার */
+        .q-orbit {
+          background: conic-gradient(
+            from 0deg,
+            transparent 0deg,
+            transparent 230deg,
+            rgba(214, 170, 98, 0.15) 270deg,
+            #d6aa62 360deg
+          );
+          animation: qOrbit 4s linear infinite;
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .q-float, .q-glow, .q-twinkle,
-          .q-page, .q-line, .q-fade {
+          .q-page, .q-line, .q-fade, .q-orbit {
             animation: none !important;
             transition: none !important;
           }
@@ -373,13 +389,21 @@ const Banner = () => {
             </p>
 
             <div className="mt-6 flex flex-col justify-center gap-3 min-[380px]:flex-row lg:mt-7 lg:justify-start">
+              {/* হালকা বাটন + চারপাশে ঘোরা গোল্ড বর্ডার */}
               <a
                 href="/ExploreLibrary"
-                className="group inline-flex min-h-12 items-center justify-center gap-2.5 rounded-xl bg-[#d2aa69] px-5 py-3 text-sm font-semibold text-[#102127] transition-colors hover:bg-[#e4c28b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#081b22] sm:px-6"
+                className="group relative inline-flex overflow-hidden rounded-xl bg-[#d6aa62]/25 p-[1.5px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#081b22]"
               >
-                <FaBookOpen className="text-base" />
-                ডিজিটাল লাইব্রেরি
-                <FaArrowRight className="transition-transform group-hover:translate-x-1" />
+                <span
+                  aria-hidden="true"
+                  className="q-orbit pointer-events-none absolute left-1/2 top-1/2 -ml-[200px] -mt-[200px] h-[400px] w-[400px]"
+                />
+
+                <span className="relative inline-flex min-h-12 w-full items-center justify-center gap-2.5 rounded-[10px] bg-[#0c242b] px-5 py-3 text-sm font-semibold text-[#e4c28b] transition-colors group-hover:bg-[#12313a] sm:px-6">
+                  <FaBookOpen className="text-base" />
+                  ডিজিটাল লাইব্রেরি
+                  <FaArrowRight className="transition-transform group-hover:translate-x-1" />
+                </span>
               </a>
             </div>
 

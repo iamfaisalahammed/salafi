@@ -9,8 +9,8 @@ const Nav = () => {
 
   const navItems = [
      { name: "Tools", to: "tools" },
+     { name: "Topics", to: "topics" },
     { name: "Resources", to: "resources" },
-    { name: "Topics", to: "topics" },
     { name: "Scholars", to: "scholars" },
     { name: "Channels", to: "channels" },
   ];

@@ -119,7 +119,7 @@ export default function Topics() {
                 className="group flex min-w-0 items-center gap-3 rounded-xl border border-white/[0.09] bg-white/[0.035] p-4 transition-all duration-200 hover:border-emerald-400/40 hover:bg-emerald-400/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 sm:gap-4 sm:p-5"
               >
                 {/* Topic Icon */}
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-400/15 bg-emerald-400/10 text-emerald-400 transition-colors group-hover:border-emerald-400/30 group-hover:bg-emerald-400/15 sm:h-12 sm:w-12">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-400/15 bg-emerald-400/10 text-[#d6aa62] transition-colors group-hover:border-emerald-400/30 group-hover:bg-emerald-400/15 sm:h-12 sm:w-12">
                   <Icon className="text-lg" />
                 </div>
 

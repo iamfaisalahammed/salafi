@@ -223,7 +223,7 @@ function VideoModal({ video, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/75 p-0 backdrop-blur-sm animate-in fade-in duration-200 sm:items-center sm:p-4"
+      className="fixed inset-0 z-[100] flex items-end justify-center overscroll-contain bg-black/75 p-0 backdrop-blur-sm animate-in fade-in duration-200 sm:items-center sm:p-4"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -232,7 +232,7 @@ function VideoModal({ video, onClose }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="video-modal-title"
-        className="relative w-full max-w-lg overflow-hidden rounded-t-3xl border border-white/10 bg-[#081b22] shadow-2xl animate-in slide-in-from-bottom-4 duration-300 sm:rounded-2xl"
+        className="relative w-full max-w-lg max-h-[92dvh] overflow-y-auto overscroll-contain overflow-x-hidden rounded-t-3xl border border-white/10 bg-[#081b22] shadow-2xl animate-in slide-in-from-bottom-4 duration-300 sm:rounded-2xl"
       >
         <div className="flex items-start gap-3 border-b border-white/10 px-4 py-4 sm:px-5">
           <div
@@ -352,7 +352,7 @@ export default function PillarsOfIslam() {
   return (
     <section
       style={FONT}
-      className="min-h-screen bg-[#081b22] px-3 py-8 text-slate-200 sm:px-6 sm:py-12 lg:px-8"
+      className=" relative min-h-screen overflow-x-hidden bg-[#081b22] px-3 py-8 text-slate-200 sm:px-6 sm:py-12 lg:px-8"
     >
       <div className="mx-auto max-w-5xl">
         <header className="mb-8 text-center sm:mb-10">
@@ -385,7 +385,7 @@ export default function PillarsOfIslam() {
                   type="button"
                   onClick={() => setExpanded(isActive ? "" : pillar.id)}
                   aria-expanded={isActive}
-                  className={`inline-flex min-h-10 items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b] ${
+                  className={`relative inline-flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-xl border px-3 py-2 text-sm font-semibold transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#dfbd7b] ${
                     isActive
                       ? "text-[#dfbd7b]"
                       : "border-white/10 bg-[#10252d] text-slate-300 hover:text-[#dfbd7b]"

@@ -1,13 +1,100 @@
-
 import { useEffect, useState } from "react";
 import {
   FaGlobe,
   FaArrowUpRightFromSquare,
   FaBookOpen,
+  FaBookQuran,
+  FaMosque,
+  FaKaaba,
+  FaScroll,
+  FaFeatherPointed,
+  FaGraduationCap,
+  FaUserGraduate,
+  FaCirclePlay,
+  FaYoutube,
+  FaMobileScreenButton,
+  FaHeadphones,
+  FaScaleBalanced,
+  FaHandsPraying,
+  FaClock,
+  FaPeopleGroup,
+  FaNewspaper,
+  FaMagnifyingGlass,
+  FaCircleQuestion,
+  FaCalendarDays,
+  FaCompass,
+  FaHandHoldingHeart,
+  FaMoon,
+  FaLanguage,
+  FaChildren,
+  FaPersonDress,
+  FaBullhorn,
+  FaBookOpenReader,
 } from "react-icons/fa6";
 
-const FALLBACK_IMAGE =
-  "https://placehold.co/100x100/f0fdf4/166534?text=Web";
+// Order matters: specific rules first
+const ICON_RULES = [
+  // Your listed resources (exact names)
+  { match: /audioquran|quranicaudio/i, icon: FaHeadphones },
+  { match: /hisnul|হিসনুল/i, icon: FaHandsPraying },
+  { match: /islamqa|islam qa/i, icon: FaCircleQuestion },
+  { match: /islamhouse/i, icon: FaMosque },
+  { match: /hadithbd/i, icon: FaBookOpenReader },
+  { match: /ihadith|ihadis/i, icon: FaFeatherPointed },
+  { match: /sunnah/i, icon: FaScroll },
+  { match: /quran\.com/i, icon: FaBookQuran },
+
+  // Audio / Video / App
+  { match: /অডিও|audio|podcast|পডকাস্ট|শুনুন|listen|mp3/i, icon: FaHeadphones },
+  { match: /youtube|ইউটিউব/i, icon: FaYoutube },
+  { match: /ভিডিও|video|লেকচার|lecture|বক্তব্য|ওয়াজ|মাহফিল|খুতবা|khutbah/i, icon: FaCirclePlay },
+  { match: /অ্যাপ|এপ|\bapp\b|android|\bios\b|মোবাইল|muslim pro/i, icon: FaMobileScreenButton },
+
+  // Dua / Dhikr
+  { match: /দোয়া|দুআ|\bdua\b|যিকির|জিকির|adhkar|dhikr|মাসনুন/i, icon: FaHandsPraying },
+
+  // Q&A / Fatwa
+  { match: /প্রশ্নোত্তর|প্রশ্ন|জিজ্ঞাসা|q&a|q & a|ফতোয়া|ফাতওয়া|fatwa|ifta/i, icon: FaCircleQuestion },
+  { match: /fiqh|ফিকহ|ফিকাহ|মাসআলা|মাসায়েল/i, icon: FaScaleBalanced },
+
+  // Tools
+  { match: /সালাতের সময়|নামাজের সময়|সময়সূচি|prayer time|waqt|salah time/i, icon: FaClock },
+  { match: /কিবলা|qibla|কম্পাস/i, icon: FaCompass },
+  { match: /ক্যালেন্ডার|calendar|হিজরি|hijri/i, icon: FaCalendarDays },
+  { match: /যাকাত|zakat|সদকা|sadaqah|donate|charity/i, icon: FaHandHoldingHeart },
+  { match: /রমজান|রমযান|ramadan|ramadhan|সিয়াম|রোজা/i, icon: FaMoon },
+
+  // Hadith / Seerah / Quran
+  { match: /হাদিস|হাদীস|hadith|সুন্নাহ|bukhari|বুখারি|sahih muslim|তিরমিজি|আবু দাউদ/i, icon: FaScroll },
+  { match: /সিরাত|সীরাত|সিরাহ|seerah|sirah|ইতিহাস|history/i, icon: FaKaaba },
+  { match: /অনুবাদ|translation|ভাষা|language/i, icon: FaLanguage },
+  { match: /কুরআন|কোরআন|quran|qur'an|tafsir|তাফসীর|তাফসির/i, icon: FaBookQuran },
+
+  // Learning
+  { match: /শিশু|কিডস|kids|children/i, icon: FaChildren },
+  { match: /নারী|বোন|women|sisters/i, icon: FaPersonDress },
+  { match: /আলেম|শাইখ|শায়খ|sheikh|shaykh|scholar/i, icon: FaUserGraduate },
+  { match: /কোর্স|course|academy|একাডেমি|institute|ইনস্টিটিউট|university|বিশ্ববিদ্যালয়|মাদরাসা|madrasa|yaqeen|bayyinah/i, icon: FaGraduationCap },
+  { match: /লাইব্রেরি|library|বই|ebook|e-book|pdf|কিতাব|kitab|book|শামেলা|shamela/i, icon: FaBookOpenReader },
+
+  // Community / Others
+  { match: /দাওয়াহ|দাওয়াত|dawah|da'wah/i, icon: FaBullhorn },
+  { match: /কমিউনিটি|community|ফোরাম|forum/i, icon: FaPeopleGroup },
+  { match: /মসজিদ|mosque|masjid|ইসলামিক সেন্টার|foundation|ফাউন্ডেশন/i, icon: FaMosque },
+  { match: /খবর|সংবাদ|news|ব্লগ|blog|article|প্রবন্ধ/i, icon: FaNewspaper },
+  { match: /অনুসন্ধান|search|খুঁজ/i, icon: FaMagnifyingGlass },
+];
+
+// Match by name first, then fall back to description
+const getResourceIcon = (resource) => {
+  const byName = ICON_RULES.find((rule) => rule.match.test(resource.name || ""));
+  if (byName) return byName.icon;
+
+  const byDescription = ICON_RULES.find((rule) =>
+    rule.match.test(resource.description || "")
+  );
+  return byDescription ? byDescription.icon : FaGlobe;
+};
 
 const Resources = () => {
   const [resources, setResources] = useState([]);
@@ -55,12 +142,6 @@ const Resources = () => {
     return () => controller.abort();
   }, [retry]);
 
-  // Image fallback
-  const handleImageError = (event) => {
-    event.currentTarget.onerror = null;
-    event.currentTarget.src = FALLBACK_IMAGE;
-  };
-
   return (
     <section
       id="resources"
@@ -73,9 +154,7 @@ const Resources = () => {
         <div className="mb-6 sm:mb-8">
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-300/15 bg-emerald-400/[0.07] px-3 py-1.5 text-xs font-semibold text-emerald-300 sm:text-sm">
             <FaGlobe className="shrink-0" />
-            <span
-              style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
-            >
+            <span style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
               ইসলামিক রিসোর্স ডিরেক্টরি
             </span>
           </div>
@@ -124,7 +203,7 @@ const Resources = () => {
                 key={index}
                 className="flex animate-pulse items-start gap-3 rounded-xl border border-white/[0.07] bg-[#10252d] p-3.5 sm:p-4"
               >
-                <div className="h-11 w-11 shrink-0 rounded-xl bg-white/[0.07]" />
+                <div className="h-7 w-7 shrink-0 rounded-md bg-white/[0.07]" />
 
                 <div className="min-w-0 flex-1 space-y-2 pt-1">
                   <div className="h-4 w-2/5 rounded bg-white/[0.08]" />
@@ -193,21 +272,13 @@ const Resources = () => {
         {!loading && !error && resources.length > 0 && (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
             {resources.map((resource, index) => {
+              const ResourceIcon = getResourceIcon(resource);
+
               const content = (
                 <>
-                  {/* Resource Icon */}
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/[0.06] bg-[#0b2028] text-emerald-300 sm:h-12 sm:w-12">
-                    {resource.image ? (
-                      <img
-                        src={resource.image}
-                        alt=""
-                        loading="lazy"
-                        onError={handleImageError}
-                        className="h-7 w-7 object-contain sm:h-8 sm:w-8"
-                      />
-                    ) : (
-                      <FaGlobe className="text-lg sm:text-xl" />
-                    )}
+                  {/* Resource Icon (icon only) */}
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center text-[#d6aa62] transition-transform duration-200 group-hover:scale-110 sm:h-9 sm:w-9">
+                    <ResourceIcon className="text-2xl sm:text-[1.7rem]" />
                   </div>
 
                   {/* Resource Information */}

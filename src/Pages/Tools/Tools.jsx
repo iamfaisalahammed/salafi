@@ -3,13 +3,13 @@ import {
   FaMosque,
   FaCompass,
   FaClock,
-  FaCircleDot,
   FaKaaba,
   FaCalendarDays,
   FaArrowUpRightFromSquare,
   FaMap,
   FaTimeline,
   FaLandmark,
+  FaUsers,
 } from "react-icons/fa6";
 
 const tools = [
@@ -29,11 +29,7 @@ const tools = [
     icon: FaClock,
     path: "/tools/prayer-times",
   },
-  {
-    title: "Tasbih",
-    icon: FaCircleDot,
-    path: "/tools/tasbih",
-  },
+
   {
     title: "Sacred Mosques",
     icon: FaKaaba,
@@ -56,7 +52,7 @@ const tools = [
   },
   {
     title: "Prophets",
-    icon: FaTimeline,
+    icon: FaUsers,
     path: "/tools/prophets",
   },
   {
@@ -100,7 +96,7 @@ export default function Tools() {
               <>
                 <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-emerald-300/15 bg-[#102d35] transition-colors duration-200 group-hover:border-emerald-300/35 group-hover:bg-[#15313a] sm:h-16 sm:w-16">
                   <Icon
-                    className="text-xl text-white sm:text-2xl"
+                    className="text-xl text-[#d6aa62] sm:text-2xl"
                     aria-hidden="true"
                   />
                 </span>

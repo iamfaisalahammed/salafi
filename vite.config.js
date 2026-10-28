@@ -19,8 +19,8 @@ export default defineConfig({
       },
 
       manifest: {
-        name: "HIKMAH",
-        short_name: "HIKMAH",
+        name: "Hikmah",
+        short_name: "Hikmah",
         description:
           "Learn Islam From Authentic Sources — All In One Place",
         theme_color: "#000000",

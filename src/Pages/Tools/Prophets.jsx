@@ -106,12 +106,7 @@ const sections = [
   },
 ];
 
-const suhufList = [
-  { name: "শীষ (আ.)", text: "৫০ সুহুফ" },
-  { name: "ইদরিস (আ.)", text: "৩০ সুহুফ" },
-  { name: "ইবরাহীম (আ.)", text: "১০ সুহুফ" },
-  { name: "মূসা (আ.) (তাওরাতের আগে)", text: "১০ সুহুফ" },
-];
+
 
 const fourBooks = [
   { book: "তাওরাত", to: "মূসা (আ.)" },
@@ -553,22 +548,7 @@ const MobileView = () => {
           ))}
         </div>
 
-        <section className="mt-9">
-          <BlockTitle>সুহুফ (ঐশী সহিফা)</BlockTitle>
-          <ul className="divide-y divide-white/[0.08] overflow-hidden rounded-2xl border border-white/10 bg-[#0d2229] px-4">
-            {suhufList.map((item) => (
-              <li
-                key={item.name}
-                className="flex items-center justify-between gap-3 py-3.5 text-[15px]"
-              >
-                <span className="text-slate-200">{item.name}</span>
-                <span className="shrink-0 rounded-full border border-amber-300/20 bg-amber-300/[0.07] px-2.5 py-1 text-xs font-semibold text-amber-200">
-                  {item.text}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
+       
 
         <section className="mt-9">
           <BlockTitle>চারটি প্রধান আসমানী কিতাব</BlockTitle>
@@ -1089,26 +1069,6 @@ const PedigreeChart = () => {
           {layout.map((item) => (
             <TreeNode key={item.en} item={item} />
           ))}
-
-          <Box
-            x={18}
-            y={690}
-            w={222}
-            h={104}
-            className="rounded-xl border border-amber-300/30 bg-[#172c2c] p-2.5 shadow-sm"
-          >
-            <h2 className="mb-1 text-[13px] font-bold text-amber-200">
-              সুহুফ (ঐশী সহিফা)
-            </h2>
-            <ul className="space-y-0.5 text-[11px] leading-4 text-slate-300">
-              {suhufList.map((item, index) => (
-                <li key={item.name} className="flex justify-between gap-2">
-                  <span>{index + 1}. {item.name}</span>
-                  <span className="shrink-0 font-bold text-amber-200">{item.text}</span>
-                </li>
-              ))}
-            </ul>
-          </Box>
 
           <Box
             x={18}

@@ -9,7 +9,7 @@ import {
   FaMap,
   FaTimeline,
   FaLandmark,
-  FaUsers,
+
 } from "react-icons/fa6";
 
 const tools = [
@@ -48,11 +48,11 @@ const tools = [
     icon: FaTimeline,
     path: "/tools/seerah-timeline",
   },
-  {
-    title: "Prophets",
-    icon: FaUsers,
-    path: "/tools/prophets",
-  },
+  // {
+  //   title: "Prophets",
+  //   icon: FaUsers,
+  //   path: "/tools/prophets",
+  // },
   {
     title: "Find Mosque",
     icon: FaMosque,

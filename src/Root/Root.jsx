@@ -20,7 +20,7 @@ import SacredMosques from "../Pages/Tools/SacredMosques";
 import IslamicCalendar from "../Pages/Tools/IslamicCalendar";
 import MuslimMap from "../Pages/Tools/MuslimMap";
 import SeerahTimeline from "../Pages/Tools/SeerahTimeline";
-import Prophets from "../Pages/Tools/Prophets";
+// import Prophets from "../Pages/Tools/Prophets";
 import MakkahLocator from "../Pages/Tools/MakkahLocator";
 import KhilafahAtlas from "../Pages/Tools/KhilafahAtlas";
 import IslamicCaliphate from "../Pages/TopicPages/IslamicCaliphate";
@@ -59,7 +59,7 @@ export default function Root() {
       <Route path="/tools/islamic-calendar" element={<IslamicCalendar />} />
       <Route path="/tools/muslim-map" element={<MuslimMap />} />
       <Route path="/tools/seerah-timeline" element={<SeerahTimeline />} />
-      <Route path="/tools/prophets" element={<Prophets />} />
+      {/* <Route path="/tools/prophets" element={<Prophets />} /> */}
 
       {/* 404 Page */}
       <Route path="*" element={<NotFound />} />
